@@ -2,8 +2,12 @@ package Lab1.Core;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import Lab1.Core.Student.Student;
+import Lab1.Core.Student.StudentQuestionAnswer;
 
 public class Test {
 	@SerializedName("test_id")
@@ -16,7 +20,13 @@ public class Test {
 	@Expose
 	private List<Question> questions = null;
 	
-	private List<StudentAnswer> studentAnswers = new ArrayList<>();
+	private List<Student> studentAnswers = new ArrayList<>();
+	
+	public boolean isQuestionAnswerCorrect(StudentQuestionAnswer answer) {
+		Question question = getQuestionById(answer.getQuestionId());
+		
+		return question.isStudentQuestionAnswerCorrect(answer);
+	}
 
 	public Integer getTestId() {
 		return testId;
@@ -32,6 +42,13 @@ public class Test {
 
 	public void setTestName(String testName) {
 		this.testName = testName;
+	}
+	
+	public Question getQuestionById(int questionId) {
+		return Utilities.toStream(this.getQuestions())
+				.filter(q -> q.getId().equals(questionId))
+				.findFirst()
+				.get();
 	}
 
 	public List<Question> getQuestions() {
@@ -51,12 +68,12 @@ public class Test {
 		
 		return n;
 	}
-
-	public List<StudentAnswer> getStudentAnswers() {
+	
+	public List<Student> getStudentAnswers() {
 		return studentAnswers;
 	}
 
-	public void setStudentAnswers(List<StudentAnswer> studentAnswers) {
+	public void setStudentAnswers(List<Student> studentAnswers) {
 		this.studentAnswers = studentAnswers;
 	}
 	

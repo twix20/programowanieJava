@@ -4,18 +4,14 @@ import java.awt.Frame;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 
 import Lab1.Core.Test;
 import Lab1.Core.TestManager;
+import Lab1.Core.Presentation.PresentationManager;
 
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -34,6 +30,7 @@ import javax.swing.JScrollPane;
 public class MainForm {
 
 	private TestManager testManager;
+	private PresentationManager presentationManager;
 	private JFrame frmTestVisualizer;
 	private JTable tableTests;
 
@@ -58,6 +55,7 @@ public class MainForm {
 	 */
 	public MainForm() {
 		testManager = new TestManager();
+		presentationManager = new PresentationManager();
 
 		initialize();
 	}
@@ -114,6 +112,7 @@ public class MainForm {
 					
 					lblTest.setText("Test: " + selectedTestId);
 					
+					presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
 				}
 			}
 		});
@@ -148,6 +147,8 @@ public class MainForm {
 				testManager.loadAnswersFromFile(selectedTestId, path.toString());
 				
 				tableTests.repaint();
+				
+				presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
 			}
 		});
 		btnLoadAnswers.setBounds(418, 148, 119, 23);
@@ -171,7 +172,7 @@ public class MainForm {
 	}
 	
 	static class TestTableModel extends AbstractTableModel {
-		public static String[] columnNames = {"Id", "Name", "Questions", "Answers", "Student Answers"};
+		public static String[] columnNames = {"Id", "Name", "Questions", "Question Answers", "Student Answers"};
 		private List<Test> tests;
 		
 		public TestTableModel(List<Test> tests) {
@@ -207,7 +208,7 @@ public class MainForm {
 				case 3:
 					return test.getAnswersCount();
 				case 4:
-					return test.getStudentAnswers().size();
+					return test.getStudentAnswers().size() == 0 ? "Not loaded" : test.getStudentAnswers().size();
 			}
 			return null;
 		}

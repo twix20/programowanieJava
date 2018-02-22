@@ -4,6 +4,8 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import Lab1.Core.Student.StudentQuestionAnswer;
+
 public class Question {
 
 	@SerializedName("id")
@@ -15,6 +17,16 @@ public class Question {
 	@SerializedName("answers")
 	@Expose
 	private List<Answer> answers = null;
+	
+	public boolean isStudentQuestionAnswerCorrect(StudentQuestionAnswer sqa) {
+		
+		boolean isCorrect = Utilities.toStream(answers)
+								.anyMatch(a -> 
+									a.getOption().equals(sqa.getOption()) &&
+									a.getIsCorrect()
+									);
+		return isCorrect;
+	}
 
 	public Integer getId() {
 		return id;
@@ -39,5 +51,5 @@ public class Question {
 	public void setAnswers(List<Answer> answers) {
 		this.answers = answers;
 	}
-
+	
 }

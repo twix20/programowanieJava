@@ -10,6 +10,8 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
+import Lab1.Core.Student.Student;
+import Lab1.Core.Student.StudentQuestionAnswer;
 import au.com.bytecode.opencsv.CSVReader;
 
 public class TestManager {
@@ -34,7 +36,7 @@ public class TestManager {
 		Test test= getTestById(testId);
 		if(test == null) return;
 		
-		List<StudentAnswer> studentAnswers = new ArrayList<>();
+		List<Student> studentAnswers = new ArrayList<>();
 		try {
 			CSVReader csvReader = new CSVReader(new FileReader(filePath));
 			
@@ -43,17 +45,17 @@ public class TestManager {
 			String [] nextLine;
 			while ((nextLine = csvReader.readNext()) != null) {
 			   // nextLine[] is an array of values from the line
-				StudentAnswer sa = new StudentAnswer();
+				Student sa = new Student();
 				
 				sa.setStudentId(Integer.parseInt(nextLine[0]));
 				sa.setFirstName(nextLine[1]);
 				sa.setLastName(nextLine[2]);
 				
 				for(int i = 3; i < nextLine.length; i++) {
-					int questionId = i - 3;
+					int questionId = i - 2;
 					String option = nextLine[i];
 					
-					sa.getAnswers().add(new StudentQuestionAnswer(sa, questionId, option));
+					sa.getAnswers().add(new StudentQuestionAnswer(sa, questionId, testId, option));
 				}
 				
 				studentAnswers.add(sa);
@@ -61,9 +63,15 @@ public class TestManager {
 			
 			test.setStudentAnswers(studentAnswers);
 			
+			
+			csvReader.close();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			
 		}
 		
 	}

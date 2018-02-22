@@ -17,6 +17,14 @@
         {
           "option": "C",
           "is_correct": true
+        },
+        {
+          "option": "D",
+          "is_correct": true
+        },
+        {
+          "option": "E",
+          "is_correct": true
         }
       ]
     },
