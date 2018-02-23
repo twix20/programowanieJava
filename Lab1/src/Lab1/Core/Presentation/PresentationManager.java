@@ -31,6 +31,11 @@ public class PresentationManager {
 		
 		return testResult = r;
 	}
+	
+	public boolean canGenerateHistogram() {
+		
+		return getTestResult() != null && getTestResult().getTest() != null;
+	}
 
 	public CategoryChart generateHistogram() {
 		Test test = this.getTestResult().getTest();

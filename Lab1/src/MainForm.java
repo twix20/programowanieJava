@@ -49,14 +49,19 @@ import java.awt.Font;
 import javax.swing.JTextField;
 
 public class MainForm {
+	
+	final static String WELCOME_PANEL = "Card welcome";
+	final static String MAIN_PANEL = "Card main";
+	private JPanel welcomePanel;
+	private JPanel mainPanel;
 
 	private TestManager testManager;
 	private PresentationManager presentationManager;
 	private JFrame frmTestVisualizer;
 	private JTable tableTests;
 	private JTable tableStatistics;
-	private JPanel mainPanel;
 	private JTextField txtMadeByPiotr;
+	
 
 	/**
 	 * Launch the application.
@@ -89,10 +94,8 @@ public class MainForm {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				Container frame = frmTestVisualizer.getContentPane();
-				frame.removeAll();
-				frame.add(mainPanel);
-				frame.repaint();
-				frame.revalidate();
+				CardLayout cl = (CardLayout)frame.getLayout();
+				cl.show(frame, MAIN_PANEL);
 			}
 		};
 	}
@@ -110,7 +113,7 @@ public class MainForm {
 		frmTestVisualizer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmTestVisualizer.getContentPane().setLayout(new CardLayout(0, 0));
 		
-		JPanel welcomePanel = new JPanel();
+		welcomePanel = new JPanel();
 		welcomePanel.setBackground(SystemColor.inactiveCaption);
 		welcomePanel.addMouseListener(goToMainPanelEvent());
 		frmTestVisualizer.getContentPane().add(welcomePanel, "name_122298456624859");
@@ -149,6 +152,9 @@ public class MainForm {
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		mainPanel.add(tabbedPane);
+		
+		frmTestVisualizer.getContentPane().add(welcomePanel, this.WELCOME_PANEL);
+		frmTestVisualizer.getContentPane().add(mainPanel, this.MAIN_PANEL);
 
 		JPanel configurationPanel = new JPanel();
 		tabbedPane.addTab("Configuration", null, configurationPanel, null);
@@ -234,6 +240,11 @@ public class MainForm {
 						JButton btnHistogram = new JButton("Histogram");
 						btnHistogram.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
+								if(!presentationManager.canGenerateHistogram()) {
+									showError("Load and choose test first");
+									return;
+								}
+								
 								CategoryChart chart = presentationManager.generateHistogram();
 								XChartPanel<CategoryChart> panel = new XChartPanel<CategoryChart>(chart); 
 
