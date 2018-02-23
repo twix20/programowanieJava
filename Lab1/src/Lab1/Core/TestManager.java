@@ -10,7 +10,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-import Lab1.Core.Student.Student;
+import Lab1.Core.Student.StudentCard;
 import Lab1.Core.Student.StudentQuestionAnswer;
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -36,7 +36,7 @@ public class TestManager {
 		Test test= getTestById(testId);
 		if(test == null) return;
 		
-		List<Student> studentAnswers = new ArrayList<>();
+		List<StudentCard> studentAnswers = new ArrayList<>();
 		try {
 			CSVReader csvReader = new CSVReader(new FileReader(filePath));
 			
@@ -45,7 +45,7 @@ public class TestManager {
 			String [] nextLine;
 			while ((nextLine = csvReader.readNext()) != null) {
 			   // nextLine[] is an array of values from the line
-				Student sa = new Student();
+				StudentCard sa = new StudentCard();
 				
 				sa.setStudentId(Integer.parseInt(nextLine[0]));
 				sa.setFirstName(nextLine[1]);

@@ -1,23 +1,23 @@
 package Lab1.Core.Student;
 
 public class StudentQuestionAnswer {
-	private Student student;
+	private StudentCard student;
 	private int testId;
 	private int questionId;
 	private String option;
 	
-	public StudentQuestionAnswer(Student student, int questionId, int testId, String option) {
+	public StudentQuestionAnswer(StudentCard student, int questionId, int testId, String option) {
 		this.setStudent(student);
 		this.setTestId(testId);
 		this.setQuestionId(questionId);
 		this.setOption(option);
 	}
 	
-	public Student getStudent() {
+	public StudentCard getStudent() {
 		return student;
 	}
 	
-	public void setStudent(Student student) {
+	public void setStudent(StudentCard student) {
 		this.student = student;
 	}
 	public int getQuestionId() {

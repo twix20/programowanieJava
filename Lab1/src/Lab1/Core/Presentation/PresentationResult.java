@@ -1,11 +1,13 @@
 package Lab1.Core.Presentation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import Lab1.Core.Test;
+import org.knowm.xchart.*;
+import org.knowm.xchart.style.Styler.LegendPosition;
+
+import Lab1.Core.*;
+import Lab1.Core.Student.*;
 
 public class PresentationResult {
 	private Test test;
@@ -33,6 +35,77 @@ public class PresentationResult {
 			}
 		});
 	}
+	
+	public CategoryChart generateQuestionPassRateHistogram() {
+		Test test = getTest();
+		List<Question> allQuestions = test.getQuestions();
+		List<StudentCard> allStudents = test.getStudents();
+
+		// Create Chart
+	    CategoryChart chart = new CategoryChartBuilder()
+	    		.width(800)
+	    		.height(600)
+	    		.title(String.format("Test_%d: %s Question Pass Rate Histogram", test.getTestId(), test.getTestName()))
+	    		.xAxisTitle("Question Id")
+	    		.yAxisTitle("Answers")
+	    		.build();
+	    
+	    // Customize Chart
+	    chart.getStyler().setOverlapped(true);
+	    
+	    //Calculate histogram data for correct answers
+	    List<Integer> correctAnswersData = new ArrayList<>();
+	    List<Integer> incorrectAnswersData = new ArrayList<>();
+    	for(StudentCard s: allStudents) {
+    		for(StudentQuestionAnswer sqa: s.getAnswers()) {
+    			int questionId = sqa.getQuestionId();
+    			
+    			if(test.isQuestionAnswerCorrect(sqa))
+    				correctAnswersData.add(questionId);
+    			else
+    				incorrectAnswersData.add(questionId);
+    		}
+    	}
+	    	
+	    int numBins = allQuestions.size();
+	    List<Integer> questionIds = test
+	    		.getQuestions().stream().map(x->x.getId())
+	    		.collect(Collectors.toList());
+	    
+		Histogram histogramCorrect = new Histogram(correctAnswersData, numBins);
+	    Histogram histogramIncorrect = new Histogram(incorrectAnswersData, numBins);
+	    
+	    chart.addSeries("Correct Answers", questionIds, histogramCorrect.getyAxisData());
+	    chart.addSeries("Incorrect Answers", questionIds, histogramIncorrect.getyAxisData());
+	    
+	    return chart;
+	}
+	
+	public CategoryChart generateStudentMarkRateHistogram() {
+		
+		CategoryChart chart = new CategoryChartBuilder()
+				.width(800)
+	    		.height(600)
+	    		.title(String.format("Test_%d: %s Student Pass Rate Histogram", test.getTestId(), test.getTestName()))
+	    		.xAxisTitle("Mark")
+	    		.yAxisTitle("Quantity")
+	    		.build();
+		
+		Test t = getTest();
+		
+		
+		List<Double> data = t.getStudents().stream()
+				.mapToDouble(s -> t.calculatePointsScoredForStudent(s))
+				.boxed()
+				.collect(Collectors.toList());
+		int bins = t.getMarksCount();
+		
+		Histogram histogram = new Histogram(data, bins);
+		chart.addSeries("Students", test.getMarks(), histogram.getyAxisData());
+		
+		return chart;
+	}
+	
 
 	public List<QuestionStatistic> getQuestionStatistics() {
 		return questionStatistics;

@@ -20,16 +20,21 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.internal.chartpart.Chart;
+import org.knowm.xchart.style.Styler.LegendPosition;
 
 import java.awt.event.ActionListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
@@ -43,6 +48,7 @@ import java.awt.GridBagConstraints;
 import javax.swing.JTextPane;
 import java.awt.Insets;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.Font;
@@ -169,12 +175,15 @@ public class MainForm {
 				btnLoadTest.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						
-						FileDialog dialog = shopChooseFile("Select Test to Open");
-						
+						FileDialog dialog = showChooseFile("Select Test to Open");
+						if(dialog.getFile() == null) return;
+
 						Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
 						testManager.loadTestFromFile(path.toString());
 						
-						tableTests.setModel(new TestTableModel(testManager.getTests()));
+						TestTableModel model = (TestTableModel)tableTests.getModel();
+						model.setTests(testManager.getTests());
+						model.fireTableDataChanged();
 					}
 				});
 				
@@ -195,21 +204,25 @@ public class MainForm {
 				gbc_scrollPane.gridy = 1;
 				configurationPanel.add(scrollPane, gbc_scrollPane);
 				
-						tableTests = new JTable();
-						ListSelectionModel tableTestsModel = tableTests.getSelectionModel();
-						scrollPane.setViewportView(tableTests);
-						tableTests.setModel(new DefaultTableModel(
-							new Object[][] {
-							},
-							TestTableModel.columnNames
-						) {
-							boolean[] columnEditables = new boolean[] {
-								false, false, false, false
-							};
-							public boolean isCellEditable(int row, int column) {
-								return columnEditables[column];
-							}
-						});
+				tableTests = new JTable();
+				tableTests.setModel(new TestTableModel());
+				tableTests.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+					@Override
+					public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+							boolean hasFocus, int row, int column) {
+						// TODO Auto-generated method stub
+						setBackground(Color.WHITE);
+						
+						super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+						
+						if(value.toString().contains("Not"))
+							setBackground(Color.RED);
+						
+						return this;
+					}
+				});
+				ListSelectionModel tableTestsModel = tableTests.getSelectionModel();
+				scrollPane.setViewportView(tableTests);
 				GridBagConstraints gbc_btnLoadTest = new GridBagConstraints();
 				gbc_btnLoadTest.anchor = GridBagConstraints.NORTH;
 				gbc_btnLoadTest.fill = GridBagConstraints.HORIZONTAL;
@@ -229,7 +242,8 @@ public class MainForm {
 								}
 								Integer selectedTestId = (Integer)tableTests.getModel().getValueAt(selectedRow, 0);
 								
-								FileDialog dialog = shopChooseFile("Select Answers to Open");
+								FileDialog dialog = showChooseFile("Select Answers to Open");
+								if(dialog.getFile() == null) return;
 								
 								Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
 								testManager.loadAnswersFromFile(selectedTestId, path.toString());
@@ -254,9 +268,9 @@ public class MainForm {
 						JPanel panelStats = new JPanel();
 						GridBagLayout gbl_panelStats = new GridBagLayout();
 						gbl_panelStats.columnWidths = new int[]{251, 168, 0};
-						gbl_panelStats.rowHeights = new int[] {7, 159, 5, 0};
+						gbl_panelStats.rowHeights = new int[] {7, 0, 159, 5, 0};
 						gbl_panelStats.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-						gbl_panelStats.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+						gbl_panelStats.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 						panelStats.setLayout(gbl_panelStats);
 						presentationPanel.add(panelStats);
 						
@@ -270,27 +284,9 @@ public class MainForm {
 						panelStats.add(lblStatisticsTable, gbc_lblStatisticsTable);
 						lblStatisticsTable.setVerticalAlignment(SwingConstants.TOP);
 						
-						JButton btnHistogram = new JButton("Histogram");
-						btnHistogram.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								if(!presentationManager.canGenerateHistogram()) {
-									showError("Load and choose test first");
-									return;
-								}
-								
-								CategoryChart chart = presentationManager.generateHistogram();
-								XChartPanel<CategoryChart> panel = new XChartPanel<CategoryChart>(chart); 
-
-								//Display chart in new form
-								JFrame chartFrame = new JFrame(String.format("%s presentation", panel.getChart().getTitle()));
-								chartFrame.getContentPane().add(panel);
-								chartFrame.pack();
-								chartFrame.setVisible(true);
-							}
-						});
-						
 						JScrollPane scrollPane_1 = new JScrollPane();
 						GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
+						gbc_scrollPane_1.gridheight = 2;
 						gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
 						gbc_scrollPane_1.insets = new Insets(0, 0, 5, 5);
 						gbc_scrollPane_1.gridx = 0;
@@ -314,13 +310,34 @@ public class MainForm {
 							}
 						});
 						tableStatistics.getColumnModel().getColumn(0).setMinWidth(15);
-						GridBagConstraints gbc_btnHistogram = new GridBagConstraints();
-						gbc_btnHistogram.insets = new Insets(0, 0, 5, 0);
-						gbc_btnHistogram.anchor = GridBagConstraints.NORTH;
-						gbc_btnHistogram.fill = GridBagConstraints.HORIZONTAL;
-						gbc_btnHistogram.gridx = 1;
-						gbc_btnHistogram.gridy = 1;
-						panelStats.add(btnHistogram, gbc_btnHistogram);
+						
+						JButton btnQuestionPassRateHistogram = new JButton("Question Pass Rate Histogram");
+						btnQuestionPassRateHistogram.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								displayChart("Question Pass Rate Histogram", () -> presentationManager.getTestResult().generateQuestionPassRateHistogram());
+							}
+						});
+						GridBagConstraints gbc_btnQuestionPassRateHistogram = new GridBagConstraints();
+						gbc_btnQuestionPassRateHistogram.insets = new Insets(0, 0, 5, 0);
+						gbc_btnQuestionPassRateHistogram.anchor = GridBagConstraints.NORTH;
+						gbc_btnQuestionPassRateHistogram.fill = GridBagConstraints.HORIZONTAL;
+						gbc_btnQuestionPassRateHistogram.gridx = 1;
+						gbc_btnQuestionPassRateHistogram.gridy = 1;
+						panelStats.add(btnQuestionPassRateHistogram, gbc_btnQuestionPassRateHistogram);
+						
+						JButton btnMarkRateHistogram = new JButton("Mark Rate Histogram");
+						btnMarkRateHistogram.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								displayChart("Student Mark Rate Histogram", () -> presentationManager.getTestResult().generateStudentMarkRateHistogram());
+							}
+						});
+						GridBagConstraints gbc_btnMarkRateHistogram = new GridBagConstraints();
+						gbc_btnMarkRateHistogram.fill = GridBagConstraints.HORIZONTAL;
+						gbc_btnMarkRateHistogram.anchor = GridBagConstraints.NORTH;
+						gbc_btnMarkRateHistogram.insets = new Insets(0, 0, 5, 0);
+						gbc_btnMarkRateHistogram.gridx = 1;
+						gbc_btnMarkRateHistogram.gridy = 2;
+						panelStats.add(btnMarkRateHistogram, gbc_btnMarkRateHistogram);
 		tableTestsModel.addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
@@ -338,7 +355,25 @@ public class MainForm {
 		});
 	}
 	
-	private FileDialog shopChooseFile(String title) {
+	private void displayChart(String frameTitle, Supplier<Chart> chartSupplier) {
+		if(!presentationManager.canGenerateHistogram()) {
+			showError("Load and choose test first");
+			return;
+		}
+		
+		Chart chart = chartSupplier.get();
+	    chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
+	    
+		XChartPanel<CategoryChart> panel = new XChartPanel(chart); 
+
+		//Display chart in new form
+		JFrame chartFrame = new JFrame(frameTitle);
+		chartFrame.getContentPane().add(panel);
+		chartFrame.pack();
+		chartFrame.setVisible(true);
+	}
+	
+	private FileDialog showChooseFile(String title) {
 		FileDialog dialog = new FileDialog((Frame) null, title);
 		dialog.setMode(FileDialog.LOAD);
 		dialog.setVisible(true);
@@ -361,8 +396,10 @@ public class MainForm {
 		rows.add(new Object[] {"Id", t.getTestId()});
 		rows.add(new Object[] {"Name", t.getTestName()});
 		rows.add(new Object[] {"Questions", t.getQuestions().size()});
+		rows.add(new Object[] {"All Question Options", t.getAllQuestionOptionsCount()});
 		rows.add(new Object[] {"Easiest question", String.format("%d | %d", r.getEasiestQuestion().getQuestionId(), r.getEasiestQuestion().getStudentsAnsweredCorrectly())});
 		rows.add(new Object[] {"Hardest question", String.format("%d | %d", r.getHardesQuestion().getQuestionId(), r.getHardesQuestion().getStudentsAnsweredIncorrectly())});
+		rows.add(new Object[] {"Student Cards", t.getStudents().size()});
 		
 		//Best student
 		//Worst student
@@ -375,14 +412,23 @@ public class MainForm {
 
 	}
 	
-	static class TestTableModel extends AbstractTableModel {
-		public static final String[] columnNames = {"Id", "Name", "Questions", "Question Answers", "Students"};
+	static class TestTableModel extends DefaultTableModel {
+		public static final String[] columnNames = {"Id", "Name", "Questions", "Student Cards"};
 		private List<Test> tests;
 		
-		public TestTableModel(List<Test> tests) {
+		public TestTableModel() {
+			this.tests = new ArrayList<>();
+		}
+
+		public void setTests(List<Test> tests) {
 			this.tests = tests;
 		}
 		
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+
 		@Override
 		public String getColumnName(int column) {
 			return columnNames[column];
@@ -395,7 +441,7 @@ public class MainForm {
 
 		@Override
 		public int getRowCount() {
-			return tests.size();
+			return tests == null ? 0 : tests.size();
 		}
 
 		@Override
@@ -410,8 +456,6 @@ public class MainForm {
 				case 2:
 					return test.getQuestions().size();
 				case 3:
-					return test.getAnswersCount();
-				case 4:
 					return test.areAnswersLoaded() ? test.getStudents().size() : "Not loaded";
 			}
 			return null;
