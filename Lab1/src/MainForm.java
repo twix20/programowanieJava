@@ -34,6 +34,20 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import java.awt.CardLayout;
+import java.awt.Container;
+import java.awt.BorderLayout;
+import javax.swing.BoxLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import javax.swing.JTextPane;
+import java.awt.Insets;
+import java.awt.Color;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
+import java.awt.Toolkit;
 
 public class MainForm {
 
@@ -42,6 +56,7 @@ public class MainForm {
 	private JFrame frmTestVisualizer;
 	private JTable tableTests;
 	private JTable tableStatistics;
+	private JPanel mainPanel;
 
 	/**
 	 * Launch the application.
@@ -74,13 +89,52 @@ public class MainForm {
 	 */
 	private void initialize() {
 		frmTestVisualizer = new JFrame();
+		frmTestVisualizer.setIconImage(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/Lab1/icon.jpg")));
 		frmTestVisualizer.setTitle("Test Visualizer");
 		frmTestVisualizer.setBounds(100, 100, 580, 251);
 		frmTestVisualizer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmTestVisualizer.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
+		frmTestVisualizer.getContentPane().setLayout(new CardLayout(0, 0));
+		
+		JPanel welcomePanel = new JPanel();
+		welcomePanel.setBackground(UIManager.getColor("Button.background"));
+		welcomePanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Container frame = frmTestVisualizer.getContentPane();
+				frame.removeAll();
+				frame.add(mainPanel);
+				frame.repaint();
+				frame.revalidate();
+			}
+		});
+		frmTestVisualizer.getContentPane().add(welcomePanel, "name_122298456624859");
+		GridBagLayout gbl_welcomePanel = new GridBagLayout();
+		gbl_welcomePanel.columnWidths = new int[]{147, 285, 0, 0};
+		gbl_welcomePanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl_welcomePanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_welcomePanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		welcomePanel.setLayout(gbl_welcomePanel);
+		
+		JTextPane txtpnWelcomeToTest = new JTextPane();
+		txtpnWelcomeToTest.setForeground(new Color(218, 165, 32));
+		txtpnWelcomeToTest.setBackground(Color.WHITE);
+		txtpnWelcomeToTest.setEnabled(false);
+		txtpnWelcomeToTest.setEditable(false);
+		txtpnWelcomeToTest.setText("Lab1\r\n\r\nWelcome to Test Visualizer\r\nMade by Piotr Markiewicz");
+		GridBagConstraints gbc_txtpnWelcomeToTest = new GridBagConstraints();
+		gbc_txtpnWelcomeToTest.anchor = GridBagConstraints.WEST;
+		gbc_txtpnWelcomeToTest.insets = new Insets(0, 0, 5, 5);
+		gbc_txtpnWelcomeToTest.fill = GridBagConstraints.VERTICAL;
+		gbc_txtpnWelcomeToTest.gridx = 1;
+		gbc_txtpnWelcomeToTest.gridy = 2;
+		welcomePanel.add(txtpnWelcomeToTest, gbc_txtpnWelcomeToTest);
+		
+		mainPanel = new JPanel();
+		frmTestVisualizer.getContentPane().add(mainPanel, "name_122291661539763");
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		frmTestVisualizer.getContentPane().add(tabbedPane);
+		mainPanel.add(tabbedPane);
 
 		JPanel configurationPanel = new JPanel();
 		tabbedPane.addTab("Configuration", null, configurationPanel, null);
@@ -111,6 +165,95 @@ public class MainForm {
 
 		tableTests = new JTable();
 		ListSelectionModel tableTestsModel = tableTests.getSelectionModel();
+		scrollPane.setViewportView(tableTests);
+		tableTests.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			TestTableModel.columnNames
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false, false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		
+				JButton btnLoadAnswers = new JButton("Load Answers");
+				btnLoadAnswers.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						
+						int selectedRow = tableTests.getSelectedRow();
+						if(selectedRow == -1) {
+							showError("Select the test from the list first");
+							return;
+						}
+						Integer selectedTestId = (Integer)tableTests.getModel().getValueAt(selectedRow, 0);
+						
+						FileDialog dialog = shopChooseFile("Select Answers to Open");
+						
+						Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
+						testManager.loadAnswersFromFile(selectedTestId, path.toString());
+						
+						presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
+						
+						refreshTableStatistics();
+						tableTests.repaint();
+					}
+				});
+				btnLoadAnswers.setBounds(418, 148, 119, 23);
+				configurationPanel.add(btnLoadAnswers);
+				
+						JPanel presentationPanel = new JPanel();
+						tabbedPane.addTab("Presentation", null, presentationPanel, null);
+						presentationPanel.setLayout(new GridLayout(0, 1, 0, 0));
+						
+						JPanel panelStats = new JPanel();
+						panelStats.setLayout(null);
+						
+						JLabel lblStatisticsTable = new JLabel("Statistics:");
+						lblStatisticsTable.setBounds(10, 12, 197, 14);
+						panelStats.add(lblStatisticsTable);
+						lblStatisticsTable.setVerticalAlignment(SwingConstants.TOP);
+						
+						JScrollPane scrollPane_1 = new JScrollPane();
+						scrollPane_1.setBounds(10, 35, 286, 138);
+						panelStats.add(scrollPane_1);
+						
+						tableStatistics = new JTable();
+						tableStatistics.setModel(new DefaultTableModel(
+							new Object[][] {
+							},
+							new String[] {
+								"Name", "Value"
+							}
+						) {
+							boolean[] columnEditables = new boolean[] {
+								false, false
+							};
+							public boolean isCellEditable(int row, int column) {
+								return columnEditables[column];
+							}
+						});
+						tableStatistics.getColumnModel().getColumn(0).setMinWidth(35);
+						scrollPane_1.setViewportView(tableStatistics);
+						presentationPanel.add(panelStats);
+						
+						JButton btnHistogram = new JButton("Histogram");
+						btnHistogram.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								CategoryChart chart = presentationManager.generateHistogram();
+								XChartPanel<CategoryChart> panel = new XChartPanel<CategoryChart>(chart); 
+
+								//Display chart in new form
+								JFrame chartFrame = new JFrame(String.format("%s presentation", panel.getChart().getTitle()));
+								chartFrame.getContentPane().add(panel);
+								chartFrame.pack();
+								chartFrame.setVisible(true);
+							}
+						});
+						btnHistogram.setBounds(306, 32, 243, 23);
+						panelStats.add(btnHistogram);
 		tableTestsModel.addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
@@ -126,95 +269,6 @@ public class MainForm {
 				}
 			}
 		});
-		scrollPane.setViewportView(tableTests);
-		tableTests.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			TestTableModel.columnNames
-		) {
-			boolean[] columnEditables = new boolean[] {
-				false, false, false, false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-
-		JButton btnLoadAnswers = new JButton("Load Answers");
-		btnLoadAnswers.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				int selectedRow = tableTests.getSelectedRow();
-				if(selectedRow == -1) {
-					showError("Select the test from the list first");
-					return;
-				}
-				Integer selectedTestId = (Integer)tableTests.getModel().getValueAt(selectedRow, 0);
-				
-				FileDialog dialog = shopChooseFile("Select Answers to Open");
-				
-				Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
-				testManager.loadAnswersFromFile(selectedTestId, path.toString());
-				
-				presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
-				
-				refreshTableStatistics();
-				tableTests.repaint();
-			}
-		});
-		btnLoadAnswers.setBounds(418, 148, 119, 23);
-		configurationPanel.add(btnLoadAnswers);
-
-		JPanel presentationPanel = new JPanel();
-		tabbedPane.addTab("Presentation", null, presentationPanel, null);
-		presentationPanel.setLayout(new GridLayout(0, 1, 0, 0));
-		
-		JPanel panelStats = new JPanel();
-		panelStats.setLayout(null);
-		
-		JLabel lblStatisticsTable = new JLabel("Statistics:");
-		lblStatisticsTable.setBounds(10, 12, 197, 14);
-		panelStats.add(lblStatisticsTable);
-		lblStatisticsTable.setVerticalAlignment(SwingConstants.TOP);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 35, 286, 138);
-		panelStats.add(scrollPane_1);
-		
-		tableStatistics = new JTable();
-		tableStatistics.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Name", "Value"
-			}
-		) {
-			boolean[] columnEditables = new boolean[] {
-				false, false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-		tableStatistics.getColumnModel().getColumn(0).setMinWidth(35);
-		scrollPane_1.setViewportView(tableStatistics);
-		presentationPanel.add(panelStats);
-		
-		JButton btnHistogram = new JButton("Histogram");
-		btnHistogram.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				CategoryChart chart = presentationManager.generateHistogram();
-				XChartPanel<CategoryChart> panel = new XChartPanel<CategoryChart>(chart); 
-
-				//Display chart in new form
-				JFrame chartFrame = new JFrame(String.format("%s presentation", panel.getChart().getTitle()));
-				chartFrame.add(panel);
-				chartFrame.pack();
-				chartFrame.setVisible(true);
-			}
-		});
-		btnHistogram.setBounds(306, 32, 243, 23);
-		panelStats.add(btnHistogram);
 	}
 	
 	private FileDialog shopChooseFile(String title) {
