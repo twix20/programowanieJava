@@ -50,8 +50,7 @@ public class PresentationManager {
 			List<StudentQuestionAnswer> saForQuestions = sa.getAnswersForQuestion(questionId);
 			for(StudentQuestionAnswer a: saForQuestions) {
 				
-				boolean isCorrect = test.isQuestionAnswerCorrect(a);
-				if(isCorrect)
+				if(test.isQuestionAnswerCorrect(a))
 					correct++;
 				else
 					incorrect++;
@@ -59,6 +58,7 @@ public class PresentationManager {
 		}
 		
 		QuestionStatistic stat = new QuestionStatistic();
+		stat.setTestId(test.getTestId());
 		stat.setQuestionId(questionId);
 		stat.setStudentsAnsweredCorrectly(correct);
 		stat.setStudentsAnsweredIncorrectly(incorrect);
