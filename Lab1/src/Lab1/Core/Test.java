@@ -79,7 +79,7 @@ public class Test {
 	}
 	
 	public boolean areAnswersLoaded() {
-		return this.getAnswersCount() != 0;
+		return this.getStudents().size() != 0;
 	}
 	
 	

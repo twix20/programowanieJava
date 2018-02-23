@@ -48,6 +48,8 @@ import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
 import java.awt.Toolkit;
+import java.awt.Font;
+import javax.swing.JTextField;
 
 public class MainForm {
 
@@ -57,6 +59,7 @@ public class MainForm {
 	private JTable tableTests;
 	private JTable tableStatistics;
 	private JPanel mainPanel;
+	private JTextField txtMadeByPiotr;
 
 	/**
 	 * Launch the application.
@@ -83,21 +86,9 @@ public class MainForm {
 
 		initialize();
 	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frmTestVisualizer = new JFrame();
-		frmTestVisualizer.setIconImage(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/Lab1/icon.jpg")));
-		frmTestVisualizer.setTitle("Test Visualizer");
-		frmTestVisualizer.setBounds(100, 100, 580, 251);
-		frmTestVisualizer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmTestVisualizer.getContentPane().setLayout(new CardLayout(0, 0));
-		
-		JPanel welcomePanel = new JPanel();
-		welcomePanel.setBackground(UIManager.getColor("Button.background"));
-		welcomePanel.addMouseListener(new MouseAdapter() {
+	
+	private MouseAdapter goToMainPanelEvent() {
+		return new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				Container frame = frmTestVisualizer.getContentPane();
@@ -106,28 +97,54 @@ public class MainForm {
 				frame.repaint();
 				frame.revalidate();
 			}
-		});
+		};
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frmTestVisualizer = new JFrame();
+		frmTestVisualizer.getContentPane().setBackground(SystemColor.inactiveCaption);
+		frmTestVisualizer.setBackground(SystemColor.inactiveCaption);
+		frmTestVisualizer.setIconImage(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/Lab1/icon.jpg")));
+		frmTestVisualizer.setTitle("Test Visualizer");
+		frmTestVisualizer.setBounds(100, 100, 580, 251);
+		frmTestVisualizer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmTestVisualizer.getContentPane().setLayout(new CardLayout(0, 0));
+		
+		JPanel welcomePanel = new JPanel();
+		welcomePanel.setBackground(SystemColor.inactiveCaption);
+		welcomePanel.addMouseListener(goToMainPanelEvent());
 		frmTestVisualizer.getContentPane().add(welcomePanel, "name_122298456624859");
 		GridBagLayout gbl_welcomePanel = new GridBagLayout();
-		gbl_welcomePanel.columnWidths = new int[]{147, 285, 0, 0};
-		gbl_welcomePanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_welcomePanel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_welcomePanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_welcomePanel.columnWidths = new int[]{256, 0, 0};
+		gbl_welcomePanel.rowHeights = new int[] {140, 30, 0};
+		gbl_welcomePanel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_welcomePanel.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 		welcomePanel.setLayout(gbl_welcomePanel);
 		
-		JTextPane txtpnWelcomeToTest = new JTextPane();
-		txtpnWelcomeToTest.setForeground(new Color(218, 165, 32));
-		txtpnWelcomeToTest.setBackground(Color.WHITE);
-		txtpnWelcomeToTest.setEnabled(false);
-		txtpnWelcomeToTest.setEditable(false);
-		txtpnWelcomeToTest.setText("Lab1\r\n\r\nWelcome to Test Visualizer\r\nMade by Piotr Markiewicz");
-		GridBagConstraints gbc_txtpnWelcomeToTest = new GridBagConstraints();
-		gbc_txtpnWelcomeToTest.anchor = GridBagConstraints.WEST;
-		gbc_txtpnWelcomeToTest.insets = new Insets(0, 0, 5, 5);
-		gbc_txtpnWelcomeToTest.fill = GridBagConstraints.VERTICAL;
-		gbc_txtpnWelcomeToTest.gridx = 1;
-		gbc_txtpnWelcomeToTest.gridy = 2;
-		welcomePanel.add(txtpnWelcomeToTest, gbc_txtpnWelcomeToTest);
+		JTextPane txtpnLabWelcomeTo = new JTextPane();
+		txtpnLabWelcomeTo.addMouseListener(goToMainPanelEvent());
+		txtpnLabWelcomeTo.setFont(new Font("Tahoma", Font.BOLD, 25));
+		txtpnLabWelcomeTo.setEditable(false);
+		txtpnLabWelcomeTo.setBackground(new Color(0, 0, 0, 0));
+		txtpnLabWelcomeTo.setText("Lab1\r\n\r\nWelcome to Test Visualizer");
+		GridBagConstraints gbc_txtpnLabWelcomeTo = new GridBagConstraints();
+		gbc_txtpnLabWelcomeTo.insets = new Insets(0, 0, 5, 5);
+		gbc_txtpnLabWelcomeTo.gridx = 0;
+		gbc_txtpnLabWelcomeTo.gridy = 0;
+		welcomePanel.add(txtpnLabWelcomeTo, gbc_txtpnLabWelcomeTo);
+		
+		txtMadeByPiotr = new JTextField();
+		txtMadeByPiotr.setEditable(false);
+		txtMadeByPiotr.setText("Made by Piotr Markiewicz");
+		GridBagConstraints gbc_txtMadeByPiotr = new GridBagConstraints();
+		gbc_txtMadeByPiotr.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtMadeByPiotr.gridx = 1;
+		gbc_txtMadeByPiotr.gridy = 1;
+		welcomePanel.add(txtMadeByPiotr, gbc_txtMadeByPiotr);
+		txtMadeByPiotr.setColumns(10);
 		
 		mainPanel = new JPanel();
 		frmTestVisualizer.getContentPane().add(mainPanel, "name_122291661539763");
@@ -211,32 +228,10 @@ public class MainForm {
 						JPanel panelStats = new JPanel();
 						panelStats.setLayout(null);
 						
-						JLabel lblStatisticsTable = new JLabel("Statistics:");
+						JLabel lblStatisticsTable = new JLabel("Aditional Informations:");
 						lblStatisticsTable.setBounds(10, 12, 197, 14);
 						panelStats.add(lblStatisticsTable);
 						lblStatisticsTable.setVerticalAlignment(SwingConstants.TOP);
-						
-						JScrollPane scrollPane_1 = new JScrollPane();
-						scrollPane_1.setBounds(10, 35, 286, 138);
-						panelStats.add(scrollPane_1);
-						
-						tableStatistics = new JTable();
-						tableStatistics.setModel(new DefaultTableModel(
-							new Object[][] {
-							},
-							new String[] {
-								"Name", "Value"
-							}
-						) {
-							boolean[] columnEditables = new boolean[] {
-								false, false
-							};
-							public boolean isCellEditable(int row, int column) {
-								return columnEditables[column];
-							}
-						});
-						tableStatistics.getColumnModel().getColumn(0).setMinWidth(35);
-						scrollPane_1.setViewportView(tableStatistics);
 						presentationPanel.add(panelStats);
 						
 						JButton btnHistogram = new JButton("Histogram");
@@ -254,6 +249,25 @@ public class MainForm {
 						});
 						btnHistogram.setBounds(306, 32, 243, 23);
 						panelStats.add(btnHistogram);
+						
+						tableStatistics = new JTable();
+						tableStatistics.setBounds(10, 36, 284, 137);
+						panelStats.add(tableStatistics);
+						tableStatistics.setModel(new DefaultTableModel(
+							new Object[][] {
+							},
+							new String[] {
+								"Name", "Value"
+							}
+						) {
+							boolean[] columnEditables = new boolean[] {
+								false, false
+							};
+							public boolean isCellEditable(int row, int column) {
+								return columnEditables[column];
+							}
+						});
+						tableStatistics.getColumnModel().getColumn(0).setMinWidth(35);
 		tableTestsModel.addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
@@ -285,7 +299,7 @@ public class MainForm {
 	}
 	
 	static class TestTableModel extends AbstractTableModel {
-		public static String[] columnNames = {"Id", "Name", "Questions", "Question Answers", "Student Answers"};
+		public static String[] columnNames = {"Id", "Name", "Questions", "Question Answers", "Students"};
 		private List<Test> tests;
 		
 		public TestTableModel(List<Test> tests) {
