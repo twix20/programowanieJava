@@ -112,7 +112,7 @@
         },
         {
           "option": "D",
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -166,7 +166,7 @@
         },
         {
           "option": "B",
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option": "C",

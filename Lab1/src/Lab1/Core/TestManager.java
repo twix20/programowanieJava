@@ -61,7 +61,7 @@ public class TestManager {
 				studentAnswers.add(sa);
 			}
 			
-			test.setStudentAnswers(studentAnswers);
+			test.setStudents(studentAnswers);
 			
 			
 			csvReader.close();

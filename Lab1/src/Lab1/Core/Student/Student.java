@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import Lab1.Core.Utilities;
-
 public class Student {
 	private int studentId;
 	private String firstName;
@@ -38,7 +36,8 @@ public class Student {
 	}
 	
 	public List<StudentQuestionAnswer> getAnswersForQuestion(int questionId){
-		return Utilities.toStream(getAnswers())
+		return getAnswers()
+				.stream()
 				.filter(q -> q.getQuestionId() == questionId)
 				.collect(Collectors.toList());
 	}

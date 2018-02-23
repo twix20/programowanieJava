@@ -20,7 +20,7 @@ public class Test {
 	@Expose
 	private List<Question> questions = null;
 	
-	private List<Student> studentAnswers = new ArrayList<>();
+	private List<Student> students = new ArrayList<>();
 	
 	public boolean isQuestionAnswerCorrect(StudentQuestionAnswer answer) {
 		Question question = getQuestionById(answer.getQuestionId());
@@ -45,7 +45,8 @@ public class Test {
 	}
 	
 	public Question getQuestionById(int questionId) {
-		return Utilities.toStream(this.getQuestions())
+		return this.getQuestions()
+				.stream()
 				.filter(q -> q.getId().equals(questionId))
 				.findFirst()
 				.get();
@@ -69,12 +70,16 @@ public class Test {
 		return n;
 	}
 	
-	public List<Student> getStudentAnswers() {
-		return studentAnswers;
+	public List<Student> getStudents() {
+		return students;
 	}
 
-	public void setStudentAnswers(List<Student> studentAnswers) {
-		this.studentAnswers = studentAnswers;
+	public void setStudents(List<Student> studentAnswers) {
+		this.students = studentAnswers;
+	}
+	
+	public boolean areAnswersLoaded() {
+		return this.getAnswersCount() != 0;
 	}
 	
 	

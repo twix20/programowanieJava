@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import Lab1.Core.Test;
 import Lab1.Core.TestManager;
 import Lab1.Core.Presentation.PresentationManager;
+import Lab1.Core.Presentation.PresentationResult;
+import Lab1.Core.Presentation.StatisticTableRow;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -20,12 +22,18 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.XChartPanel;
+
 import java.awt.event.ActionListener;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 public class MainForm {
 
@@ -33,6 +41,7 @@ public class MainForm {
 	private PresentationManager presentationManager;
 	private JFrame frmTestVisualizer;
 	private JTable tableTests;
+	private JTable tableStatistics;
 
 	/**
 	 * Launch the application.
@@ -113,6 +122,7 @@ public class MainForm {
 					lblTest.setText("Test: " + selectedTestId);
 					
 					presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
+					refreshTableStatistics();
 				}
 			}
 		});
@@ -146,9 +156,10 @@ public class MainForm {
 				Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
 				testManager.loadAnswersFromFile(selectedTestId, path.toString());
 				
-				tableTests.repaint();
-				
 				presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
+				
+				refreshTableStatistics();
+				tableTests.repaint();
 			}
 		});
 		btnLoadAnswers.setBounds(418, 148, 119, 23);
@@ -156,6 +167,54 @@ public class MainForm {
 
 		JPanel presentationPanel = new JPanel();
 		tabbedPane.addTab("Presentation", null, presentationPanel, null);
+		presentationPanel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JPanel panelStats = new JPanel();
+		panelStats.setLayout(null);
+		
+		JLabel lblStatisticsTable = new JLabel("Statistics:");
+		lblStatisticsTable.setBounds(10, 12, 197, 14);
+		panelStats.add(lblStatisticsTable);
+		lblStatisticsTable.setVerticalAlignment(SwingConstants.TOP);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(10, 35, 286, 138);
+		panelStats.add(scrollPane_1);
+		
+		tableStatistics = new JTable();
+		tableStatistics.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Name", "Value"
+			}
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		tableStatistics.getColumnModel().getColumn(0).setMinWidth(35);
+		scrollPane_1.setViewportView(tableStatistics);
+		presentationPanel.add(panelStats);
+		
+		JButton btnHistogram = new JButton("Histogram");
+		btnHistogram.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CategoryChart chart = presentationManager.generateHistogram();
+				XChartPanel<CategoryChart> panel = new XChartPanel<CategoryChart>(chart); 
+
+				//Display chart in new form
+				JFrame chartFrame = new JFrame(String.format("%s presentation", panel.getChart().getTitle()));
+				chartFrame.add(panel);
+				chartFrame.pack();
+				chartFrame.setVisible(true);
+			}
+		});
+		btnHistogram.setBounds(306, 32, 243, 23);
+		panelStats.add(btnHistogram);
 	}
 	
 	private FileDialog shopChooseFile(String title) {
@@ -208,10 +267,35 @@ public class MainForm {
 				case 3:
 					return test.getAnswersCount();
 				case 4:
-					return test.getStudentAnswers().size() == 0 ? "Not loaded" : test.getStudentAnswers().size();
+					return test.areAnswersLoaded() ? test.getStudents().size() : "Not loaded";
 			}
 			return null;
 		}
+	}
+	
+	public void refreshTableStatistics() {
+		PresentationResult r = presentationManager.getTestResult();
+		if(r == null) 
+			return;
+		
+		Test t = r.getTest();
+		
+		List<StatisticTableRow> rows = new ArrayList<>();
+
+		rows.add(new StatisticTableRow("Test Id", t.getTestId()));
+		rows.add(new StatisticTableRow("Test Name", t.getTestName()));
+		rows.add(new StatisticTableRow("Questions", t.getQuestions().size()));
+		rows.add(new StatisticTableRow("Easiest question", String.format("%d | %d", r.getEasiestQuestion().getQuestionId(), r.getEasiestQuestion().getStudentsAnsweredCorrectly())));
+		rows.add(new StatisticTableRow("Hardest question", String.format("%d | %d", r.getHardesQuestion().getQuestionId(), r.getHardesQuestion().getStudentsAnsweredIncorrectly())));
+		
+		//Best student
+		//Worst student
+		//Avarege points
+		
+		DefaultTableModel model = (DefaultTableModel)this.tableStatistics.getModel();
+		model.setRowCount(0);
+		for(StatisticTableRow row: rows)
+			model.addRow(new Object[] {row.getName(), row.getValue()});
 
 	}
 }

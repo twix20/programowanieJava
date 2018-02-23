@@ -20,11 +20,12 @@ public class Question {
 	
 	public boolean isStudentQuestionAnswerCorrect(StudentQuestionAnswer sqa) {
 		
-		boolean isCorrect = Utilities.toStream(answers)
+		boolean isCorrect = answers
+								.stream()
 								.anyMatch(a -> 
 									a.getOption().equals(sqa.getOption()) &&
 									a.getIsCorrect()
-									);
+								);
 		return isCorrect;
 	}
 
