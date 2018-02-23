@@ -11,7 +11,6 @@ import Lab1.Core.Test;
 import Lab1.Core.TestManager;
 import Lab1.Core.Presentation.PresentationManager;
 import Lab1.Core.Presentation.PresentationResult;
-import Lab1.Core.Presentation.StatisticTableRow;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -36,7 +35,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import java.awt.CardLayout;
 import java.awt.Container;
-import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,7 +44,6 @@ import javax.swing.JTextPane;
 import java.awt.Insets;
 import java.awt.Color;
 import java.awt.SystemColor;
-import javax.swing.UIManager;
 import java.awt.Toolkit;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -298,8 +295,32 @@ public class MainForm {
 		JOptionPane.showMessageDialog(null, infoMessage, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	public void refreshTableStatistics() {
+		PresentationResult r = presentationManager.getTestResult();
+		if(r == null) 
+			return;
+
+		List<Object[]> rows = new ArrayList<>();
+		Test t = r.getTest();
+		rows.add(new Object[] {"Test Id", t.getTestId()});
+		rows.add(new Object[] {"Test Name", t.getTestName()});
+		rows.add(new Object[] {"Questions", t.getQuestions().size()});
+		rows.add(new Object[] {"Easiest question", String.format("%d | %d", r.getEasiestQuestion().getQuestionId(), r.getEasiestQuestion().getStudentsAnsweredCorrectly())});
+		rows.add(new Object[] {"Hardest question", String.format("%d | %d", r.getHardesQuestion().getQuestionId(), r.getHardesQuestion().getStudentsAnsweredIncorrectly())});
+		
+		//Best student
+		//Worst student
+		//Avarege points
+		
+		DefaultTableModel model = (DefaultTableModel)this.tableStatistics.getModel();
+		model.setRowCount(0);
+		for(Object[] row: rows)
+			model.addRow(row);
+
+	}
+	
 	static class TestTableModel extends AbstractTableModel {
-		public static String[] columnNames = {"Id", "Name", "Questions", "Question Answers", "Students"};
+		public static final String[] columnNames = {"Id", "Name", "Questions", "Question Answers", "Students"};
 		private List<Test> tests;
 		
 		public TestTableModel(List<Test> tests) {
@@ -339,31 +360,5 @@ public class MainForm {
 			}
 			return null;
 		}
-	}
-	
-	public void refreshTableStatistics() {
-		PresentationResult r = presentationManager.getTestResult();
-		if(r == null) 
-			return;
-		
-		Test t = r.getTest();
-		
-		List<StatisticTableRow> rows = new ArrayList<>();
-
-		rows.add(new StatisticTableRow("Test Id", t.getTestId()));
-		rows.add(new StatisticTableRow("Test Name", t.getTestName()));
-		rows.add(new StatisticTableRow("Questions", t.getQuestions().size()));
-		rows.add(new StatisticTableRow("Easiest question", String.format("%d | %d", r.getEasiestQuestion().getQuestionId(), r.getEasiestQuestion().getStudentsAnsweredCorrectly())));
-		rows.add(new StatisticTableRow("Hardest question", String.format("%d | %d", r.getHardesQuestion().getQuestionId(), r.getHardesQuestion().getStudentsAnsweredIncorrectly())));
-		
-		//Best student
-		//Worst student
-		//Avarege points
-		
-		DefaultTableModel model = (DefaultTableModel)this.tableStatistics.getModel();
-		model.setRowCount(0);
-		for(StatisticTableRow row: rows)
-			model.addRow(new Object[] {row.getName(), row.getValue()});
-
 	}
 }
