@@ -1,13 +1,6 @@
 package Lab1.Core.Presentation;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
-import org.knowm.xchart.Histogram;
-import org.knowm.xchart.style.Styler.LegendPosition;
 
 import Lab1.Core.Question;
 import Lab1.Core.Test;

@@ -40,7 +40,7 @@ public class TestManager {
 		try {
 			CSVReader csvReader = new CSVReader(new FileReader(filePath));
 			
-			String[] header = csvReader.readNext(); //Ignore header
+			csvReader.readNext(); //Ignore header
 			
 			String [] nextLine;
 			while ((nextLine = csvReader.readNext()) != null) {

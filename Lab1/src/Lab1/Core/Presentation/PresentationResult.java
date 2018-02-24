@@ -1,10 +1,10 @@
 package Lab1.Core.Presentation;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.knowm.xchart.*;
-import org.knowm.xchart.style.Styler.LegendPosition;
 
 import Lab1.Core.*;
 import Lab1.Core.Student.*;
@@ -81,7 +81,7 @@ public class PresentationResult {
 	    return chart;
 	}
 	
-	public CategoryChart generateStudentMarkRateHistogram() {
+	public CategoryChart generateStudentMarkRateHistogram(Supplier<List<MarkRange>> marksRangeAquire) {
 		
 		CategoryChart chart = new CategoryChartBuilder()
 				.width(1400)
@@ -98,18 +98,17 @@ public class PresentationResult {
 				.mapToDouble(s -> t.calculatePointsScoredForStudent(s))
 				.boxed()
 				.collect(Collectors.toList());
-		int bins = t.getMarksCount();
+		int bins = marksRangeAquire.get().size();
 		
 		Histogram histogram = new Histogram(data, bins);
 		
-		List<String> xData = test.getMarks().stream()
+		List<String> xData = marksRangeAquire.get().stream()
 				.map(x -> String.format("%.0f%%-%.0f%% %s", x.getFrom() * 100, x.getTo()* 100, x.getMark()))
 				.collect(Collectors.toList());
 		chart.addSeries("Students", xData, histogram.getyAxisData());
 		
 		return chart;
 	}
-	
 
 	public List<QuestionStatistic> getQuestionStatistics() {
 		return questionStatistics;

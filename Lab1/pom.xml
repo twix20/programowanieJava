@@ -17,6 +17,13 @@
     </plugins>
   </build>
   
+    <repositories>
+    <repository>
+      <id>my-internal-site</id>
+      <url>http://simulation.tudelft.nl/maven</url>
+    </repository>
+  </repositories>
+  
   <dependencies>
   	<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 	<dependency>
@@ -39,6 +46,13 @@
     	<version>3.5.0</version>
 	</dependency>
 	
+<!-- https://mvnrepository.com/artifact/com.bric/multislider -->
+<dependency>
+    <groupId>com.bric</groupId>
+    <artifactId>multislider</artifactId>
+    <version>1.0</version>
+</dependency>
 
+	
   </dependencies>
 </project>
