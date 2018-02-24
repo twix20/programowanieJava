@@ -1,5 +1,7 @@
 package Lab1.Core;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,11 +25,19 @@ public class Test {
 
 	private List<StudentCard> students = new ArrayList<>();
 	
+	private final List<MarkRange> marks = Arrays.asList(
+			new MarkRange(0.00, 0.50, "2.0"),
+			new MarkRange(0.51, 0.55, "3.0"),
+			new MarkRange(0.56, 0.60, "3.5"),
+			new MarkRange(0.61, 0.70, "4.0"),
+			new MarkRange(0.71, 0.80, "4.5"),
+			new MarkRange(0.81, 0.90, "5.0"),
+			new MarkRange(0.91, 1.00, "5.5")
+		);
+
 	public int calculatePointsScoredForStudent(StudentCard student) {
-		
-		return student.getAnswers().stream()
-				.mapToInt(x -> isQuestionAnswerCorrect(x) ? 1 : 0)
-				.sum();
+
+		return student.getAnswers().stream().mapToInt(x -> isQuestionAnswerCorrect(x) ? 1 : 0).sum();
 	}
 
 	public boolean isQuestionAnswerCorrect(StudentQuestionAnswer answer) {
@@ -53,11 +63,7 @@ public class Test {
 	}
 
 	public Question getQuestionById(int questionId) {
-		return this.getQuestions()
-				.stream()
-				.filter(q -> q.getId().equals(questionId))
-				.findFirst()
-				.get();
+		return this.getQuestions().stream().filter(q -> q.getId().equals(questionId)).findFirst().get();
 	}
 
 	public List<Question> getQuestions() {
@@ -69,9 +75,7 @@ public class Test {
 	}
 
 	public int getAllQuestionOptionsCount() {
-		return questions.stream()
-				.mapToInt(x -> x.getAnswers().size())
-				.sum();
+		return questions.stream().mapToInt(x -> x.getAnswers().size()).sum();
 	}
 
 	public List<StudentCard> getStudents() {
@@ -85,23 +89,58 @@ public class Test {
 	public boolean areAnswersLoaded() {
 		return this.getStudents().size() != 0;
 	}
-	
+
 	public int getMarksCount() {
 		return getMarks().size();
 	}
-	public List<String> getMarks() {
-		return Arrays.asList("2.0", "3.0", "3+", "4.0", "4+", "5.0", "5+");
+
+	public List<MarkRange> getMarks() {
+		return marks;
 	}
 
-	public double calculateMarkByPoints(int pointsScored) {
+	public String calculateMarkByPoints(int pointsScored) {
 		int allPoints = this.getQuestions().size();
 		double percentageScored = pointsScored / allPoints;
+		
+		for(MarkRange r: getMarks()) {
+			if(r.isInRange(percentageScored))
+				return r.getMark();
+		}
+		
+		return "UNKNOWN";
+	}
 
-		return percentageScored < 0.50 ? 2.0
-				: percentageScored < 0.55 ? 3.0
-						: percentageScored < 0.60 ? 3.5
-								: percentageScored < 0.70 ? 4.0
-										: percentageScored < 0.80 ? 4.5 
-												: percentageScored < 0.90 ? 5.0 : 5.5;
+	public class MarkRange {
+		private double from;
+		private double to;
+		private String mark;
+
+		public MarkRange(double from, double to, String mark) {
+			this.from = from;
+			this.to = to;
+			this.mark = mark;
+		}
+
+		public double getFrom() {
+			return from;
+		}
+
+		public double getTo() {
+			return to;
+		}
+
+		public String getMark() {
+			return mark;
+		}
+		
+		public boolean isInRange(double p) {
+			double r = round(p);
+			
+			return from < r && r < to;
+		}
+		
+		private double round(double v) {
+			return new BigDecimal(v).setScale(2, RoundingMode.HALF_UP).doubleValue();
+		}
 	}
 }

@@ -161,105 +161,106 @@ public class MainForm {
 		
 		frmTestVisualizer.getContentPane().add(welcomePanel, this.WELCOME_PANEL);
 		frmTestVisualizer.getContentPane().add(mainPanel, this.MAIN_PANEL);
+						
+								JPanel configurationPanel = new JPanel();
+								tabbedPane.addTab("Configuration", null, configurationPanel, null);
+								GridBagLayout gbl_configurationPanel = new GridBagLayout();
+								gbl_configurationPanel.columnWidths = new int[]{15, 150, 199, 119, 10, 0};
+								gbl_configurationPanel.rowHeights = new int[]{14, 121, 23, 10, 0};
+								gbl_configurationPanel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+								gbl_configurationPanel.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+								configurationPanel.setLayout(gbl_configurationPanel);
+								
+										JButton btnAddTest = new JButton("Add Test");
+										btnAddTest.addActionListener(new ActionListener() {
+											public void actionPerformed(ActionEvent arg0) {
+												
+												FileDialog dialog = showChooseFile("Select Test to Open");
+												if(dialog.getFile() == null) return;
 
-		JPanel configurationPanel = new JPanel();
-		tabbedPane.addTab("Configuration", null, configurationPanel, null);
-		GridBagLayout gbl_configurationPanel = new GridBagLayout();
-		gbl_configurationPanel.columnWidths = new int[]{0, 150, 199, 119, 0};
-		gbl_configurationPanel.rowHeights = new int[]{14, 121, 23, 0};
-		gbl_configurationPanel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, Double.MIN_VALUE};
-		gbl_configurationPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		configurationPanel.setLayout(gbl_configurationPanel);
-		
-				JButton btnLoadTest = new JButton("Load Test");
-				btnLoadTest.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						
-						FileDialog dialog = showChooseFile("Select Test to Open");
-						if(dialog.getFile() == null) return;
-
-						Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
-						testManager.loadTestFromFile(path.toString());
-						
-						TestTableModel model = (TestTableModel)tableTests.getModel();
-						model.setTests(testManager.getTests());
-						model.fireTableDataChanged();
-					}
-				});
-				
-						JLabel lblTest = new JLabel("Test:");
-						GridBagConstraints gbc_lblTest = new GridBagConstraints();
-						gbc_lblTest.anchor = GridBagConstraints.NORTHWEST;
-						gbc_lblTest.insets = new Insets(0, 0, 5, 5);
-						gbc_lblTest.gridx = 1;
-						gbc_lblTest.gridy = 0;
-						configurationPanel.add(lblTest, gbc_lblTest);
-				
-				JScrollPane scrollPane = new JScrollPane();
-				GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-				gbc_scrollPane.fill = GridBagConstraints.BOTH;
-				gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
-				gbc_scrollPane.gridwidth = 3;
-				gbc_scrollPane.gridx = 1;
-				gbc_scrollPane.gridy = 1;
-				configurationPanel.add(scrollPane, gbc_scrollPane);
-				
-				tableTests = new JTable();
-				tableTests.setModel(new TestTableModel());
-				tableTests.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
-					@Override
-					public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-							boolean hasFocus, int row, int column) {
-						// TODO Auto-generated method stub
-						setBackground(Color.WHITE);
-						
-						super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-						
-						if(value.toString().contains("Not"))
-							setBackground(Color.RED);
-						
-						return this;
-					}
-				});
-				ListSelectionModel tableTestsModel = tableTests.getSelectionModel();
-				scrollPane.setViewportView(tableTests);
-				GridBagConstraints gbc_btnLoadTest = new GridBagConstraints();
-				gbc_btnLoadTest.anchor = GridBagConstraints.NORTH;
-				gbc_btnLoadTest.fill = GridBagConstraints.HORIZONTAL;
-				gbc_btnLoadTest.insets = new Insets(0, 0, 0, 5);
-				gbc_btnLoadTest.gridx = 1;
-				gbc_btnLoadTest.gridy = 2;
-				configurationPanel.add(btnLoadTest, gbc_btnLoadTest);
-				
-						JButton btnLoadAnswers = new JButton("Load Answers");
-						btnLoadAnswers.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								
-								int selectedRow = tableTests.getSelectedRow();
-								if(selectedRow == -1) {
-									showError("Select the test from the list first");
-									return;
-								}
-								Integer selectedTestId = (Integer)tableTests.getModel().getValueAt(selectedRow, 0);
-								
-								FileDialog dialog = showChooseFile("Select Answers to Open");
-								if(dialog.getFile() == null) return;
-								
-								Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
-								testManager.loadAnswersFromFile(selectedTestId, path.toString());
-								
-								presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
-								
-								refreshTableStatistics();
-								tableTests.repaint();
-							}
-						});
-						GridBagConstraints gbc_btnLoadAnswers = new GridBagConstraints();
-						gbc_btnLoadAnswers.anchor = GridBagConstraints.NORTH;
-						gbc_btnLoadAnswers.fill = GridBagConstraints.HORIZONTAL;
-						gbc_btnLoadAnswers.gridx = 3;
-						gbc_btnLoadAnswers.gridy = 2;
-						configurationPanel.add(btnLoadAnswers, gbc_btnLoadAnswers);
+												Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
+												testManager.loadTestFromFile(path.toString());
+												
+												TestTableModel model = (TestTableModel)tableTests.getModel();
+												model.setTests(testManager.getTests());
+												model.fireTableDataChanged();
+											}
+										});
+										
+												JLabel lblTest = new JLabel("Test:");
+												GridBagConstraints gbc_lblTest = new GridBagConstraints();
+												gbc_lblTest.anchor = GridBagConstraints.NORTHWEST;
+												gbc_lblTest.insets = new Insets(0, 0, 5, 5);
+												gbc_lblTest.gridx = 1;
+												gbc_lblTest.gridy = 0;
+												configurationPanel.add(lblTest, gbc_lblTest);
+												
+												JScrollPane scrollPane = new JScrollPane();
+												GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+												gbc_scrollPane.fill = GridBagConstraints.BOTH;
+												gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
+												gbc_scrollPane.gridwidth = 3;
+												gbc_scrollPane.gridx = 1;
+												gbc_scrollPane.gridy = 1;
+												configurationPanel.add(scrollPane, gbc_scrollPane);
+												
+												tableTests = new JTable();
+												tableTests.setModel(new TestTableModel());
+												tableTests.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+													@Override
+													public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+															boolean hasFocus, int row, int column) {
+														// TODO Auto-generated method stub
+														setBackground(Color.WHITE);
+														
+														super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+														
+														if(value.toString().contains("Not"))
+															setBackground(Color.RED);
+														
+														return this;
+													}
+												});
+												ListSelectionModel tableTestsModel = tableTests.getSelectionModel();
+												scrollPane.setViewportView(tableTests);
+												GridBagConstraints gbc_btnAddTest = new GridBagConstraints();
+												gbc_btnAddTest.anchor = GridBagConstraints.NORTH;
+												gbc_btnAddTest.fill = GridBagConstraints.HORIZONTAL;
+												gbc_btnAddTest.insets = new Insets(0, 0, 5, 5);
+												gbc_btnAddTest.gridx = 1;
+												gbc_btnAddTest.gridy = 2;
+												configurationPanel.add(btnAddTest, gbc_btnAddTest);
+												
+														JButton btnLoadAnswers = new JButton("Load Answers");
+														btnLoadAnswers.addActionListener(new ActionListener() {
+															public void actionPerformed(ActionEvent arg0) {
+																
+																int selectedRow = tableTests.getSelectedRow();
+																if(selectedRow == -1) {
+																	showError("Select the test from the list first");
+																	return;
+																}
+																Integer selectedTestId = (Integer)tableTests.getModel().getValueAt(selectedRow, 0);
+																
+																FileDialog dialog = showChooseFile("Select Answers to Open");
+																if(dialog.getFile() == null) return;
+																
+																Path path = Paths.get(dialog.getDirectory(), dialog.getFile());
+																testManager.loadAnswersFromFile(selectedTestId, path.toString());
+																
+																presentationManager.calculateForTest(testManager.getTestById(selectedTestId));
+																
+																refreshTableStatistics();
+																tableTests.repaint();
+															}
+														});
+														GridBagConstraints gbc_btnLoadAnswers = new GridBagConstraints();
+														gbc_btnLoadAnswers.insets = new Insets(0, 0, 5, 5);
+														gbc_btnLoadAnswers.anchor = GridBagConstraints.NORTH;
+														gbc_btnLoadAnswers.fill = GridBagConstraints.HORIZONTAL;
+														gbc_btnLoadAnswers.gridx = 3;
+														gbc_btnLoadAnswers.gridy = 2;
+														configurationPanel.add(btnLoadAnswers, gbc_btnLoadAnswers);
 				
 						JPanel presentationPanel = new JPanel();
 						tabbedPane.addTab("Presentation", null, presentationPanel, null);
@@ -267,9 +268,9 @@ public class MainForm {
 						
 						JPanel panelStats = new JPanel();
 						GridBagLayout gbl_panelStats = new GridBagLayout();
-						gbl_panelStats.columnWidths = new int[]{251, 168, 0};
+						gbl_panelStats.columnWidths = new int[]{15, 251, 168, 10, 0};
 						gbl_panelStats.rowHeights = new int[] {7, 0, 159, 5, 0};
-						gbl_panelStats.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+						gbl_panelStats.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 						gbl_panelStats.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 						panelStats.setLayout(gbl_panelStats);
 						presentationPanel.add(panelStats);
@@ -279,7 +280,7 @@ public class MainForm {
 						gbc_lblStatisticsTable.anchor = GridBagConstraints.NORTH;
 						gbc_lblStatisticsTable.fill = GridBagConstraints.HORIZONTAL;
 						gbc_lblStatisticsTable.insets = new Insets(0, 0, 5, 5);
-						gbc_lblStatisticsTable.gridx = 0;
+						gbc_lblStatisticsTable.gridx = 1;
 						gbc_lblStatisticsTable.gridy = 0;
 						panelStats.add(lblStatisticsTable, gbc_lblStatisticsTable);
 						lblStatisticsTable.setVerticalAlignment(SwingConstants.TOP);
@@ -289,7 +290,7 @@ public class MainForm {
 						gbc_scrollPane_1.gridheight = 2;
 						gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
 						gbc_scrollPane_1.insets = new Insets(0, 0, 5, 5);
-						gbc_scrollPane_1.gridx = 0;
+						gbc_scrollPane_1.gridx = 1;
 						gbc_scrollPane_1.gridy = 1;
 						panelStats.add(scrollPane_1, gbc_scrollPane_1);
 						
@@ -314,14 +315,14 @@ public class MainForm {
 						JButton btnQuestionPassRateHistogram = new JButton("Question Pass Rate Histogram");
 						btnQuestionPassRateHistogram.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
-								displayChart("Question Pass Rate Histogram", () -> presentationManager.getTestResult().generateQuestionPassRateHistogram());
+								displayChart("Question Pass Rate Histogram", () -> presentationManager.getTestResult().generateQuestionMarkRateHistogram());
 							}
 						});
 						GridBagConstraints gbc_btnQuestionPassRateHistogram = new GridBagConstraints();
-						gbc_btnQuestionPassRateHistogram.insets = new Insets(0, 0, 5, 0);
+						gbc_btnQuestionPassRateHistogram.insets = new Insets(0, 0, 5, 5);
 						gbc_btnQuestionPassRateHistogram.anchor = GridBagConstraints.NORTH;
 						gbc_btnQuestionPassRateHistogram.fill = GridBagConstraints.HORIZONTAL;
-						gbc_btnQuestionPassRateHistogram.gridx = 1;
+						gbc_btnQuestionPassRateHistogram.gridx = 2;
 						gbc_btnQuestionPassRateHistogram.gridy = 1;
 						panelStats.add(btnQuestionPassRateHistogram, gbc_btnQuestionPassRateHistogram);
 						
@@ -334,8 +335,8 @@ public class MainForm {
 						GridBagConstraints gbc_btnMarkRateHistogram = new GridBagConstraints();
 						gbc_btnMarkRateHistogram.fill = GridBagConstraints.HORIZONTAL;
 						gbc_btnMarkRateHistogram.anchor = GridBagConstraints.NORTH;
-						gbc_btnMarkRateHistogram.insets = new Insets(0, 0, 5, 0);
-						gbc_btnMarkRateHistogram.gridx = 1;
+						gbc_btnMarkRateHistogram.insets = new Insets(0, 0, 5, 5);
+						gbc_btnMarkRateHistogram.gridx = 2;
 						gbc_btnMarkRateHistogram.gridy = 2;
 						panelStats.add(btnMarkRateHistogram, gbc_btnMarkRateHistogram);
 		tableTestsModel.addListSelectionListener(new ListSelectionListener() {

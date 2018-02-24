@@ -36,14 +36,14 @@ public class PresentationResult {
 		});
 	}
 	
-	public CategoryChart generateQuestionPassRateHistogram() {
+	public CategoryChart generateQuestionMarkRateHistogram() {
 		Test test = getTest();
 		List<Question> allQuestions = test.getQuestions();
 		List<StudentCard> allStudents = test.getStudents();
 
 		// Create Chart
 	    CategoryChart chart = new CategoryChartBuilder()
-	    		.width(800)
+	    		.width(1400)
 	    		.height(600)
 	    		.title(String.format("Test_%d: %s Question Pass Rate Histogram", test.getTestId(), test.getTestName()))
 	    		.xAxisTitle("Question Id")
@@ -84,9 +84,9 @@ public class PresentationResult {
 	public CategoryChart generateStudentMarkRateHistogram() {
 		
 		CategoryChart chart = new CategoryChartBuilder()
-				.width(800)
+				.width(1400)
 	    		.height(600)
-	    		.title(String.format("Test_%d: %s Student Pass Rate Histogram", test.getTestId(), test.getTestName()))
+	    		.title(String.format("Test_%d: %s Student Mark Rate Histogram", test.getTestId(), test.getTestName()))
 	    		.xAxisTitle("Mark")
 	    		.yAxisTitle("Quantity")
 	    		.build();
@@ -101,7 +101,11 @@ public class PresentationResult {
 		int bins = t.getMarksCount();
 		
 		Histogram histogram = new Histogram(data, bins);
-		chart.addSeries("Students", test.getMarks(), histogram.getyAxisData());
+		
+		List<String> xData = test.getMarks().stream()
+				.map(x -> String.format("%.0f%%-%.0f%% %s", x.getFrom() * 100, x.getTo()* 100, x.getMark()))
+				.collect(Collectors.toList());
+		chart.addSeries("Students", xData, histogram.getyAxisData());
 		
 		return chart;
 	}
