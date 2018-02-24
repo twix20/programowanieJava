@@ -112,11 +112,7 @@ public class MainForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmTestVisualizer = new JFrame();
-		frmTestVisualizer.getContentPane().setBackground(SystemColor.inactiveCaption);
-		frmTestVisualizer.setBackground(SystemColor.inactiveCaption);
-		frmTestVisualizer
-				.setIconImage(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/Lab1/icon.jpg")));
+		frmTestVisualizer = new BaseForm();
 		frmTestVisualizer.setTitle("Test Visualizer");
 		frmTestVisualizer.setBounds(100, 100, 1080, 268);
 		frmTestVisualizer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -417,7 +413,8 @@ public class MainForm {
 		XChartPanel<CategoryChart> panel = new XChartPanel(chart);
 
 		// Display chart in new form
-		JFrame chartFrame = new JFrame(frameTitle);
+		JFrame chartFrame = new BaseForm(frameTitle);
+		chartFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(MainForm.class.getResource("/Lab1/icon.jpg")));
 		chartFrame.getContentPane().add(panel);
 		chartFrame.pack();
 		chartFrame.setVisible(true);

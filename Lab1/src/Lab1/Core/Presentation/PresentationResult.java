@@ -3,6 +3,7 @@ package Lab1.Core.Presentation;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.knowm.xchart.*;
 
@@ -67,19 +68,16 @@ public class PresentationResult {
     	}
 	    	
 	    List<Integer> questionIds = test
-	    		.getQuestions().stream().map(x->x.getId())
+	    		.getQuestions()
+	    		.stream()
+	    		.map(x->x.getId())
 	    		.collect(Collectors.toList());
 	    
-	    List<Double> questionCorrect = questionIds.stream()
-	    		.map(x -> countOccurence(correctAnswersData, x))
-	    		.collect(Collectors.toList());
-	    
-	    List<Double> questionIncorrect = questionIds.stream()
-	    		.map(x -> countOccurence(incorrectAnswersData, x))
-	    		.collect(Collectors.toList());
-	    
-	    chart.addSeries("Correct Answers", questionIds, questionCorrect);
-	    chart.addSeries("Incorrect Answers", questionIds, questionIncorrect);
+	    PreciseHistogram<Integer> correctAnswersHistogram = new PreciseHistogram<Integer>(correctAnswersData, questionIds);
+	    PreciseHistogram<Integer> incorrectAnswersHistogram = new PreciseHistogram<Integer>(incorrectAnswersData, questionIds);
+
+	    chart.addSeries("Correct Answers", correctAnswersHistogram.getXAxis(), correctAnswersHistogram.getYAxis());
+	    chart.addSeries("Incorrect Answers", incorrectAnswersHistogram.getXAxis(), incorrectAnswersHistogram.getYAxis());
 	    
 	    return chart;
 	}
@@ -103,27 +101,18 @@ public class PresentationResult {
 				.collect(Collectors.toList());
 
 		List<MarkRange> marksRanges = marksRangeAquire.get();
+
+		List<Double> allPossibleMarks = marksRanges.stream().map(x -> x.getMark()).collect(Collectors.toList());
+		
+		PreciseHistogram<Double> histogram = new PreciseHistogram<Double>(studentMarks, allPossibleMarks);
+		
 		List<String> xData = marksRanges.stream()
 				.map(x -> String.format("%.0f%%-%.0f%% %s", x.getFrom() * 100, x.getTo()* 100, x.getMark()))
 				.collect(Collectors.toList());
 		
-		List<Double> yData = marksRanges.stream()
-				.map(x -> countOccurence(studentMarks, x.getMark()))
-				.collect(Collectors.toList());
-		
-		chart.addSeries("Students", xData, yData);
+		chart.addSeries("Students", xData, histogram.getYAxis());
 		
 		return chart;
-	}
-	
-	private <T> double countOccurence(List<T> list, T value){
-		double occurences = 0.0;
-		for(T o:list) {
-			if(o.equals(value)) 
-				occurences++;
-		}
-		
-		return occurences;
 	}
 
 	public List<QuestionStatistic> getQuestionStatistics() {
