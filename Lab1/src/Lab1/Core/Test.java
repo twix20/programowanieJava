@@ -23,8 +23,6 @@ public class Test {
 
 	private List<StudentCard> students = new ArrayList<>();
 	
-	public static final String[] MARKS = new String[] {"3.0","3.5","4.0","4.5","5.0", "5.5"};
-	
 	public int calculatePointsScoredForStudent(StudentCard student) {
 
 		return student.getAnswers().stream().mapToInt(x -> isQuestionAnswerCorrect(x) ? 1 : 0).sum();
@@ -80,9 +78,9 @@ public class Test {
 		return this.getStudents().size() != 0;
 	}
 
-	public String calculateMarkByPoints(int pointsScored, Supplier<List<MarkRange>> marksRangeAquire) {
+	public double calculateMarkByPoints(int pointsScored, Supplier<List<MarkRange>> marksRangeAquire) {
 		int allPoints = this.getQuestions().size();
-		double percentageScored = pointsScored / allPoints;
+		double percentageScored = pointsScored /(double) allPoints;
 		
 		List<MarkRange> marks = marksRangeAquire.get();
 		for(MarkRange r: marks) {
@@ -90,6 +88,6 @@ public class Test {
 				return r.getMark();
 		}
 		
-		return "UNKNOWN";
+		return 0;
 	}
 }

@@ -6,9 +6,9 @@ import java.math.RoundingMode;
 public class MarkRange {
 	private double from;
 	private double to;
-	private String mark;
+	private double mark;
 
-	public MarkRange(double from, double to, String mark) {
+	public MarkRange(double from, double to, double mark) {
 		this.from = from;
 		this.to = to;
 		this.mark = mark;
@@ -22,7 +22,7 @@ public class MarkRange {
 		return to;
 	}
 
-	public String getMark() {
+	public double getMark() {
 		return mark;
 	}
 	

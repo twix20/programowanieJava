@@ -38,7 +38,6 @@ public class PresentationResult {
 	
 	public CategoryChart generateQuestionMarkRateHistogram() {
 		Test test = getTest();
-		List<Question> allQuestions = test.getQuestions();
 		List<StudentCard> allStudents = test.getStudents();
 
 		// Create Chart
@@ -67,16 +66,20 @@ public class PresentationResult {
     		}
     	}
 	    	
-	    int numBins = allQuestions.size();
 	    List<Integer> questionIds = test
 	    		.getQuestions().stream().map(x->x.getId())
 	    		.collect(Collectors.toList());
 	    
-		Histogram histogramCorrect = new Histogram(correctAnswersData, numBins);
-	    Histogram histogramIncorrect = new Histogram(incorrectAnswersData, numBins);
+	    List<Double> questionCorrect = questionIds.stream()
+	    		.map(x -> countOccurence(correctAnswersData, x))
+	    		.collect(Collectors.toList());
 	    
-	    chart.addSeries("Correct Answers", questionIds, histogramCorrect.getyAxisData());
-	    chart.addSeries("Incorrect Answers", questionIds, histogramIncorrect.getyAxisData());
+	    List<Double> questionIncorrect = questionIds.stream()
+	    		.map(x -> countOccurence(incorrectAnswersData, x))
+	    		.collect(Collectors.toList());
+	    
+	    chart.addSeries("Correct Answers", questionIds, questionCorrect);
+	    chart.addSeries("Incorrect Answers", questionIds, questionIncorrect);
 	    
 	    return chart;
 	}
@@ -92,22 +95,35 @@ public class PresentationResult {
 	    		.build();
 		
 		Test t = getTest();
-		
-		
-		List<Double> data = t.getStudents().stream()
-				.mapToDouble(s -> t.calculatePointsScoredForStudent(s))
-				.boxed()
+		List<Double> studentMarks = t.getStudents().stream()
+				.map(s -> {
+					int pointsScored = t.calculatePointsScoredForStudent(s);
+					return t.calculateMarkByPoints(pointsScored, marksRangeAquire);
+				})
 				.collect(Collectors.toList());
-		int bins = marksRangeAquire.get().size();
-		
-		Histogram histogram = new Histogram(data, bins);
-		
-		List<String> xData = marksRangeAquire.get().stream()
+
+		List<MarkRange> marksRanges = marksRangeAquire.get();
+		List<String> xData = marksRanges.stream()
 				.map(x -> String.format("%.0f%%-%.0f%% %s", x.getFrom() * 100, x.getTo()* 100, x.getMark()))
 				.collect(Collectors.toList());
-		chart.addSeries("Students", xData, histogram.getyAxisData());
+		
+		List<Double> yData = marksRanges.stream()
+				.map(x -> countOccurence(studentMarks, x.getMark()))
+				.collect(Collectors.toList());
+		
+		chart.addSeries("Students", xData, yData);
 		
 		return chart;
+	}
+	
+	private <T> double countOccurence(List<T> list, T value){
+		double occurences = 0.0;
+		for(T o:list) {
+			if(o.equals(value)) 
+				occurences++;
+		}
+		
+		return occurences;
 	}
 
 	public List<QuestionStatistic> getQuestionStatistics() {

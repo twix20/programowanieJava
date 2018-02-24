@@ -350,7 +350,8 @@ public class MainForm {
 		gbc_lblMarkRandeSlider.gridy = 3;
 		panelStats.add(lblMarkRandeSlider, gbc_lblMarkRandeSlider);
 	
-		mtsMarksSlider = new MultiThumbSlider(new float[] {0.5f, 0.6f, 0.67f, 0.75f, 0.85f, 0.93f}, Test.MARKS);
+		mtsMarksSlider = new MultiThumbSlider(new float[] {0.5f, 0.6f, 0.67f, 0.75f, 0.85f, 0.93f}, new Object[] {0,0,0,0,0,0});
+		mtsMarksSlider.setAutoAdding(false);
 		mtsMarksSlider.setToolTipText("Grade Mark Slider");
 		mtsMarksSlider.setThumbRemovalAllowed(false);
 		mtsMarksSlider.setCollisionPolicy(Collision.STOP_AGAINST);
@@ -384,18 +385,22 @@ public class MainForm {
 		
 		float[] pos = mtsMarksSlider.getThumbPositions();
 		
-		String[] marks = Test.MARKS;
-		List<MarkRange> ranges = new ArrayList<>();
-		ranges.add(new MarkRange(0.0, pos[0], "2.0"));
+		double[] marks = new double[] {2.0, 3.0,3.5,4.0,4.5,5.0, 5.5};
 		
-		for(int i = 1; i < pos.length; i++) {
-			MarkRange priorMark = ranges.get(i - 1);
-			ranges.add(new MarkRange(priorMark.getTo() + 0.01, pos[i], marks[i - 1]));
+		List<MarkRange> ranges = new ArrayList<>();
+		
+		for(int i = 0; i < pos.length; i++) {
+			if(i == 0) {
+				ranges.add(new MarkRange(0, pos[i], marks[i]));
+			}
+			else {
+				MarkRange priorMark = ranges.get(i - 1);
+				ranges.add(new MarkRange(priorMark.getTo() + 0.01, pos[i], marks[i]));
+			}
 		}
 		
 		MarkRange last = ranges.get(ranges.size() - 1);
-		ranges.add(new MarkRange(last.getTo() + 0.01, 1, marks[pos.length - 1]));
-		
+		ranges.add(new MarkRange(last.getTo() + 0.01, 1, marks[pos.length]));
 		
 		return ranges;
 	}
