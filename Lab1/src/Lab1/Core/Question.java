@@ -6,6 +6,11 @@ import com.google.gson.annotations.SerializedName;
 
 import Lab1.Core.Student.StudentQuestionAnswer;
 
+
+/**
+ * @author User
+ * Question of test that contians all avalible answers
+ */
 public class Question {
 
 	@SerializedName("id")

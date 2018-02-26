@@ -10,6 +10,11 @@ import com.google.gson.annotations.SerializedName;
 import Lab1.Core.Student.StudentCard;
 import Lab1.Core.Student.StudentQuestionAnswer;
 
+
+/**
+ * @author User
+ * Main test class that contains test info, questions and student cards
+ */
 public class Test {
 	@SerializedName("test_id")
 	@Expose
@@ -78,6 +83,12 @@ public class Test {
 		return this.getStudents().size() != 0;
 	}
 
+	/**
+	 * Func that calculates student mark for given points
+	 * @param pointsScored by students
+	 * @param marksRangeAquire list of all marks with given ranges
+	 * @return
+	 */
 	public double calculateMarkByPoints(int pointsScored, Supplier<List<MarkRange>> marksRangeAquire) {
 		int allPoints = this.getQuestions().size();
 		double percentageScored = pointsScored /(double) allPoints;

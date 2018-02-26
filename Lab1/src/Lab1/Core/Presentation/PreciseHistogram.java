@@ -1,10 +1,14 @@
 package Lab1.Core.Presentation;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * @author User
+ * Histogram of ocurances, numbers from xData in yData
+ * @param <T> type of data
+ */
 public class PreciseHistogram <T extends Number> {
 	
 	List<T> orginalData;

@@ -1,5 +1,9 @@
 package Lab1.Core.Presentation;
 
+/**
+ * @author User
+ * Statistics for given question in given test
+ */
 public class QuestionStatistic {
 	private int testId;
 	private int questionId;

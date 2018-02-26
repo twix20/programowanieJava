@@ -14,6 +14,11 @@ import Lab1.Core.Student.StudentCard;
 import Lab1.Core.Student.StudentQuestionAnswer;
 import au.com.bytecode.opencsv.CSVReader;
 
+
+/**
+ * @author User
+ * Manages populating tests from files
+ */
 public class TestManager {
 	private List<Test> tests = new ArrayList<>();
 	

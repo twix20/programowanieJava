@@ -10,6 +10,11 @@ import org.knowm.xchart.*;
 import Lab1.Core.*;
 import Lab1.Core.Student.*;
 
+
+/**
+ * @author User
+ * Result for evaluating test
+ */
 public class PresentationResult {
 	private Test test;
 	
@@ -19,6 +24,9 @@ public class PresentationResult {
 		this.setTest(test);
 	}
 	
+	/**
+	 * @return finds question that was answered correctly the most times
+	 */
 	public QuestionStatistic getEasiestQuestion() {
 		return Collections.max(this.questionStatistics, new Comparator<QuestionStatistic>() {
 			@Override
@@ -28,6 +36,9 @@ public class PresentationResult {
 		});
 	}
 	
+	/**
+	 * @return finds question that was answered incorrectly the most times
+	 */
 	public QuestionStatistic getHardesQuestion() {
 		return Collections.max(this.questionStatistics, new Comparator<QuestionStatistic>() {
 			@Override
@@ -37,6 +48,9 @@ public class PresentationResult {
 		});
 	}
 	
+	/**
+	 * @return generatest histogram of question correct/incorrect times
+	 */
 	public CategoryChart generateQuestionMarkRateHistogram() {
 		Test test = getTest();
 		List<StudentCard> allStudents = test.getStudents();
@@ -82,6 +96,10 @@ public class PresentationResult {
 	    return chart;
 	}
 	
+	/**
+	 * @param marksRangeAquire
+	 * @return generates histogram for student mark occurences
+	 */
 	public CategoryChart generateStudentMarkRateHistogram(Supplier<List<MarkRange>> marksRangeAquire) {
 		
 		CategoryChart chart = new CategoryChartBuilder()

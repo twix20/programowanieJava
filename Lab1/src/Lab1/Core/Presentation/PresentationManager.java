@@ -7,6 +7,11 @@ import Lab1.Core.Test;
 import Lab1.Core.Student.StudentCard;
 import Lab1.Core.Student.StudentQuestionAnswer;
 
+
+/**
+ * @author User
+ * Generates data for histograms
+ */
 public class PresentationManager {
 	PresentationResult testResult = null;
 

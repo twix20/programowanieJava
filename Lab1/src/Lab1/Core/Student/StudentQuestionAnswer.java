@@ -1,5 +1,9 @@
 package Lab1.Core.Student;
 
+/**
+ * @author User
+ * One question answer for given test and given question
+ */
 public class StudentQuestionAnswer {
 	private StudentCard student;
 	private int testId;

@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author User
+ * List of answers for test from one student
+ */
 public class StudentCard {
 	private int studentId;
 	private String firstName;

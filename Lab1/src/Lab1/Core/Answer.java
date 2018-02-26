@@ -3,6 +3,10 @@ package Lab1.Core;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * @author User
+ * Question answer with state if its correct or not
+ */
 public class Answer {
 
 	@SerializedName("option")

@@ -3,6 +3,11 @@ package Lab1.Core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+
+/**
+ * @author User
+ * Mark and compartment of % scored by student from-to
+ */
 public class MarkRange {
 	private double from;
 	private double to;
