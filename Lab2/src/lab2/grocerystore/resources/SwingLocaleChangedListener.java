@@ -7,7 +7,6 @@ import java.util.*;
 
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 import com.github.peholmst.i18n4vaadin.LocaleChangedEvent;
 import com.github.peholmst.i18n4vaadin.LocaleChangedListener;
