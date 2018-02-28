@@ -25,9 +25,9 @@ public class SwingLocaleChangedListener implements LocaleChangedListener {
 
     	abstractComponents.keySet().forEach(c -> {
     		ResourceBundle rb = Resources.get().getBundle(abstractComponents.get(c));
-    		System.out.println("Locale changed to '" + rb.getLocale() + "' for " + c.getName());
-    		
     		String newComponentText = rb.getString(c.getName());
+    		
+    		System.out.println("Locale changed to '" + rb.getLocale() + "' for " + c.getName() + " newString " + newComponentText);
     		
     		if(c instanceof AbstractButton) {
     			((AbstractButton)c).setText(newComponentText);

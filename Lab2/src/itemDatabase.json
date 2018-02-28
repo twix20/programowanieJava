@@ -1,51 +1,21 @@
 [{
   "id": 1,
-  "name": "Mallissa",
+  "name": "Marchewka",
   "pricePerUnit": 27.0,
   "quantity": 73
 }, {
   "id": 2,
-  "name": "Rhianna",
+  "name": "Pietruszka",
   "pricePerUnit": 26.56,
   "quantity": 74
 }, {
   "id": 3,
-  "name": "Ajay",
+  "name": "Ziemniak",
   "pricePerUnit": 66.38,
   "quantity": 41
 }, {
   "id": 4,
-  "name": "Berkly",
+  "name": "Cebula",
   "pricePerUnit": 16.81,
   "quantity": 82
-}, {
-  "id": 5,
-  "name": "Maggie",
-  "pricePerUnit": 35.98,
-  "quantity": 66
-}, {
-  "id": 6,
-  "name": "Prescott",
-  "pricePerUnit": 11.07,
-  "quantity": 74
-}, {
-  "id": 7,
-  "name": "Fern",
-  "pricePerUnit": 84.13,
-  "quantity": 79
-}, {
-  "id": 8,
-  "name": "Doris",
-  "pricePerUnit": 24.14,
-  "quantity": 99
-}, {
-  "id": 9,
-  "name": "Stormie",
-  "pricePerUnit": 90.79,
-  "quantity": 54
-}, {
-  "id": 10,
-  "name": "Matelda",
-  "pricePerUnit": 19.41,
-  "quantity": 47
 }]
