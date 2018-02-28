@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public abstract class JsonRepository<T> {
 	protected Path filePath;
 	protected String fileName;
 	protected Class<T> type;
-	Gson gson = new Gson();
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public JsonRepository(String fileName, Class<T> type) {
 		this.fileName = fileName;
