@@ -2,12 +2,12 @@ package lab2.grocerystore.resources;
 
 import java.awt.Component;
 import java.awt.ComponentOrientation;
-import java.awt.Label;
 import java.util.*;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import com.github.peholmst.i18n4vaadin.LocaleChangedEvent;
 import com.github.peholmst.i18n4vaadin.LocaleChangedListener;
@@ -32,8 +32,8 @@ public class SwingLocaleChangedListener implements LocaleChangedListener {
     		if(c instanceof AbstractButton) {
     			((AbstractButton)c).setText(newComponentText);
     		}
-    		else if(c instanceof Label) {
-    			((Label)c).setText(newComponentText);
+    		else if(c instanceof JLabel) {
+    			((JLabel)c).setText(newComponentText);
     		}
     		else if(c instanceof JFrame){
     			((JFrame)c).setTitle(newComponentText);

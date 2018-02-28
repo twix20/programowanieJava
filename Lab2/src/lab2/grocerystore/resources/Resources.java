@@ -20,10 +20,10 @@ public class Resources {
     }
 	
 	private List<Locale> supportedLocales = new ArrayList<>(Arrays.asList(new Locale("en", "US"), new Locale("pl", "PL")));
-	private Locales currentLocale = Locales.English;
+	private SupportedLocale currentLocale = SupportedLocale.English;
     private SwingLocaleChangedListener listener = new SwingLocaleChangedListener();
 
-	public void changeLocale(Locales locale) {
+	public void changeLocale(SupportedLocale locale) {
 		this.currentLocale = locale;
 		
         if (listener != null) {
@@ -55,7 +55,7 @@ public class Resources {
 		return supportedLocales.get(currentLocale.ordinal());
 	}
 	
-	public enum Locales{
+	public enum SupportedLocale{
 		English,
 		Polish
 	}
