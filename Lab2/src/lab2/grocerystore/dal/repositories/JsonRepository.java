@@ -1,5 +1,6 @@
 package lab2.grocerystore.dal.repositories;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.ParameterizedType;
@@ -36,6 +37,7 @@ public abstract class JsonRepository<T> {
 	}
 
 	protected String readFile() {
+	
 		String wholeFile = "";
 		try {
 			wholeFile = new String(Files.readAllBytes(filePath));

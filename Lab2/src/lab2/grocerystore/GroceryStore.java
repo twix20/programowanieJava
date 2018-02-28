@@ -7,6 +7,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 
+import lab2.grocerystore.dal.repositories.ItemRepository;
+import lab2.grocerystore.models.Item;
 import lab2.grocerystore.resources.Resources;
 import lab2.grocerystore.resources.Resources.Locales;
 
@@ -25,9 +27,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.IntStream;
 
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 
@@ -100,24 +106,6 @@ public class GroceryStore {
 		
 		tableItems = new JTable();
 		scrollPane.setViewportView(tableItems);
-		tableItems.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-			},
-			new String[] {
-				"New column", "New column", "New column", "New column", "New column", "New column"
-			}
-		));
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmGroceryStore.setJMenuBar(menuBar);
@@ -158,5 +146,47 @@ public class GroceryStore {
 		r.register(mnLanguage, Resources.GUI_BUNDLE);
 		r.register(mntmPolish, Resources.GUI_BUNDLE);
 		r.register(mntmEnglish, Resources.GUI_BUNDLE);
+		r.register(x -> tableItems.setModel(new ItemsTableModel()));
+	}
+	
+	private class ItemsTableModel extends AbstractTableModel {
+		String[] columnNames;
+		
+		Object[] data;
+		
+		private ItemsTableModel() {
+			List<Item> all = new ItemRepository().getAll();
+			
+			columnNames = Arrays.stream(IntStream.range(0, 4).toArray())
+					.boxed()
+					.map(col -> Resources.get().getBundle(Resources.GUI_BUNDLE).getString("ItemsTable_Col_" + col))
+					.toArray(String[]::new);
+			
+			data = all.stream()
+					.map(x -> new Object[] { x.getId(), x.getName(), x.getPricePerUnit(), x.getQuantity(), x.getTotalPrice()})
+					.toArray();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return columnNames.length;
+		}
+		
+		@Override
+		public String getColumnName(int column) {
+			return columnNames[column];
+		}
+
+		@Override
+		public int getRowCount() {
+			return data.length;
+		}
+
+		@Override
+		public Object getValueAt(int row, int col) {
+			// TODO Auto-generated method stub
+			return ((Object[])data[row])[col];
+		}
+		
 	}
 }

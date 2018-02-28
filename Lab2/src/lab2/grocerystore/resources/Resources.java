@@ -3,6 +3,7 @@ package lab2.grocerystore.resources;
 import java.awt.Component;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 import com.github.peholmst.i18n4vaadin.*;
 
@@ -34,6 +35,10 @@ public class Resources {
 	
     public void register(Component c, String bundleName) {
         listener.add(c, bundleName);
+    }
+    
+    public void register(Consumer<LocaleChangedEvent> toRun) {
+    	listener.add(toRun);
     }
 	
 	public String localizeNumber(Number n) {

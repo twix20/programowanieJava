@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Label;
 import java.util.*;
+import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
@@ -17,6 +18,7 @@ public class SwingLocaleChangedListener implements LocaleChangedListener {
      * Component, BundleString
      */
     private Map<Component, String> abstractComponents = null;
+    private List<Consumer<LocaleChangedEvent>> eventOcuredFunctions = null;
 
     @Override
     public void localeChanged(LocaleChangedEvent event) {
@@ -35,23 +37,35 @@ public class SwingLocaleChangedListener implements LocaleChangedListener {
     		}
     		else if(c instanceof JFrame){
     			((JFrame)c).setTitle(newComponentText);
-    		}else {
+    		}
+    		else {
     			throw new UnsupportedOperationException(c.getName());
     		}
     		
     		c.setComponentOrientation(ComponentOrientation.getOrientation(rb.getLocale())); //EDIT: Line added
     	});
+    	
+    	eventOcuredFunctions.forEach(c -> {
+    		c.accept(event);
+    	});
     }
     
     public void add(Component b, String bundleName) {
-        initAbstractButtons();
+    	init();
         abstractComponents.put(b, bundleName);
     }
+    
+    public void add(Consumer<LocaleChangedEvent> toRun) {
+    	init();
+    	eventOcuredFunctions.add(toRun);
+    }
 
-    private void initAbstractButtons() {
-        if (abstractComponents == null) {
+    private void init() {
+        if (abstractComponents == null)
             this.abstractComponents = new HashMap<>();
-        }
+        
+        if(eventOcuredFunctions == null)
+        	this.eventOcuredFunctions = new ArrayList<>();
     }
 
 }
