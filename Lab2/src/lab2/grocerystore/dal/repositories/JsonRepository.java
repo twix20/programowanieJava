@@ -1,8 +1,6 @@
 package lab2.grocerystore.dal.repositories;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -63,10 +61,10 @@ public abstract class JsonRepository<T> {
 
 	}
 
-	private class ListOfJson<T> implements ParameterizedType {
-		private Class<?> wrapped;
+	private class ListOfJson<TModel> implements ParameterizedType {
+		private Class<TModel> wrapped;
 
-		public ListOfJson(Class<T> wrapper) {
+		public ListOfJson(Class<TModel> wrapper) {
 			this.wrapped = wrapper;
 		}
 

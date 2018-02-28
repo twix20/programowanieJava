@@ -1,41 +1,28 @@
 package lab2.grocerystore;
 
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import javax.swing.JFrame;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import lab2.grocerystore.dal.repositories.ItemRepository;
 import lab2.grocerystore.models.Item;
 import lab2.grocerystore.resources.Resources;
 import lab2.grocerystore.resources.Resources.Locales;
-
-import java.awt.GridBagLayout;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.JTable;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.stream.IntStream;
-
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JScrollPane;
 
 public class GroceryStore {
 
@@ -62,13 +49,13 @@ public class GroceryStore {
 			}
 		});
 	}
-	
+
 	/**
 	 * Create the application.
 	 */
 	public GroceryStore() {
 		initialize();
-		
+
 		Resources.get().changeLocale(Locales.English);
 	}
 
@@ -76,17 +63,17 @@ public class GroceryStore {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		
+
 		frmGroceryStore = new JFrame();
 		frmGroceryStore.setBounds(100, 100, 583, 339);
 		frmGroceryStore.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{10, 0, 307, 10, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] { 10, 0, 307, 10, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		frmGroceryStore.getContentPane().setLayout(gridBagLayout);
-		
+
 		lblAllItems = new Label();
 		lblAllItems.setText("All items");
 		GridBagConstraints gbc_lblAllItems = new GridBagConstraints();
@@ -94,7 +81,7 @@ public class GroceryStore {
 		gbc_lblAllItems.gridx = 1;
 		gbc_lblAllItems.gridy = 0;
 		frmGroceryStore.getContentPane().add(lblAllItems, gbc_lblAllItems);
-		
+
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 2;
@@ -103,17 +90,17 @@ public class GroceryStore {
 		gbc_scrollPane.gridx = 1;
 		gbc_scrollPane.gridy = 1;
 		frmGroceryStore.getContentPane().add(scrollPane, gbc_scrollPane);
-		
+
 		tableItems = new JTable();
 		scrollPane.setViewportView(tableItems);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		frmGroceryStore.setJMenuBar(menuBar);
-		
+
 		mnLanguage = new JMenu();
 		mnLanguage.setText("Languages");
 		menuBar.add(mnLanguage);
-		
+
 		mntmPolish = new JMenuItem();
 		mntmPolish.setText("Polish");
 		mntmPolish.addMouseListener(new MouseAdapter() {
@@ -123,7 +110,7 @@ public class GroceryStore {
 			}
 		});
 		mnLanguage.add(mntmPolish);
-		
+
 		mntmEnglish = new JMenuItem();
 		mntmEnglish.setText("English");
 		mntmEnglish.addMouseListener(new MouseAdapter() {
@@ -133,13 +120,13 @@ public class GroceryStore {
 			}
 		});
 		mnLanguage.add(mntmEnglish);
-		
+
 		frmGroceryStore.setName("Frame_Title_groceryStore");
 		lblAllItems.setName("ItemsTable_Label");
 		mnLanguage.setName("Language");
 		mntmPolish.setName("Language_Polish");
 		mntmEnglish.setName("Language_English");
-		
+
 		Resources r = Resources.get();
 		r.register(frmGroceryStore, Resources.GUI_BUNDLE);
 		r.register(lblAllItems, Resources.GUI_BUNDLE);
@@ -148,30 +135,30 @@ public class GroceryStore {
 		r.register(mntmEnglish, Resources.GUI_BUNDLE);
 		r.register(x -> tableItems.setModel(new ItemsTableModel()));
 	}
-	
+
 	private class ItemsTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = -2851996699178618340L;
+
 		String[] columnNames;
-		
+
 		Object[] data;
-		
+
 		private ItemsTableModel() {
 			List<Item> all = new ItemRepository().getAll();
-			
-			columnNames = Arrays.stream(IntStream.range(0, 4).toArray())
-					.boxed()
+
+			columnNames = Arrays.stream(IntStream.range(0, 4).toArray()).boxed()
 					.map(col -> Resources.get().getBundle(Resources.GUI_BUNDLE).getString("ItemsTable_Col_" + col))
 					.toArray(String[]::new);
-			
-			data = all.stream()
-					.map(x -> new Object[] { x.getId(), x.getName(), x.getPricePerUnit(), x.getQuantity(), x.getTotalPrice()})
-					.toArray();
+
+			data = all.stream().map(x -> new Object[] { x.getId(), x.getName(), x.getPricePerUnit(), x.getQuantity(),
+					x.getTotalPrice() }).toArray();
 		}
 
 		@Override
 		public int getColumnCount() {
 			return columnNames.length;
 		}
-		
+
 		@Override
 		public String getColumnName(int column) {
 			return columnNames[column];
@@ -184,9 +171,8 @@ public class GroceryStore {
 
 		@Override
 		public Object getValueAt(int row, int col) {
-			// TODO Auto-generated method stub
-			return ((Object[])data[row])[col];
+			return ((Object[]) data[row])[col];
 		}
-		
+
 	}
 }
