@@ -10,8 +10,13 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.ChoiceFormat;
+import java.text.Format;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
@@ -65,6 +70,7 @@ public class GroceryStore {
 	 * Create the application.
 	 */
 	public GroceryStore() {
+
 		initialize();
 
 		manageResources();
@@ -166,11 +172,9 @@ public class GroceryStore {
 		mnLanguage.setName("Language");
 		mntmPolish.setName("Language_Polish");
 		mntmEnglish.setName("Language_English");
-		lblAllItems.setName("ItemsTable_Label");
 
 		Resources r = Resources.get();
 		r.register(frmGroceryStore, Resources.GUI_BUNDLE);
-		r.register(lblAllItems, Resources.GUI_BUNDLE);
 		r.register(mnLanguage, Resources.GUI_BUNDLE);
 		r.register(mntmPolish, Resources.GUI_BUNDLE);
 		r.register(mntmEnglish, Resources.GUI_BUNDLE);
@@ -200,6 +204,33 @@ public class GroceryStore {
 
 	private void updateTableItems() {
 		tableItems.setModel(new ItemsTableModel());
+		
+		//Update table label
+		ResourceBundle bundle = Resources.get().getBundle(Resources.GUI_BUNDLE);
+		String pattern = bundle.getString("lblItemsTable_pattern");
+		
+		MessageFormat messageForm = new MessageFormat("");
+		messageForm.setLocale(Resources.get().getCurrentLocale());
+		
+		double[] fileLimits = {0,1,2};
+		String [] fileStrings = {
+		    bundle.getString("lblItemsTable_noItems"),
+		    bundle.getString("lblItemsTable_oneItem"),
+		    bundle.getString("lblItemsTable_multipleItems")
+		};
+		
+		ChoiceFormat choiceForm = new ChoiceFormat(fileLimits, fileStrings);
+		
+		messageForm.applyPattern(pattern);
+		
+		Format[] formats = {choiceForm, null, NumberFormat.getInstance()};
+		messageForm.setFormats(formats);
+		
+		Object[] messageArguments = {tableItems.getModel().getRowCount(), tableItems.getModel().getRowCount()};
+		
+		String result = messageForm.format(messageArguments);
+		lblAllItems.setText(result);
+		
 	}
 
 	private class ItemsTableModel extends AbstractTableModel {
@@ -218,9 +249,10 @@ public class GroceryStore {
 					.toArray(String[]::new);
 
 			data = all.stream()
+					.filter(x -> x.getQuantity() > 0)
 					.map(x -> new Object[] { 
 						x.getId(), 
-						x.getName(), 
+						Resources.get().getBundle(Resources.GROCERY_ITEMS_BUNDLE).getString(String.format("GroceryItem_%d_name", x.getId())),
 						Resources.get().localizeNumber(x.getPricePerUnit()), 
 						x.getQuantity(),
 						Resources.get().localizeNumber(x.getTotalPrice())
