@@ -2,12 +2,12 @@
   "id": 1,
   "name": "Marchewka",
   "pricePerUnit": 27.0,
-  "quantity": 73
+  "quantity": 0
 }, {
   "id": 2,
   "name": "Pietruszka",
   "pricePerUnit": 26.56,
-  "quantity": 74
+  "quantity": 1
 }, {
   "id": 3,
   "name": "Ziemniak",
@@ -17,5 +17,5 @@
   "id": 4,
   "name": "Cebula",
   "pricePerUnit": 16.81,
-  "quantity": 82
+  "quantity": 8200
 }]

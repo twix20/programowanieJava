@@ -82,7 +82,7 @@ public class GroceryStore {
 		frmGroceryStore.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 15, 0, 160, 10, 0, 307, 0, 0, 10, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 30, 162, 0, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 30, 162, 0, 10, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		frmGroceryStore.getContentPane().setLayout(gridBagLayout);
@@ -182,18 +182,19 @@ public class GroceryStore {
 
 		int width = 150;
 		int height = 150;
+		Image imageResized = null;
 		try {
 			File img = itemRepository.getImageFile(itemId);
 			BufferedImage tmp = ImageIO.read(img);
 
-			Image imageResized = tmp.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
+			imageResized = tmp.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 			this.panelItemImagePreview.setImage(imageResized);
 			this.panelItemImagePreview.repaint();
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 	}
 
@@ -211,12 +212,20 @@ public class GroceryStore {
 		private ItemsTableModel() {
 			List<Item> all = itemRepository.getAll();
 
-			columnNames = Arrays.stream(IntStream.range(0, 4).toArray()).boxed()
+			columnNames = Arrays.stream(IntStream.range(0, 5).toArray())
+					.boxed()
 					.map(col -> Resources.get().getBundle(Resources.GUI_BUNDLE).getString("ItemsTable_Col_" + col))
 					.toArray(String[]::new);
 
-			data = all.stream().map(x -> new Object[] { x.getId(), x.getName(), x.getPricePerUnit(), x.getQuantity(),
-					x.getTotalPrice() }).toArray();
+			data = all.stream()
+					.map(x -> new Object[] { 
+						x.getId(), 
+						x.getName(), 
+						Resources.get().localizeNumber(x.getPricePerUnit()), 
+						x.getQuantity(),
+						Resources.get().localizeNumber(x.getTotalPrice())
+					})
+					.toArray();
 		}
 
 		@Override
