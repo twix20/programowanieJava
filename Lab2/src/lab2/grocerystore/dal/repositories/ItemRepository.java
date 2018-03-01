@@ -17,7 +17,7 @@ public class ItemRepository extends JsonRepository<Item> {
 		return new File(imageFolder + itemId + ".png");
 	}
 	
-	public void update(int itemId, Item updated) {
+	public void update(int itemId, int newQuanity) {
 		List<Item> allItems = getAll();
 		
 		allItems.stream()
@@ -25,7 +25,7 @@ public class ItemRepository extends JsonRepository<Item> {
 			.forEach(x -> {
 				//x.setName(updated.getName());
 				//x.setPricePerUnit(updated.getPricePerUnit());
-				x.setQuantity(updated.getQuantity());
+				x.setQuantity(newQuanity);
 			});
 		
 		this.dumpToFile(allItems);

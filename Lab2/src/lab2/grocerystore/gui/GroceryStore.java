@@ -8,6 +8,8 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -26,6 +28,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import lab2.grocerystore.dal.repositories.ItemRepository;
@@ -70,7 +74,7 @@ public class GroceryStore {
 		initialize();
 
 		manageResources();
-		
+
 		Resources.get().changeLocale(SupportedLocale.English);
 	}
 
@@ -116,7 +120,7 @@ public class GroceryStore {
 			}
 		});
 		mnLanguage.add(mntmEnglish);
-		
+
 		lblAllItems = new JLabel("All items");
 		GridBagConstraints gbc_lblAllItems = new GridBagConstraints();
 		gbc_lblAllItems.insets = new Insets(0, 0, 5, 5);
@@ -144,6 +148,7 @@ public class GroceryStore {
 		frmGroceryStore.getContentPane().add(scrollPane, gbc_scrollPane);
 
 		tableItems = new JTable();
+		tableItems.setModel(new ItemsTableModel());
 		tableItems.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -161,9 +166,9 @@ public class GroceryStore {
 		scrollPane.setViewportView(tableItems);
 
 	}
-	
+
 	private void manageResources() {
-		
+
 		frmGroceryStore.setName("Frame_Title_groceryStore");
 		mnLanguage.setName("Language");
 		mntmPolish.setName("Language_Polish");
@@ -194,25 +199,24 @@ public class GroceryStore {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 
 	}
 
 	private void updateTableItems() {
 		tableItems.setModel(new ItemsTableModel());
-		
-		//Update table label
+
+		// Update table label
 		String pattern = Resources.get().getBundle(Resources.GUI_BUNDLE).getString("lblItemsTable_pattern");
-		
-		long diffrentItemsCount = Arrays.stream(((ItemsTableModel)tableItems.getModel()).data)
-									.filter(x ->  (int)((Object[])x)[3]> 0)
-									.count();
-				
+
+		long diffrentItemsCount = Arrays.stream(((ItemsTableModel) tableItems.getModel()).data)
+				.filter(x -> (int) ((Object[]) x)[3] > 0)
+				.count();
+
 		Object[] formatargs = { diffrentItemsCount };
 		String result = MessageFormat.format(pattern, formatargs);
-		
+
 		lblAllItems.setText(result);
-		
+
 	}
 
 	private class ItemsTableModel extends AbstractTableModel {
@@ -223,22 +227,8 @@ public class GroceryStore {
 		Object[] data;
 
 		private ItemsTableModel() {
-			List<Item> all = itemRepository.getAll();
 
-			columnNames = Arrays.stream(IntStream.range(0, 5).toArray())
-					.boxed()
-					.map(col -> Resources.get().getBundle(Resources.GUI_BUNDLE).getString("ItemsTable_Col_" + col))
-					.toArray(String[]::new);
-
-			data = all.stream()
-					.map(x -> new Object[] { 
-						x.getId(), 
-						Resources.get().getBundle(Resources.GROCERY_ITEMS_BUNDLE).getString(String.format("GroceryItem_%d_name", x.getId())),
-						Resources.get().localizeNumber(x.getPricePerUnit()), 
-						x.getQuantity(),
-						String.format("%s PLN", Resources.get().localizeNumber(x.getTotalPrice()))
-					})
-					.toArray();
+			refreshData();
 		}
 
 		@Override
@@ -259,6 +249,49 @@ public class GroceryStore {
 		@Override
 		public Object getValueAt(int row, int col) {
 			return ((Object[]) data[row])[col];
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return columnIndex == 3;
+		}
+
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			if (columnIndex != 3)
+				return;
+
+			int itemId = (int) getValueAt(rowIndex, 0);
+			int newQuanity = Integer.parseInt(aValue.toString());
+
+			itemRepository.update(itemId, newQuanity);
+
+			updateTableItems();
+		}
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			if (columnIndex == 3)
+				return Integer.class;
+
+			return super.getColumnClass(columnIndex);
+		}
+
+		public void refreshData() {
+			columnNames = Arrays.stream(IntStream.range(0, 5).toArray()).boxed()
+					.map(col -> Resources.get().getBundle(Resources.GUI_BUNDLE).getString("ItemsTable_Col_" + col))
+					.toArray(String[]::new);
+			
+			List<Item> all = itemRepository.getAll();
+			data = all.stream()
+					.map(x -> new Object[] { x.getId(),
+							Resources.get().getBundle(Resources.GROCERY_ITEMS_BUNDLE)
+									.getString(String.format("GroceryItem_%d_name", x.getId())),
+							Resources.get().localizeNumber(x.getPricePerUnit()), x.getQuantity(),
+							String.format("%s PLN", Resources.get().localizeNumber(x.getTotalPrice())) })
+					.toArray();
+
+			fireTableDataChanged();
 		}
 
 	}
