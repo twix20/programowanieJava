@@ -10,17 +10,14 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.text.ChoiceFormat;
-import java.text.Format;
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -35,7 +32,6 @@ import lab2.grocerystore.dal.repositories.ItemRepository;
 import lab2.grocerystore.models.Item;
 import lab2.grocerystore.resources.Resources;
 import lab2.grocerystore.resources.Resources.SupportedLocale;
-import javax.swing.JLabel;
 
 public class GroceryStore {
 
@@ -206,29 +202,15 @@ public class GroceryStore {
 		tableItems.setModel(new ItemsTableModel());
 		
 		//Update table label
-		ResourceBundle bundle = Resources.get().getBundle(Resources.GUI_BUNDLE);
-		String pattern = bundle.getString("lblItemsTable_pattern");
+		String pattern = Resources.get().getBundle(Resources.GUI_BUNDLE).getString("lblItemsTable_pattern");
 		
-		MessageFormat messageForm = new MessageFormat("");
-		messageForm.setLocale(Resources.get().getCurrentLocale());
+		long diffrentItemsCount = Arrays.stream(((ItemsTableModel)tableItems.getModel()).data)
+									.filter(x ->  (int)((Object[])x)[3]> 0)
+									.count();
+				
+		Object[] formatargs = { diffrentItemsCount };
+		String result = MessageFormat.format(pattern, formatargs);
 		
-		double[] fileLimits = {0,1,2};
-		String [] fileStrings = {
-		    bundle.getString("lblItemsTable_noItems"),
-		    bundle.getString("lblItemsTable_oneItem"),
-		    bundle.getString("lblItemsTable_multipleItems")
-		};
-		
-		ChoiceFormat choiceForm = new ChoiceFormat(fileLimits, fileStrings);
-		
-		messageForm.applyPattern(pattern);
-		
-		Format[] formats = {choiceForm, null, NumberFormat.getInstance()};
-		messageForm.setFormats(formats);
-		
-		Object[] messageArguments = {tableItems.getModel().getRowCount(), tableItems.getModel().getRowCount()};
-		
-		String result = messageForm.format(messageArguments);
 		lblAllItems.setText(result);
 		
 	}
@@ -249,13 +231,12 @@ public class GroceryStore {
 					.toArray(String[]::new);
 
 			data = all.stream()
-					.filter(x -> x.getQuantity() > 0)
 					.map(x -> new Object[] { 
 						x.getId(), 
 						Resources.get().getBundle(Resources.GROCERY_ITEMS_BUNDLE).getString(String.format("GroceryItem_%d_name", x.getId())),
 						Resources.get().localizeNumber(x.getPricePerUnit()), 
 						x.getQuantity(),
-						Resources.get().localizeNumber(x.getTotalPrice())
+						String.format("%s PLN", Resources.get().localizeNumber(x.getTotalPrice()))
 					})
 					.toArray();
 		}
