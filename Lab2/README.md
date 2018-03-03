@@ -2,8 +2,8 @@ Screenshots:
 
 EN:
 
-![ScreenShot](https://i.imgur.com/5Ulm3nO.jpg)
+![Alt text](/screenshots/1.jpg?raw=true "English resources")
 
 PL:
 
-![ScreenShot](https://i.imgur.com/k0j2o28.png)
+![Alt text](/screenshots/2.png?raw=true "Polish resources")
