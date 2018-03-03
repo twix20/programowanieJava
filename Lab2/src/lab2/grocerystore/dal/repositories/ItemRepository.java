@@ -6,7 +6,7 @@ import java.util.List;
 import lab2.grocerystore.models.Item;
 
 public class ItemRepository extends JsonRepository<Item> {
-	public final String imageFolder = "src/lab2/images/";
+	public final String imageFolder = "src/lab2/grocerystore/gui/images/";
 	
 	public ItemRepository() {
 		super("src/itemDatabase.json", Item.class);

@@ -8,8 +8,6 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -28,8 +26,6 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import lab2.grocerystore.dal.repositories.ItemRepository;
@@ -209,8 +205,7 @@ public class GroceryStore {
 		String pattern = Resources.get().getBundle(Resources.GUI_BUNDLE).getString("lblItemsTable_pattern");
 
 		long diffrentItemsCount = Arrays.stream(((ItemsTableModel) tableItems.getModel()).data)
-				.filter(x -> (int) ((Object[]) x)[3] > 0)
-				.count();
+				.filter(x -> (int) ((Object[]) x)[3] > 0).count();
 
 		Object[] formatargs = { diffrentItemsCount };
 		String result = MessageFormat.format(pattern, formatargs);
@@ -281,12 +276,11 @@ public class GroceryStore {
 			columnNames = Arrays.stream(IntStream.range(0, 5).toArray()).boxed()
 					.map(col -> Resources.get().getBundle(Resources.GUI_BUNDLE).getString("ItemsTable_Col_" + col))
 					.toArray(String[]::new);
-			
+
 			List<Item> all = itemRepository.getAll();
 			data = all.stream()
 					.map(x -> new Object[] { x.getId(),
-							Resources.get().getBundle(Resources.GROCERY_ITEMS_BUNDLE)
-									.getString(String.format("GroceryItem_%d_name", x.getId())),
+							MessageFormat.format(Resources.get().getBundle(Resources.GROCERY_ITEMS_BUNDLE).getString(String.format("GroceryItem_%d_name_pattern", x.getId())), new Object[] {x.getQuantity()}),
 							Resources.get().localizeNumber(x.getPricePerUnit()), x.getQuantity(),
 							String.format("%s PLN", Resources.get().localizeNumber(x.getTotalPrice())) })
 					.toArray();
