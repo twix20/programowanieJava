@@ -1,3 +1,6 @@
+Usage:
+Quantity can be changed by editing a cell in the table.
+
 Screenshots:
 
 EN:
