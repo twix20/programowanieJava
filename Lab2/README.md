@@ -1,9 +1,12 @@
+Usage:
+Quantity can be changed by editing a cell in the table.
+
 Screenshots:
 
 EN:
 
-![Alt text](/screenshots/1.jpg?raw=true "English resources")
+![English resources](screenshots/1.jpg?raw=true "English resources")
 
 PL:
 
-![Alt text](/screenshots/2.png?raw=true "Polish resources")
+![Polish resources](screenshots/2.png?raw=true "Polish resources")
