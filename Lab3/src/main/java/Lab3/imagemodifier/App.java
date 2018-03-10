@@ -1,6 +1,6 @@
 package Lab3.imagemodifier;
 
-import java.awt.EventQueue;
+import javax.swing.SwingUtilities;
 
 import Lab3.imagemodifier.gui.MainFrame;
 
@@ -12,7 +12,7 @@ public class App
 {
     public static void main( String[] args )
     {
-		EventQueue.invokeLater(new Runnable() {
+    	SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainFrame window = new MainFrame();
