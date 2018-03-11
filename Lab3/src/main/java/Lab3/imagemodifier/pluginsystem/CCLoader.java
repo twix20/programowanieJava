@@ -21,7 +21,7 @@ public class CCLoader extends ClassLoader {
      * @param name
      *            Fully Classified name of class, for example com.journaldev.Foo
      */
-    private Class getClass(String name) throws ClassNotFoundException {
+    private Class<?> getClass(String name) throws ClassNotFoundException {
         String file = name.replace('.', File.separatorChar) + ".class";
         
         byte[] b = null;
@@ -31,7 +31,7 @@ public class CCLoader extends ClassLoader {
             // defineClass is inherited from the ClassLoader class
             // that converts byte array into a Class. defineClass is Final
             // so we cannot override it
-            Class c = defineClass(name, b, 0, b.length);
+            Class<?> c = defineClass(name, b, 0, b.length);
             resolveClass(c);
             return c;
         } catch (IOException e) {
@@ -50,7 +50,7 @@ public class CCLoader extends ClassLoader {
      *            Full class name
      */
     @Override
-    public Class loadClass(String name) throws ClassNotFoundException {
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         System.out.println("Loading Class '" + name + "'");
         if (name.startsWith("Lab3.imagemodifier.pluginsystem.plugins")) {
             System.out.println("Loading Class using CCLoader");

@@ -15,6 +15,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class FileTree extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8546347094252577286L;
 	JTree tree;
 
 	/** Construct a FileTree */
