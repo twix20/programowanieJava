@@ -1,14 +1,19 @@
 package Lab1.Core.Presentation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.knowm.xchart.*;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
 
-import Lab1.Core.*;
-import Lab1.Core.Student.*;
+import Lab1.Core.MarkRange;
+import Lab1.Core.Test;
+import Lab1.Core.Student.StudentCard;
+import Lab1.Core.Student.StudentQuestionAnswer;
 
 
 /**

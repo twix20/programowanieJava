@@ -34,7 +34,7 @@ public class PreciseHistogram <T extends Number> {
 		return this.yAxis;
 	}
 	
-	private <T> int countOccurence(List<T> list, T value){
+	private int countOccurence(List<T> list, T value){
 		int occurences = 0;
 		for(T o:list) {
 			if(o.equals(value)) 

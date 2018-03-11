@@ -207,6 +207,8 @@ public class MainForm {
 		tableTests = new JTable();
 		tableTests.setModel(new TestTableModel());
 		tableTests.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = -3626538245723358222L;
+
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 					boolean hasFocus, int row, int column) {
@@ -462,6 +464,8 @@ public class MainForm {
 	}
 
 	static class TestTableModel extends DefaultTableModel {
+		private static final long serialVersionUID = 7223556055931136025L;
+		
 		public static final String[] columnNames = { "Id", "Name", "Questions", "Student Cards" };
 		private List<Test> tests;
 

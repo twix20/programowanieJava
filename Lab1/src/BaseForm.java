@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 public class BaseForm extends JFrame {
+	private static final long serialVersionUID = 2220917877703221066L;
+
 	public BaseForm(String frameTitle) {
 		this();
 		
