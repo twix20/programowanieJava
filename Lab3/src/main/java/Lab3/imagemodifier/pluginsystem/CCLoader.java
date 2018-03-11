@@ -60,8 +60,8 @@ public class CCLoader extends ClassLoader {
 
 	/**
 	 * Every request for a class passes through this method. If the class is in
-	 * com.journaldev package, we will use this classloader or else delegate the
-	 * request to parent classloader.
+	 * Lab3.imagemodifier.pluginsystem.plugins package, we will use this classloader
+	 * or else delegate the request to parent classloader.
 	 *
 	 *
 	 * @param name

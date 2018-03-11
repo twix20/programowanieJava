@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -48,7 +49,7 @@ public class MainFrame extends JFrame {
 	JProgressBar progressBarThumbnailsLoading;
 
 	JButton btnLoadPlugins, btnUnloadPlugins;
-	
+
 	Thread pluginWorkingThread;
 
 	MouseAdapter thumbnailClickedAdapter;
@@ -107,7 +108,7 @@ public class MainFrame extends JFrame {
 				if (thumbnailWorker != null) {
 					thumbnailWorker.terminate();
 					progressBarThumbnailsLoading.setValue(0);
-					
+
 				}
 			}
 		});
@@ -150,8 +151,9 @@ public class MainFrame extends JFrame {
 										public void run() {
 											Method transformMethod;
 											try {
-												transformMethod = clazz.getMethod("transformImage", (Class<?>[]) new Class[] { byte[].class });
-												byte[] transofmedImage = transofmedImage = (byte[]) transformMethod.invoke(plugin, choosenThumbnailToModify.getOrginalImageBytes());
+												transformMethod = clazz.getMethod("transformImage",
+														(Class<?>[]) new Class[] { byte[].class });
+												byte[] transofmedImage = transofmedImage = (byte[]) transformMethod.invoke(plugin,choosenThumbnailToModify.getOrginalImageBytes());
 
 												Thumbnail t = new Thumbnail(transofmedImage);
 
@@ -162,16 +164,15 @@ public class MainFrame extends JFrame {
 												panelTransformedImage.repaint();
 											} catch (NoSuchMethodException | SecurityException | IllegalAccessException
 													| IllegalArgumentException | InvocationTargetException e) {
-												// TODO Auto-generated catch block
 												e.printStackTrace();
 											}
 
 										}
 									};
-									
-									if(pluginWorkingThread != null && pluginWorkingThread.isAlive())
+
+									if (pluginWorkingThread != null && pluginWorkingThread.isAlive())
 										pluginWorkingThread.interrupt();
-									
+
 									pluginWorkingThread = new Thread(renderImageTask);
 									pluginWorkingThread.start();
 
@@ -182,10 +183,10 @@ public class MainFrame extends JFrame {
 						});
 
 						panelLoadedPlugins.add(pluginButton);
+						panelLoadedPlugins.add(Box.createHorizontalStrut(10));
 
 					} catch (NoSuchMethodException | IllegalAccessException | InstantiationException
 							| InvocationTargetException | IllegalArgumentException | SecurityException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -206,7 +207,6 @@ public class MainFrame extends JFrame {
 				btnLoadPlugins.setVisible(true);
 				btnUnloadPlugins.setVisible(false);
 
-				validate();
 				repaint();
 			}
 		});
@@ -255,8 +255,7 @@ public class MainFrame extends JFrame {
 					@Override
 					public void propertyChange(PropertyChangeEvent event) {
 						String propertyName = event.getPropertyName();
-
-						// System.out.println(propertyName);
+						
 						switch (propertyName) {
 						case "progress":
 							progressBarThumbnailsLoading.setValue((Integer) event.getNewValue());

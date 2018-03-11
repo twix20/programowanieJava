@@ -1,21 +1,17 @@
 package Lab3.imagemodifier.pluginsystem.plugins;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
+import Lab3.imagemodifier.pluginsystem.BaseImagePlugin;
 
-import Lab3.imagemodifier.pluginsystem.IImagePlugin;
-
-public class RotateImagePlugin implements IImagePlugin {
+public class RotateImagePlugin extends BaseImagePlugin {
 
 	@Override
 	public byte[] transformImage(byte[] imageBytes) {
 
 		try {
-			BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+			BufferedImage image = toBufferedImage(imageBytes);
 
 			for (int i = 0; i < image.getWidth(); i++) {
 				for (int j = 0; j < image.getHeight() / 2; j++) {
@@ -24,17 +20,10 @@ public class RotateImagePlugin implements IImagePlugin {
 					image.setRGB(i, image.getHeight() - j - 1, tmp);
 				}
 			}
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(image, "jpg", baos);
-			byte[] imageInByte = baos.toByteArray();
-
-			baos.close();
-
-			return imageInByte;
+			
+			return toBytesImage(image, "jpg");
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
