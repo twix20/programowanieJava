@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 public class ThumbnailsLoaderWorker extends SwingWorker<Integer, String> {
-	final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList(".jpg", ".png");
+	final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList(".jpg");
 	
 	boolean shouldCancel = false;
 	ForkJoinPool customThreadPool = new ForkJoinPool(3);

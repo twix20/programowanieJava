@@ -48,6 +48,8 @@ public class MainFrame extends JFrame {
 	JProgressBar progressBarThumbnailsLoading;
 
 	JButton btnLoadPlugins, btnUnloadPlugins;
+	
+	Thread pluginWorkingThread;
 
 	MouseAdapter thumbnailClickedAdapter;
 
@@ -167,7 +169,11 @@ public class MainFrame extends JFrame {
 										}
 									};
 									
-									new Thread(renderImageTask).start();
+									if(pluginWorkingThread != null && pluginWorkingThread.isAlive())
+										pluginWorkingThread.interrupt();
+									
+									pluginWorkingThread = new Thread(renderImageTask);
+									pluginWorkingThread.start();
 
 								} catch (SecurityException | IllegalArgumentException e1) {
 									e1.printStackTrace();
