@@ -4,6 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
@@ -12,10 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
 public class ThumbnailsLoaderWorker extends SwingWorker<Integer, String> {
-	final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList(".jpg");
+	final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList(".jpg", ".png");
 	
 	boolean shouldCancel = false;
-	ForkJoinPool customThreadPool = new ForkJoinPool(1);
+	ForkJoinPool customThreadPool = new ForkJoinPool(3);
 
 	File directory;
 	JPanel panelThumbnails;
@@ -68,7 +69,7 @@ public class ThumbnailsLoaderWorker extends SwingWorker<Integer, String> {
 							return;
 						}
 						
-						panelThumbnails.add(t);
+						panelThumbnails.add(new WeakReference<Thumbnail>(t).get());
 						counter++;
 						setProgress(100 * counter / allImageFilesCount);
 					}

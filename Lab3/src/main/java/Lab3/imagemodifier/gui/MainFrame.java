@@ -11,10 +11,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -50,11 +47,11 @@ public class MainFrame extends JFrame {
 	JPanel panelTransformedImage;
 	JProgressBar progressBarThumbnailsLoading;
 
+	JButton btnLoadPlugins, btnUnloadPlugins;
+
 	MouseAdapter thumbnailClickedAdapter;
 
 	JScrollPane scrollPane;
-
-	List<JButton> pluginButtons;
 
 	/**
 	 * Create the application.
@@ -100,13 +97,15 @@ public class MainFrame extends JFrame {
 		progressBarThumbnailsLoading = new JProgressBar();
 		progressBarThumbnailsLoading.setBounds(10, 297, 604, 20);
 		panelDirictories.add(progressBarThumbnailsLoading);
-		
+
 		JButton btnCancelThumbnailWorker = new JButton("Stop");
 		btnCancelThumbnailWorker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Stop worker if is already running
 				if (thumbnailWorker != null) {
 					thumbnailWorker.terminate();
+					progressBarThumbnailsLoading.setValue(0);
+					
 				}
 			}
 		});
@@ -117,27 +116,23 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab("Modify Image", null, panelImageModifier, null);
 		panelImageModifier.setLayout(null);
 
-		JButton btnLoadPlugins = new JButton("Load Plugins");
+		btnLoadPlugins = new JButton("Load Plugins");
 		btnLoadPlugins.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				btnLoadPlugins.setVisible(false);
+				btnUnloadPlugins.setVisible(true);
 
-				List<File> pluginFiles = Arrays.asList(PLUGIN_FOLDER.listFiles()).stream()
-						.filter(x -> x.getName().endsWith("Plugin.class")).collect(Collectors.toList());
-
-				pluginButtons = new ArrayList<>();
 				panelLoadedPlugins.removeAll();
 
-				CCLoader ccl = new CCLoader(MainFrame.class.getClassLoader());
-				for (File f : pluginFiles) {
+				List<Class<?>> pluginClasses = CCLoader.get().loadImagePluginClasses(PLUGIN_FOLDER);
+
+				for (Class<?> clazz : pluginClasses) {
 					try {
-						String fileName = f.getName().substring(0, f.getName().length() - 6);
 
-						Class<?> clas = ccl.loadClass("Lab3.imagemodifier.pluginsystem.plugins." + fileName);
-
-						Constructor<?> ctor = clas.getConstructor();
+						Constructor<?> ctor = clazz.getConstructor();
 						Object plugin = ctor.newInstance();
 
-						String pluginName = (String) clas.getMethod("getName", null).invoke(plugin, null);
+						String pluginName = (String) clazz.getMethod("getName", null).invoke(plugin, null);
 
 						JButton pluginButton = new JButton(pluginName);
 						pluginButton.addActionListener(new ActionListener() {
@@ -149,33 +144,41 @@ public class MainFrame extends JFrame {
 											|| choosenThumbnailToModify.getOrginalImageBytes() == null)
 										return;
 
-									Method transformMethod = clas.getMethod("transformImage",
-											(Class<?>[]) new Class[] { byte[].class });
+									Runnable renderImageTask = new Runnable() {
+										public void run() {
+											Method transformMethod;
+											try {
+												transformMethod = clazz.getMethod("transformImage", (Class<?>[]) new Class[] { byte[].class });
+												byte[] transofmedImage = transofmedImage = (byte[]) transformMethod.invoke(plugin, choosenThumbnailToModify.getOrginalImageBytes());
 
-									byte[] transofmedImage = (byte[]) transformMethod.invoke(plugin,
-											choosenThumbnailToModify.getOrginalImageBytes());
+												Thumbnail t = new Thumbnail(transofmedImage);
 
-									Thumbnail t = new Thumbnail(transofmedImage);
+												panelTransformedImage.removeAll();
+												panelTransformedImage.add(t);
 
-									panelTransformedImage.removeAll();
-									panelTransformedImage.add(t);
+												panelTransformedImage.validate();
+												panelTransformedImage.repaint();
+											} catch (NoSuchMethodException | SecurityException | IllegalAccessException
+													| IllegalArgumentException | InvocationTargetException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
 
-									panelTransformedImage.validate();
-									panelTransformedImage.repaint();
+										}
+									};
+									
+									new Thread(renderImageTask).start();
 
-								} catch (NoSuchMethodException | SecurityException | IllegalAccessException
-										| IllegalArgumentException | InvocationTargetException e1) {
+								} catch (SecurityException | IllegalArgumentException e1) {
 									e1.printStackTrace();
 								}
 							}
 						});
 
-						pluginButtons.add(pluginButton);
 						panelLoadedPlugins.add(pluginButton);
 
-					} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
-							| InstantiationException | InvocationTargetException | IllegalArgumentException
-							| SecurityException e) {
+					} catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+							| InvocationTargetException | IllegalArgumentException | SecurityException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -188,17 +191,21 @@ public class MainFrame extends JFrame {
 		btnLoadPlugins.setBounds(10, 11, 121, 23);
 		panelImageModifier.add(btnLoadPlugins);
 
-		JButton btnUnloadPlugins = new JButton("Unload Plugins");
+		btnUnloadPlugins = new JButton("Unload Plugins");
 		btnUnloadPlugins.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				pluginButtons.clear();
 				panelLoadedPlugins.removeAll();
+				CCLoader.unload();
+
+				btnLoadPlugins.setVisible(true);
+				btnUnloadPlugins.setVisible(false);
 
 				validate();
 				repaint();
 			}
 		});
-		btnUnloadPlugins.setBounds(141, 11, 111, 23);
+		btnUnloadPlugins.setBounds(10, 11, 121, 23);
+		btnUnloadPlugins.setVisible(false);
 		panelImageModifier.add(btnUnloadPlugins);
 
 		panelLoadedPlugins = new JPanel();
