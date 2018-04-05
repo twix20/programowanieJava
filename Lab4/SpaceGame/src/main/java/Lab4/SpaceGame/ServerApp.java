@@ -3,6 +3,7 @@ package Lab4.SpaceGame;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import Lab4.SpaceGame.Core.Utils;
 import Lab4.SpaceGame.Server.GameServer;
 
 /**
@@ -13,6 +14,8 @@ public class ServerApp
 {
     public static void main( String[] args )
     {
+    	Utils.Env = "ServerApp";
+    	
         try {
 
         	Registry registry = null;

@@ -1,4 +1,4 @@
-package Lab4.SpaceGame.Server;
+package Lab4.SpaceGame.Core;
 
 import java.io.Serializable;
 
