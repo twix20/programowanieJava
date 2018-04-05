@@ -1,7 +1,5 @@
 package Lab4.SpaceGame;
 
-import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -24,7 +22,7 @@ public class ServerApp
 
             } catch(Exception e) {
             	System.out.println("Using existing registry");
-            	registry = LocateRegistry.getRegistry();
+            	registry = LocateRegistry.getRegistry(GameServer.SERVER_PORT);
             }
         	
         	registry.rebind(GameServer.SERVER_LOOKUP, new GameServer());            
