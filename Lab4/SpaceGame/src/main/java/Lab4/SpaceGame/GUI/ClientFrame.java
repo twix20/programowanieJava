@@ -105,6 +105,9 @@ public class ClientFrame extends JFrame implements Serializable {
 						f = new MechanicFrame(look_up, client);
 						client.setFrame((MechanicFrame) f);
 						break;
+					case Steersman:
+						f = new SteersmanFrame(look_up, client);
+						client.setFrame((SteersmanFrame) f);
 					}
 				} catch (RemoteException e1) {
 					e1.printStackTrace();

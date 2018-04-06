@@ -5,12 +5,12 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import java.beans.VetoableChangeSupport;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,9 +26,7 @@ import javax.swing.event.ChangeListener;
 
 import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CaptainCommend;
-import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Server.GameEvent;
-import Lab4.SpaceGame.Server.GameEvent.EventType;
 import Lab4.SpaceGame.Server.ServerRemote;
 
 public class PlayerPanelBean extends JPanel {
@@ -41,18 +39,31 @@ public class PlayerPanelBean extends JPanel {
 	private JTextField txtPlayerRole;
 	private JTextArea txtAreaLog;
 	
-	private int engineThrustOldValue;
-	private int steerWheelAngleOldValue;
+	String sliderName;
+	JLabel lblSlider;
+	JLabel lblSliderValue;
+	JSlider slider;
+	int sliderValue;
+
+	String spinerName;
+	JLabel lblSpinner;
+	JSpinner spinner;
 	
-	JPanel panelSteersman;
+	
+	
+	private int spinnerOldValue;
+	private int steerWheelAngleOldValue;
 	JPanel panelMechanic;
 	
 	//Wlasciwosci proste
-	private boolean mechanic;
-	private boolean steersman;
+	private boolean isSpinerEnabled;
+	private boolean isSliderEnabled;
+	
+	//Wlasciwosci ograniczone
+	private VetoableChangeSupport vetoes = new VetoableChangeSupport(this); 
 	
 	//Wlasciwosci zlozone
-	private PropertyChangeSupport propertyChanges = new PropertyChangeSupport(this);
+	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	
 	/**
 	 * Launch the application.
@@ -62,7 +73,7 @@ public class PlayerPanelBean extends JPanel {
 			public void run() {
 				try {
 					JFrame frame = new JFrame();
-					frame.add(new PlayerPanelBean());
+					frame.getContentPane().add(new PlayerPanelBean());
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -76,34 +87,58 @@ public class PlayerPanelBean extends JPanel {
 	 */
 	public PlayerPanelBean() {
 	
-		setBounds(100, 100, 548, 425);
+		setBounds(100, 100, 548, 422);
 		setLayout(null);
 
 		panelMechanic = new JPanel();
-		panelMechanic.setBounds(10, 249, 247, 158);
+		panelMechanic.setBounds(10, 249, 524, 161);
 		add(panelMechanic);
 		panelMechanic.setLayout(null);
 
-		JLabel lblMechanicTools = new JLabel("Mechanic tools");
-		lblMechanicTools.setBounds(0, 0, 104, 14);
-		panelMechanic.add(lblMechanicTools);
+		JLabel lblTools = new JLabel("Avalible Tools");
+		lblTools.setBounds(0, 0, 104, 14);
+		panelMechanic.add(lblTools);
 		
-		JLabel lblEngingeThrust = new JLabel("Enginge Thrust");
-		lblEngingeThrust.setBounds(10, 25, 94, 14);
-		panelMechanic.add(lblEngingeThrust);
+		lblSpinner = new JLabel("Spinner label");
+		lblSpinner.setBounds(10, 25, 94, 14);
+		panelMechanic.add(lblSpinner);
 		
-		JSpinner spinnerEngingeThrust = new JSpinner();
-		spinnerEngingeThrust.addChangeListener(new ChangeListener() {
+		spinner = new JSpinner();
+		spinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
-				int newValue = (Integer)spinnerEngingeThrust.getValue();
+				int newValue = (Integer)spinner.getValue();
 				
-				propertyChanges.firePropertyChange("EngineThrust", engineThrustOldValue, newValue);
-				engineThrustOldValue = newValue;
+				changes.firePropertyChange("spinner", spinnerOldValue, newValue);
+				spinnerOldValue = newValue;
 			}
 		});
-		spinnerEngingeThrust.setModel(new SpinnerNumberModel(0, 0, 150, 1));
-		spinnerEngingeThrust.setBounds(20, 50, 207, 20);
-		panelMechanic.add(spinnerEngingeThrust);
+		spinner.setModel(new SpinnerNumberModel(0, 0, 150, 1));
+		spinner.setBounds(20, 50, 207, 20);
+		panelMechanic.add(spinner);
+		
+		lblSlider = new JLabel("Slider Label");
+		lblSlider.setBounds(275, 25, 135, 14);
+		panelMechanic.add(lblSlider);
+		
+		lblSliderValue = new JLabel("0");
+		lblSliderValue.setBounds(465, 25, 46, 14);
+		panelMechanic.add(lblSliderValue);
+		
+		slider = new JSlider();
+		slider.setBounds(264, 50, 247, 26);
+		panelMechanic.add(slider);
+		slider.setMaximum(180);
+		slider.setMinimum(-180);
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				int newValue  = slider.getValue();
+				lblSliderValue.setText(Integer.toString(newValue));
+				
+				changes.firePropertyChange("slider", steerWheelAngleOldValue, newValue);
+				steerWheelAngleOldValue = newValue;
+			}
+		});
+		steerWheelAngleOldValue = slider.getValue();
 
 		JPanel panelPlayer = new JPanel();
 		panelPlayer.setBounds(10, 11, 524, 227);
@@ -145,43 +180,9 @@ public class PlayerPanelBean extends JPanel {
 		txtAreaLog = new JTextArea();
 		scrollPane.setViewportView(txtAreaLog);
 		txtAreaLog.setEditable(false);
-
-		panelSteersman = new JPanel();
-		panelSteersman.setBounds(267, 249, 267, 158);
-		add(panelSteersman);
-		panelSteersman.setLayout(null);
-
-		JLabel lblSteersmanTools = new JLabel("Steersman tools");
-		lblSteersmanTools.setBounds(0, 0, 94, 14);
-		panelSteersman.add(lblSteersmanTools);
 		
-		JLabel lblSteerWheelAngle = new JLabel("Steer Wheel Angle");
-		lblSteerWheelAngle.setBounds(10, 25, 135, 14);
-		panelSteersman.add(lblSteerWheelAngle);
-		
-		JLabel lblSteerWheelAngleValue = new JLabel("0");
-		lblSteerWheelAngleValue.setBounds(124, 25, 46, 14);
-		panelSteersman.add(lblSteerWheelAngleValue);
-		
-		JSlider sliderSteerWheelAngle = new JSlider();
-		sliderSteerWheelAngle.setMaximum(180);
-		sliderSteerWheelAngle.setMinimum(-180);
-		sliderSteerWheelAngle.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				int newValue  = sliderSteerWheelAngle.getValue();
-				lblSteerWheelAngleValue.setText(Integer.toString(newValue));
-				
-				propertyChanges.firePropertyChange("AteerWheelAngle", steerWheelAngleOldValue, newValue);
-				steerWheelAngleOldValue = newValue;
-				
-			}
-		});
-		steerWheelAngleOldValue = sliderSteerWheelAngle.getValue();
-		sliderSteerWheelAngle.setBounds(10, 49, 247, 26);
-		panelSteersman.add(sliderSteerWheelAngle);
-		
-		setMechanic(false);
-		setSteersman(false);
+		setSliderEnabled(false);
+		setSpinerEnabled(false);
 	}
 	
 	public void appendLogMessage(String msg) {
@@ -227,13 +228,14 @@ public class PlayerPanelBean extends JPanel {
 			case EVENT_CAPTAIN_SENDS_COMMEND:
 
 				lastCaptainCommend = (CaptainCommend)event.getEventData();
-
 				appendLogMessage("Captain sends commend: " + lastCaptainCommend.getMessage());
 				break;
 			case EVENT_GAME_MEASURMENT_PROPERTY_CHANGED:
-				
+				appendLogMessage(event.getMessage());
 				break;
 		}
+		
+		this.repaint();
 	}
 	
 	public CaptainCommend getLastCaptainCommend() {
@@ -241,34 +243,64 @@ public class PlayerPanelBean extends JPanel {
 	}
 
     //Proste
-	public boolean getMechanic() {
-		return mechanic;
+	public boolean getSpinerEnabled() {
+		return isSpinerEnabled;
 	}
 
-	public void setMechanic(boolean mechanic) {
-		this.mechanic = mechanic;
+	public void setSpinerEnabled(boolean enabled) {
+		this.isSpinerEnabled = enabled;
 		
-		entirePanelEnabled(panelMechanic, this.mechanic);
+		lblSpinner.setEnabled(enabled);
+		spinner.setEnabled(enabled);
 	}
 
-	public boolean getSteersman() {
-		return steersman;
+	public boolean getSliderEnabled() {
+		return this.isSliderEnabled;
 	}
 
-	public void setSteersman(boolean isSteersman) {
-		this.steersman = isSteersman;
+	public void setSliderEnabled(boolean enabled) {
+		this.isSliderEnabled = enabled;
 		
-		entirePanelEnabled(panelSteersman, this.steersman);
+		lblSlider.setEnabled(enabled);
+		lblSliderValue.setEnabled(enabled);
+		slider.setEnabled(enabled);
 	}
+	
+	
 	
 	//Wiazane
 	public void addPropertyChangeListener(PropertyChangeListener p) {
-		propertyChanges.addPropertyChangeListener(p);
+		changes.addPropertyChangeListener(p);
 	}
 
 	public void removePropertyChangeListener(PropertyChangeListener p) {
-		propertyChanges.removePropertyChangeListener(p);
+		changes.removePropertyChangeListener(p);
 	}
+	
+	//Ograniczone
+	public void addVetoableChangeListener(VetoableChangeListener v) {
+		vetoes.addVetoableChangeListener(v);
+	}
+
+	public void removeVetoableChangeListener(VetoableChangeListener v) {
+		vetoes.removeVetoableChangeListener(v);
+	}
+	
+	public int getSliderValue() {
+		return sliderValue;
+	}
+
+	public void setSliderValue(int sliderValue) throws PropertyVetoException {
+		
+		Float oldSliderValue = new Float (this.sliderValue);
+		 vetoes.fireVetoableChange ( "sliderValue", oldSliderValue, new Float (oldSliderValue));
+
+		 this.sliderValue = sliderValue;
+		 
+		 changes.firePropertyChange ( "sliderValue", oldSliderValue, new Float (oldSliderValue)); 
+	}
+	
+	
 
 	public ClientRemote getClient() {
 		return client;
@@ -291,5 +323,20 @@ public class PlayerPanelBean extends JPanel {
 		this.look_up = look_up;
 	}
 	
+	public String getSliderName() {
+		return sliderName;
+	}
+
+	public void setSliderName(String sliderName) {
+		this.sliderName = sliderName;
+		this.lblSlider.setText(sliderName);
+	}
+	public String getSpinerName() {
+		return spinerName;
+	}
 	
+	public void setSpinerName(String spinerName) {
+		this.spinerName = spinerName;
+		this.lblSpinner.setText(spinerName);
+	}
 }

@@ -21,5 +21,8 @@ public interface ServerRemote extends Remote {
 	public GameEvent endGame() throws RemoteException;
 	
 	public GameEvent captainSendsCommend(CaptainCommend cmd) throws RemoteException;
+	
+	public GameEvent trySetSteeringWheelAngle(int newangle) throws RemoteException;
+	public GameEvent trySetEngineThrust(int newEngineThrust) throws RemoteException;
 
 }

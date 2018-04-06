@@ -1,20 +1,21 @@
 package Lab4.SpaceGame.GUI;
 
-import java.awt.EventQueue;
-import java.rmi.RemoteException;
+import java.awt.*;
 
-import javax.swing.JFrame;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import Lab4.SpaceGame.Client.ClientRemote;
-import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
+
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.beans.PropertyChangeEvent;
 
-public class MechanicFrame extends JFrame {
-	
-	PlayerPanelBean playerPanelBean;
+public class SteersmanFrame extends JFrame {
+
+	private PlayerPanelBean playerPanelBean;
 
 	/**
 	 * Launch the application.
@@ -23,7 +24,7 @@ public class MechanicFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MechanicFrame frame = new MechanicFrame();
+					SteersmanFrame frame = new SteersmanFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -35,17 +36,17 @@ public class MechanicFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MechanicFrame() {
-		setTitle("Mechanic Frame");
+	public SteersmanFrame() {
+		setTitle("Steersman Frame");
 		getContentPane().setLayout(null);
-		setSize(576, 401);
+		setBounds(100, 100, 584, 460);
 		
 		playerPanelBean = new PlayerPanelBean();
 		playerPanelBean.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
-				if(e.getPropertyName() == "spinner") {
+				if(e.getPropertyName() == "slider") {
 					try {
-						playerPanelBean.getLook_up().trySetEngineThrust((int)e.getNewValue());
+						playerPanelBean.getLook_up().trySetSteeringWheelAngle((int)e.getNewValue());
 					} catch (RemoteException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -53,13 +54,13 @@ public class MechanicFrame extends JFrame {
 				}
 			}
 		});
-		playerPanelBean.setSpinerEnabled(true);
-		playerPanelBean.setSpinerName("Engine Thrust");
-		playerPanelBean.setBounds(10, 11, 541, 339);
+		playerPanelBean.setSliderEnabled(true);
+		playerPanelBean.setSliderName("Steer Wheel Angle");
+		playerPanelBean.setBounds(10, 11, 545, 399);
 		getContentPane().add(playerPanelBean);
 	}
 	
-	public MechanicFrame(ServerRemote look_up, ClientRemote client) throws RemoteException {
+	public SteersmanFrame(ServerRemote look_up, ClientRemote client) throws RemoteException {
 		this();
 		
 		playerPanelBean.setLook_up(look_up);

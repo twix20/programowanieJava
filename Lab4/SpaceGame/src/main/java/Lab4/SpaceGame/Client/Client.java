@@ -6,6 +6,7 @@ import java.rmi.server.UnicastRemoteObject;
 import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.GUI.CaptainFrame;
 import Lab4.SpaceGame.GUI.MechanicFrame;
+import Lab4.SpaceGame.GUI.SteersmanFrame;
 import Lab4.SpaceGame.Server.GameEvent;
 
 public class Client extends UnicastRemoteObject implements ClientRemote{
@@ -14,6 +15,7 @@ public class Client extends UnicastRemoteObject implements ClientRemote{
 	
 	CaptainFrame captainFrame;
 	MechanicFrame mechanicFrame;
+	SteersmanFrame steersmanFrame;
 	
 	public Client(Player player)  throws RemoteException {
 		this.player = player;
@@ -27,6 +29,10 @@ public class Client extends UnicastRemoteObject implements ClientRemote{
 		captainFrame = frame;
 	}
 	
+	public void setFrame(SteersmanFrame frame) {
+		steersmanFrame = frame;
+	}
+	
 	
 	@Override
 	public void handleGameEvent(GameEvent event) throws RemoteException {
@@ -37,8 +43,8 @@ public class Client extends UnicastRemoteObject implements ClientRemote{
 		if(mechanicFrame != null)
 			mechanicFrame.handleGameEvent(event);
 		
-		System.out.println("GameEvent from client " + event.getMessage());
-		
+		if(steersmanFrame != null)
+			steersmanFrame.handleGameEvent(event);
 	}
 
 	@Override

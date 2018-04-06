@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.SliderUI;
 import javax.swing.table.DefaultTableModel;
 
 import Lab4.SpaceGame.Client.ClientRemote;
@@ -41,6 +43,7 @@ public class CaptainFrame extends JFrame {
 	private JButton btnStartGame;
 	private JButton btnSetEngineThrust;
 	private JSpinner spinnerEngineThrust;
+	private JSpinner spinnerSteeringWheelAngle;
 
 	/**
 	 * Launch the application.
@@ -62,6 +65,7 @@ public class CaptainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public CaptainFrame() {
+		setTitle("Captain Frame");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 531, 463);
 		contentPane = new JPanel();
@@ -118,9 +122,12 @@ public class CaptainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				int desiredValue = (Integer)spinnerEngineThrust.getValue();
 				
-				CaptainCommend cmd = new CaptainCommend("Set Engine Thrust to " + desiredValue, Role.Mechanic, (Predicate & Serializable)m -> ((SpaceshipMeasurements) m).getEngineThrust() == desiredValue);
-				
 				try {
+					SpaceshipMeasurements futureMeasurments = new SpaceshipMeasurements(look_up.getGameSession().getMeasurements());
+					futureMeasurments.setEngineThrust(desiredValue);
+					
+					CaptainCommend<Integer> cmd = new CaptainCommend<>("Set Engine Thrust to " + desiredValue, Role.Mechanic, futureMeasurments, (BiPredicate<Integer, SpaceshipMeasurements> & Serializable)(c, m) -> (m.getEngineThrust() == c));
+					
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -135,6 +142,31 @@ public class CaptainFrame extends JFrame {
 		spinnerEngineThrust.setModel(new SpinnerNumberModel(0, 0, 150, 1));
 		spinnerEngineThrust.setBounds(207, 245, 94, 20);
 		contentPane.add(spinnerEngineThrust);
+		
+		JButton btnSetSteeringWheelAngle = new JButton("Set Steering Wheel Angle");
+		btnSetSteeringWheelAngle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int desiredValue = (Integer)spinnerSteeringWheelAngle.getValue();
+				try {
+					SpaceshipMeasurements futureMeasurments = new SpaceshipMeasurements(look_up.getGameSession().getMeasurements());
+					futureMeasurments.setSteeringWheelAngle(desiredValue);
+				
+					CaptainCommend<Integer> cmd = new CaptainCommend<>("Set Steering Wheel Angle to " + desiredValue, Role.Steersman, futureMeasurments, (BiPredicate<Integer, SpaceshipMeasurements> & Serializable)(c, m) -> (m.getSteeringWheelAngle() == c));
+				
+					look_up.captainSendsCommend(cmd);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		btnSetSteeringWheelAngle.setBounds(10, 278, 187, 23);
+		contentPane.add(btnSetSteeringWheelAngle);
+		
+		spinnerSteeringWheelAngle = new JSpinner();
+		spinnerSteeringWheelAngle.setModel(new SpinnerNumberModel(0, -180, 180, 1));
+		spinnerSteeringWheelAngle.setBounds(207, 276, 94, 20);
+		contentPane.add(spinnerSteeringWheelAngle);
 	}
 	
 	public CaptainFrame(ServerRemote look_up, ClientRemote client) throws RemoteException {
@@ -142,19 +174,7 @@ public class CaptainFrame extends JFrame {
 		
 		this.look_up = look_up;
 		this.client = client;
-		
-		/*
-		this.synchronizator = new ClientServerSynchronizator(this.look_up, (n, e) -> {
-			try {
-				handleGameEvent(e);
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
-		this.synchronizator.start();
-		*/
-		
+	
 		updateGui();
 	}
 	

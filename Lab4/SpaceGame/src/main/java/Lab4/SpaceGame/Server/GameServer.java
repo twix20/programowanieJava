@@ -10,6 +10,8 @@ import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CaptainCommend;
 import Lab4.SpaceGame.Core.GameSession;
 import Lab4.SpaceGame.Core.Player;
+import Lab4.SpaceGame.Core.Utils;
+import Lab4.SpaceGame.Server.GameEvent.EventType;
 
 public class GameServer extends UnicastRemoteObject implements ServerRemote {
 	public static final String SERVER_LOOKUP = "//localhost/MyServer";
@@ -66,21 +68,39 @@ public class GameServer extends UnicastRemoteObject implements ServerRemote {
 
 	@Override
 	public GameEvent captainSendsCommend(CaptainCommend cmd) throws RemoteException {
+	
 		GameEvent event = gameSession.captainSendsCommend(cmd);
+		
+		publish(event);
+		return event;
+	}
+
+	@Override
+	public GameEvent trySetSteeringWheelAngle(int newangle) throws RemoteException {
+		GameEvent event = gameSession.trySetSteeringWheelAngle(newangle);
+		
+		publish(event);
+		return event;
+	}
+
+	@Override
+	public GameEvent trySetEngineThrust(int newEngineThrust) throws RemoteException {
+		GameEvent event = gameSession.trySetEngineThrust(newEngineThrust);
 		
 		publish(event);
 		return event;
 	}
 	
 	public void publish(GameEvent event) {
+		
+		Utils.log("Connected clients: " + connectedClients.size());
+		
 		connectedClients.stream().forEach(c -> {
 			try {
 				c.handleGameEvent(event);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
 	}
-
 }

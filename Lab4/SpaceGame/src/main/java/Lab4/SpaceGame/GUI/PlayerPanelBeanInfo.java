@@ -24,10 +24,13 @@ public class PlayerPanelBeanInfo extends SimpleBeanInfo {
 
 	public PropertyDescriptor[] getPropertyDescriptors() {
 		try {
-			PropertyDescriptor MechanicPD = new PropertyDescriptor("mechanic", beanClass);
-			PropertyDescriptor SteersmanPD = new PropertyDescriptor("steersman", beanClass);
+			PropertyDescriptor sliderPD = new PropertyDescriptor("sliderEnabled", beanClass);
+			PropertyDescriptor sliderNamePD = new PropertyDescriptor("sliderName", beanClass);
+			
+			PropertyDescriptor spinerPD = new PropertyDescriptor("spinerEnabled", beanClass);
+			PropertyDescriptor spinerNamePD = new PropertyDescriptor("spinerName", beanClass);
 
-			PropertyDescriptor rv[] = { MechanicPD, SteersmanPD};
+			PropertyDescriptor rv[] = { sliderPD, sliderNamePD, spinerPD, spinerNamePD};
 			return rv;
 		} catch (IntrospectionException e) {
 			throw new Error(e.toString());
