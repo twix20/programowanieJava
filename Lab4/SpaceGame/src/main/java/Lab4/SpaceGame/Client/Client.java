@@ -1,33 +1,49 @@
 package Lab4.SpaceGame.Client;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import Lab4.SpaceGame.Core.CaptainCommend;
+import Lab4.SpaceGame.Core.Player;
+import Lab4.SpaceGame.GUI.CaptainFrame;
+import Lab4.SpaceGame.GUI.MechanicFrame;
+import Lab4.SpaceGame.Server.GameEvent;
 
-public class Client implements ClientRemote, Serializable{
-    public Client() throws RemoteException {
-        //UnicastRemoteObject.exportObject(this, 0);
-    }
+public class Client extends UnicastRemoteObject implements ClientRemote{
 
-    @Override
-    public <T> void handleMeasurmentPropertyChanged(String propertyName, T oldValue, T newValue) throws RemoteException {
-        System.out.println(String.format("%s: old %s new %s", propertyName, oldValue.toString(), newValue.toString()));
-    }
-
+	Player player;
+	
+	CaptainFrame captainFrame;
+	MechanicFrame mechanicFrame;
+	
+	public Client(Player player)  throws RemoteException {
+		this.player = player;
+	}
+	
+	public void setFrame(MechanicFrame frame) {
+		mechanicFrame = frame;
+	}
+	
+	public void setFrame(CaptainFrame frame) {
+		captainFrame = frame;
+	}
+	
+	
 	@Override
-	public void handleGameStarted() throws RemoteException {
-		System.out.println("Game started");
+	public void handleGameEvent(GameEvent event) throws RemoteException {
+		
+		if(captainFrame != null)
+			captainFrame.handleGameEvent(event);
+		
+		if(mechanicFrame != null)
+			mechanicFrame.handleGameEvent(event);
+		
+		System.out.println("GameEvent from client " + event.getMessage());
+		
 	}
 
 	@Override
-	public void handleGameEnded() throws RemoteException {
-		System.out.println("Game ended");
+	public Player getPlayer() throws RemoteException {
+		return player;
 	}
 
-	@Override
-	public void handleCaptainCommend(CaptainCommend cmd) throws RemoteException {
-		System.out.println("handleCaptainCommend " + cmd.getMessage());
-	}
 }

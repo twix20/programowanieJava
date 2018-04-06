@@ -7,7 +7,7 @@ public class SpaceshipMeasurements implements Serializable {
 	private int engineThrust = 10;
 	
 	//Steersman
-	private float steeringWheelAngle = 90.0f;
+	private int steeringWheelAngle = 0;
 
 	public int getEngineThrust() {
 		return engineThrust;
@@ -17,11 +17,11 @@ public class SpaceshipMeasurements implements Serializable {
 		this.engineThrust = engineThrust;
 	}
 
-	public float getSteeringWheelAngle() {
+	public int getSteeringWheelAngle() {
 		return steeringWheelAngle;
 	}
 
-	public void setSteeringWheelAngle(float steeringWheelAngle) {
+	public void setSteeringWheelAngle(int steeringWheelAngle) {
 		this.steeringWheelAngle = steeringWheelAngle;
 	}
 }

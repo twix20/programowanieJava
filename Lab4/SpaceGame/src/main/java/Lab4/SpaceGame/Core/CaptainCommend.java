@@ -14,7 +14,7 @@ public class CaptainCommend implements Serializable {
 	public CaptainCommend(String msg, Role playerRole, Predicate<SpaceshipMeasurements> p) {
 		this.message = msg;
 		this.playerRole = playerRole;
-		this.predicate = p;
+		this.predicate = (Predicate & Serializable)p;
 	}
 
 	public String getMessage() {

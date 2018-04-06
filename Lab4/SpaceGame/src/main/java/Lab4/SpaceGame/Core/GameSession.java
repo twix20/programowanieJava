@@ -1,56 +1,79 @@
 package Lab4.SpaceGame.Core;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import Lab4.SpaceGame.Client.ClientRemote;
+import Lab4.SpaceGame.Server.GameEvent;
+import Lab4.SpaceGame.Server.GameEvent.EventType;
 
-public class GameSession {
+public class GameSession implements Serializable {
 	
 	private Status status;
 	
 	private SpaceshipMeasurements measurements;
-	private Map<ClientRemote, Player> players;
+	
+	private Map<String, Player> players;
+	
+	private List<GameEvent> serverEvents;
+	
+	private CaptainCommend currentCaptainCommend;
+	
 	
 	public GameSession() {
+		
 		players = new HashMap<>();
+		serverEvents = new ArrayList<>();
+		
+		status = Status.NotStarted;
 	}
 
-	public boolean startGame() {
+	public GameEvent startGame() {
 		
 		if(isGameStarted())
-			return false;
+			return null;
 		
 		this.status = Status.Running;
 		this.measurements = new SpaceshipMeasurements();
-		
-		notifyAll(c -> {
-			try {
-				c.handleGameStarted();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+
+		GameEvent e = new GameEvent(EventType.EVENT_GAME_STARTED, String.format("Game started: players %d", players.values().size()), null);
+		serverEvents.add(e);
 		
 		Utils.log(String.format("Game started: players %d", players.values().size()));
-		
-		return true;
+		return e;
 	}
 	
-	public boolean addPlayer(ClientRemote client, Player newPlayer) throws RemoteException {
+	public GameEvent captainSendsCommend(CaptainCommend cmd) throws RemoteException {
+		this.currentCaptainCommend = cmd;
 		
-		if(newPlayer.isCaptain() && isCaptainInSquad()) {
-			Utils.log(String.format("Player %s cant be Captain cuz there is a catain in the team already", newPlayer.getName()));
-			return false;
+		GameEvent e = new GameEvent(EventType.EVENT_CAPTAIN_SENDS_COMMEND, "Captain sends commend: " + cmd.getMessage(), cmd);
+		serverEvents.add(e);
+		
+		return e;
+	}
+	
+	public CaptainCommend getCurrentCaptainCommend() {
+		return currentCaptainCommend;
+	}
+	
+	public GameEvent joinGame(Player newPlayer) throws RemoteException {
+		
+		if((newPlayer.isCaptain() && isCaptainInSquad()) || players.containsKey(newPlayer.getName())) {
+			Utils.log(String.format("Player %s cant be Captain cuz there is a catain in the team already or name is not unique", newPlayer.getName()));
+			return null;
 		}
 		
-		players.put(client, newPlayer);
+		players.put(newPlayer.getName(), newPlayer);
+		
+		GameEvent e = new GameEvent(EventType.EVENT_NEW_PLAYER_JOINED, "New player joined: " + newPlayer.getName(), newPlayer);
+		serverEvents.add(e);
 		
 		Utils.log(String.format("Added player %s to the squad with role %s", newPlayer.getName(), newPlayer.getRole().name()));
-		return true;
+		return e;
 	}
 	
 	public boolean isCaptainInSquad() {
@@ -61,22 +84,20 @@ public class GameSession {
 		return getStatus() != Status.NotStarted;
 	}
 	
-	private void notifyAll(Consumer<ClientRemote> c) {
-		getPlayers().keySet().stream().forEach(client -> {
-			c.accept(client);
-		});
-	}
-	
 	public Status getStatus() {
 		return status;
 	}
 	
-	public Map<ClientRemote, Player> getPlayers() {
+	public Map<String, Player> getPlayers() {
 		return players;
 	}
 
 	public SpaceshipMeasurements getMeasurements() {
 		return measurements;
+	}
+	
+	public List<GameEvent> getServerEvents() {
+		return serverEvents;
 	}
 
 	enum Status {

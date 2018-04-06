@@ -1,8 +1,9 @@
 package Lab4.SpaceGame.Core;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 
-public class Player implements Serializable {
+public class Player implements Remote, Serializable {
 	
 	private String name;
 	private Role role;
