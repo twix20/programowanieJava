@@ -17,14 +17,13 @@ public class GameSession implements Serializable {
 	
 	private Status status;
 	
-	private SpaceshipMeasurements futureMeasurements;
 	private SpaceshipMeasurements measurements;
 	
 	private Map<String, Player> players;
 	
 	private List<GameEvent> serverEvents;
 	
-	private CaptainCommand currentCaptainCommend;
+	private CaptainCommand currentCaptainCommand;
 	
 	
 	public GameSession() {
@@ -42,7 +41,6 @@ public class GameSession implements Serializable {
 		
 		this.status = Status.Running;
 		this.setMeasurements(new SpaceshipMeasurements());
-		this.setFutureMeasurements(new SpaceshipMeasurements(this.measurements));
 
 		GameEvent e = new GameEvent(EventType.EVENT_GAME_STARTED, String.format("Game started: players %d", players.values().size()), null);
 		serverEvents.add(e);
@@ -52,19 +50,14 @@ public class GameSession implements Serializable {
 	}
 	
 	public GameEvent captainSendsCommend(CaptainCommand cmd) throws RemoteException {
-		this.currentCaptainCommend = cmd;
-		
-		this.setFutureMeasurements(cmd.getFutureMeasurments());
-		
+		setCurrentCaptainCommand(cmd);
+
 		GameEvent e = new GameEvent(EventType.EVENT_CAPTAIN_SENDS_COMMEND, "Captain sends commend: " + cmd.getMessage(), cmd);
 		serverEvents.add(e);
 		
 		return e;
 	}
 	
-	public CaptainCommand getCurrentCaptainCommend() {
-		return currentCaptainCommend;
-	}
 	
 	public GameEvent joinGame(Player newPlayer) throws RemoteException {
 		
@@ -91,15 +84,20 @@ public class GameSession implements Serializable {
 	}
 	
 	private GameEvent testCurrentCommand(Object newValue) {
-		CaptainCommand currentCmd = getCurrentCaptainCommend();
 		
 		GameEvent e = null;
+		CaptainCommand currentCmd = getCurrentCaptainCommand();
+		if(currentCmd == null)
+			return e;
+		
 		try {
 			if(currentCmd.validate(newValue)) {
-				setMeasurements(getFutureMeasurements());
+				
+				currentCmd.modifyOnSuccess(getMeasurements());
 				e = currentCmd.successEvent();
+				
+				setCurrentCaptainCommand(null);
 			}
-			
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -132,16 +130,16 @@ public class GameSession implements Serializable {
 		this.measurements = measurements;
 	}
 	
+	public CaptainCommand getCurrentCaptainCommand() {
+		return currentCaptainCommand;
+	}
+	
+	public void setCurrentCaptainCommand(CaptainCommand cmd) {
+		this.currentCaptainCommand = cmd;	
+	}
+	
 	public List<GameEvent> getServerEvents() {
 		return serverEvents;
-	}
-
-	public SpaceshipMeasurements getFutureMeasurements() {
-		return futureMeasurements;
-	}
-
-	public void setFutureMeasurements(SpaceshipMeasurements futureMeasurements) {
-		this.futureMeasurements = futureMeasurements;
 	}
 
 	enum Status {

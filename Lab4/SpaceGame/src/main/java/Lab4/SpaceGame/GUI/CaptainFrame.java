@@ -125,10 +125,8 @@ public class CaptainFrame extends JFrame {
 				int desiredValue = (Integer)spinnerEngineThrust.getValue();
 				
 				try {
-					SpaceshipMeasurements futureMeasurments = new SpaceshipMeasurements(look_up.getGameSession().getMeasurements());
-					futureMeasurments.setEngineThrust(desiredValue);
-					
-					CaptainCommand cmd = new EngineThrustCommend(desiredValue, futureMeasurments);
+	
+					CaptainCommand cmd = new EngineThrustCommend(desiredValue);
 					
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {
@@ -149,10 +147,8 @@ public class CaptainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				int desiredValue = (Integer)spinnerSteeringWheelAngle.getValue();
 				try {
-					SpaceshipMeasurements futureMeasurments = new SpaceshipMeasurements(look_up.getGameSession().getMeasurements());
-					futureMeasurments.setSteeringWheelAngle(desiredValue);
 				
-					CaptainCommand<Integer> cmd = new StearingWheelAngleCommand(desiredValue, futureMeasurments);
+					CaptainCommand<Integer> cmd = new StearingWheelAngleCommand(desiredValue);
 				
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {

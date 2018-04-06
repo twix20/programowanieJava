@@ -30,13 +30,6 @@ public class GameServer extends UnicastRemoteObject implements ServerRemote {
 	}
 	
 	@Override
-	public String helloTo(String name) throws RemoteException {
-		
-        System.err.println(name + " is trying to contact!");
-        return "Server says hello to " + name;
-	}
-	
-	@Override
 	public GameEvent joinGame(ClientRemote client, Player newPlayer) throws RemoteException {
 		
 		connectedClients.add(client);
@@ -92,9 +85,6 @@ public class GameServer extends UnicastRemoteObject implements ServerRemote {
 	}
 	
 	public void publish(GameEvent event) {
-		
-		Utils.log("Connected clients: " + connectedClients.size());
-		
 		connectedClients.stream().forEach(c -> {
 			try {
 				c.handleGameEvent(event);

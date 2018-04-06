@@ -11,8 +11,6 @@ import Lab4.SpaceGame.Core.Player;
 
 public interface ServerRemote extends Remote {
 
-	public String helloTo(String name) throws RemoteException;
-
 	public GameSession getGameSession() throws RemoteException;
 
 	public GameEvent joinGame(ClientRemote client, Player newPlayer) throws RemoteException;

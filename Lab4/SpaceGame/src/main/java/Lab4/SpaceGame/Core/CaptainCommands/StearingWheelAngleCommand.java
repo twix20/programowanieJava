@@ -11,15 +11,15 @@ public class StearingWheelAngleCommand extends CaptainCommand<Integer> {
 
 	int desiredValue;
 	
-	public StearingWheelAngleCommand(int desiredValue, SpaceshipMeasurements futureMeasurments) {
-		super("Set Steering Wheel Angle to " + desiredValue, Role.Steersman, futureMeasurments);
+	public StearingWheelAngleCommand(int desiredValue) {
+		super("Set Steering Wheel Angle to " + desiredValue, Role.Steersman);
 		
 		this.desiredValue = desiredValue;
 	}
 
 	@Override
 	public boolean validate(Integer newValue) {
-		return getFutureMeasurments().getSteeringWheelAngle() == newValue;
+		return desiredValue == newValue;
 	}
 
 	@Override
@@ -27,4 +27,8 @@ public class StearingWheelAngleCommand extends CaptainCommand<Integer> {
 		return new GameEvent(EventType.EVENT_GAME_MEASURMENT_PROPERTY_CHANGED, "Steering wheel angle is now " + desiredValue, new PropertyEvent("SteeringWheelAngle", desiredValue));
 	}
 
+	@Override
+	public void modifyOnSuccess(SpaceshipMeasurements measurments) {
+		measurments.setSteeringWheelAngle(desiredValue);
+	}
 }

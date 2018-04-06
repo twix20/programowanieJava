@@ -10,11 +10,6 @@ public class SpaceshipMeasurements implements Serializable {
 	private int steeringWheelAngle = 0;
 	
 	public SpaceshipMeasurements() {}
-	
-	public SpaceshipMeasurements(SpaceshipMeasurements m) {
-		setEngineThrust(m.getEngineThrust());
-		setSteeringWheelAngle(m.getSteeringWheelAngle());
-	}
 
 	public int getEngineThrust() {
 		return engineThrust;

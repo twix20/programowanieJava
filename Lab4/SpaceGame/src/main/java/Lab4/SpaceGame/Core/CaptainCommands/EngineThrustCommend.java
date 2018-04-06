@@ -11,8 +11,8 @@ public class EngineThrustCommend extends CaptainCommand<Integer> {
 
 	int desiredValue;
 	
-	public EngineThrustCommend(int desiredValue, SpaceshipMeasurements futureMeasurments) {
-		super("Set Engine Thrust to " + desiredValue, Role.Mechanic, futureMeasurments);
+	public EngineThrustCommend(int desiredValue) {
+		super("Set Engine Thrust to " + desiredValue, Role.Mechanic);
 		// TODO Auto-generated constructor stub
 		
 		this.desiredValue = desiredValue;
@@ -26,5 +26,10 @@ public class EngineThrustCommend extends CaptainCommand<Integer> {
 	@Override
 	public GameEvent successEvent() {
 		return new GameEvent(EventType.EVENT_GAME_MEASURMENT_PROPERTY_CHANGED, "Engine Thrust is now " + desiredValue, new PropertyEvent("EngineThrust", desiredValue));
+	}
+
+	@Override
+	public void modifyOnSuccess(SpaceshipMeasurements measurments) {
+		measurments.setEngineThrust(desiredValue);
 	}
 }

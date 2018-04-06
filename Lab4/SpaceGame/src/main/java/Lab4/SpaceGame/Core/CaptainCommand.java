@@ -11,12 +11,10 @@ public abstract class CaptainCommand<T> implements Serializable {
 	
 	private String message;
 	private Role playerRole;
-	private SpaceshipMeasurements futureMeasurments;
 	
-	public CaptainCommand(String msg, Role playerRole, SpaceshipMeasurements futureMeasurments) {
+	public CaptainCommand(String msg, Role playerRole) {
 		this.message = msg;
 		this.playerRole = playerRole;
-		this.futureMeasurments = futureMeasurments;
 	}
 
 	public String getMessage() {
@@ -26,12 +24,9 @@ public abstract class CaptainCommand<T> implements Serializable {
 	public Role getPlayerRole() {
 		return playerRole;
 	}
-
-	public SpaceshipMeasurements getFutureMeasurments() {
-		return futureMeasurments;
-	}
 	
 	public abstract boolean validate(T newValue);
 	public abstract GameEvent successEvent();
+	public abstract void modifyOnSuccess(SpaceshipMeasurements measurments);
 
 }

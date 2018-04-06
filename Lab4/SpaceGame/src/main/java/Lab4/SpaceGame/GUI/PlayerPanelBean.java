@@ -313,6 +313,8 @@ public class PlayerPanelBean extends JPanel {
 		this.txtPlayerRole.setText(this.getClient().getPlayer().getRole().name());
 		
 		this.appendLogMessage("Wait till game starts");
+		
+		repaint();
 	}
 
 	public ServerRemote getLook_up() {
