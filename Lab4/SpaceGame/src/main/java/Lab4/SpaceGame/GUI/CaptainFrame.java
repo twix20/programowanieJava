@@ -22,11 +22,13 @@ import javax.swing.plaf.SliderUI;
 import javax.swing.table.DefaultTableModel;
 
 import Lab4.SpaceGame.Client.ClientRemote;
-import Lab4.SpaceGame.Core.CaptainCommend;
+import Lab4.SpaceGame.Core.CaptainCommand;
 import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Core.Player.Role;
 import Lab4.SpaceGame.Core.SpaceshipMeasurements;
 import Lab4.SpaceGame.Core.Utils;
+import Lab4.SpaceGame.Core.CaptainCommands.EngineThrustCommend;
+import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.GameEvent.EventType;
 import Lab4.SpaceGame.Server.ServerRemote;
@@ -126,11 +128,10 @@ public class CaptainFrame extends JFrame {
 					SpaceshipMeasurements futureMeasurments = new SpaceshipMeasurements(look_up.getGameSession().getMeasurements());
 					futureMeasurments.setEngineThrust(desiredValue);
 					
-					CaptainCommend<Integer> cmd = new CaptainCommend<>("Set Engine Thrust to " + desiredValue, Role.Mechanic, futureMeasurments, (BiPredicate<Integer, SpaceshipMeasurements> & Serializable)(c, m) -> (m.getEngineThrust() == c));
+					CaptainCommand cmd = new EngineThrustCommend(desiredValue, futureMeasurments);
 					
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -151,7 +152,7 @@ public class CaptainFrame extends JFrame {
 					SpaceshipMeasurements futureMeasurments = new SpaceshipMeasurements(look_up.getGameSession().getMeasurements());
 					futureMeasurments.setSteeringWheelAngle(desiredValue);
 				
-					CaptainCommend<Integer> cmd = new CaptainCommend<>("Set Steering Wheel Angle to " + desiredValue, Role.Steersman, futureMeasurments, (BiPredicate<Integer, SpaceshipMeasurements> & Serializable)(c, m) -> (m.getSteeringWheelAngle() == c));
+					CaptainCommand<Integer> cmd = new StearingWheelAngleCommand(desiredValue, futureMeasurments);
 				
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {

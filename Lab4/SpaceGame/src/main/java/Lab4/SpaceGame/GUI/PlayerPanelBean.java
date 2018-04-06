@@ -25,7 +25,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import Lab4.SpaceGame.Client.ClientRemote;
-import Lab4.SpaceGame.Core.CaptainCommend;
+import Lab4.SpaceGame.Core.CaptainCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
 
@@ -33,7 +33,7 @@ public class PlayerPanelBean extends JPanel {
 	
 	private ServerRemote look_up;
 	private ClientRemote client;
-	private CaptainCommend lastCaptainCommend;
+	private CaptainCommand lastCaptainCommend;
 
 	private JTextField txtPlayerName;
 	private JTextField txtPlayerRole;
@@ -227,7 +227,7 @@ public class PlayerPanelBean extends JPanel {
 				break;
 			case EVENT_CAPTAIN_SENDS_COMMEND:
 
-				lastCaptainCommend = (CaptainCommend)event.getEventData();
+				lastCaptainCommend = (CaptainCommand)event.getEventData();
 				appendLogMessage("Captain sends commend: " + lastCaptainCommend.getMessage());
 				break;
 			case EVENT_GAME_MEASURMENT_PROPERTY_CHANGED:
@@ -238,7 +238,7 @@ public class PlayerPanelBean extends JPanel {
 		this.repaint();
 	}
 	
-	public CaptainCommend getLastCaptainCommend() {
+	public CaptainCommand getLastCaptainCommend() {
 		return lastCaptainCommend;
 	}
 

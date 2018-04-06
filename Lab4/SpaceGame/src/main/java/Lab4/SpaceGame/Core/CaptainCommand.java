@@ -5,27 +5,22 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import Lab4.SpaceGame.Core.Player.Role;
+import Lab4.SpaceGame.Server.GameEvent;
 
-public class CaptainCommend<T> implements Serializable {
+public abstract class CaptainCommand<T> implements Serializable {
 	
 	private String message;
 	private Role playerRole;
 	private SpaceshipMeasurements futureMeasurments;
-	private BiPredicate<T, SpaceshipMeasurements> predicate;
 	
-	public CaptainCommend(String msg, Role playerRole, SpaceshipMeasurements futureMeasurments, BiPredicate<T, SpaceshipMeasurements> p) {
+	public CaptainCommand(String msg, Role playerRole, SpaceshipMeasurements futureMeasurments) {
 		this.message = msg;
 		this.playerRole = playerRole;
 		this.futureMeasurments = futureMeasurments;
-		this.predicate = (BiPredicate & Serializable)p;
 	}
 
 	public String getMessage() {
 		return message;
-	}
-
-	public BiPredicate<T, SpaceshipMeasurements> getPredicate() {
-		return predicate;
 	}
 
 	public Role getPlayerRole() {
@@ -35,5 +30,8 @@ public class CaptainCommend<T> implements Serializable {
 	public SpaceshipMeasurements getFutureMeasurments() {
 		return futureMeasurments;
 	}
+	
+	public abstract boolean validate(T newValue);
+	public abstract GameEvent successEvent();
 
 }

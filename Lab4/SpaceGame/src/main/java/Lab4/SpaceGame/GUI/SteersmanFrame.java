@@ -39,9 +39,10 @@ public class SteersmanFrame extends JFrame {
 	public SteersmanFrame() {
 		setTitle("Steersman Frame");
 		getContentPane().setLayout(null);
-		setBounds(100, 100, 584, 460);
+		setBounds(100, 100, 584, 408);
 		
 		playerPanelBean = new PlayerPanelBean();
+		playerPanelBean.setSpinerName(" ");
 		playerPanelBean.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				if(e.getPropertyName() == "slider") {
@@ -56,7 +57,7 @@ public class SteersmanFrame extends JFrame {
 		});
 		playerPanelBean.setSliderEnabled(true);
 		playerPanelBean.setSliderName("Steer Wheel Angle");
-		playerPanelBean.setBounds(10, 11, 545, 399);
+		playerPanelBean.setBounds(10, 11, 545, 351);
 		getContentPane().add(playerPanelBean);
 	}
 	

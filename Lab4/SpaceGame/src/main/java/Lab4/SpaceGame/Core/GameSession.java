@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.PropertyEvent;
 import Lab4.SpaceGame.Server.GameEvent.EventType;
@@ -23,7 +24,7 @@ public class GameSession implements Serializable {
 	
 	private List<GameEvent> serverEvents;
 	
-	private CaptainCommend currentCaptainCommend;
+	private CaptainCommand currentCaptainCommend;
 	
 	
 	public GameSession() {
@@ -50,7 +51,7 @@ public class GameSession implements Serializable {
 		return e;
 	}
 	
-	public GameEvent captainSendsCommend(CaptainCommend cmd) throws RemoteException {
+	public GameEvent captainSendsCommend(CaptainCommand cmd) throws RemoteException {
 		this.currentCaptainCommend = cmd;
 		
 		this.setFutureMeasurements(cmd.getFutureMeasurments());
@@ -61,7 +62,7 @@ public class GameSession implements Serializable {
 		return e;
 	}
 	
-	public CaptainCommend getCurrentCaptainCommend() {
+	public CaptainCommand getCurrentCaptainCommend() {
 		return currentCaptainCommend;
 	}
 	
@@ -82,32 +83,26 @@ public class GameSession implements Serializable {
 	}
 	
 	public GameEvent trySetSteeringWheelAngle(int newangle) throws RemoteException {
-		
-		System.out.println("newangle " + newangle);
-		
-		CaptainCommend currentCmd = getCurrentCaptainCommend();
-		
-		GameEvent e = null;
-		if(currentCmd.getPredicate().test(newangle, getFutureMeasurements())) {
-			setMeasurements(getFutureMeasurements());
-			
-			e = new GameEvent(EventType.EVENT_GAME_MEASURMENT_PROPERTY_CHANGED, "Steering wheel angle is now " + newangle, new PropertyEvent("SteeringWheelAngle", newangle));
-		}
-		
-		return e;
+		return testCurrentCommand(newangle);
 	}
 
 	public GameEvent trySetEngineThrust(int newEngineThrust) throws RemoteException {
-		
-		System.out.println("newEngineThrust " + newEngineThrust);
-		
-		CaptainCommend currentCmd = getCurrentCaptainCommend();
+		return testCurrentCommand(newEngineThrust);
+	}
+	
+	private GameEvent testCurrentCommand(Object newValue) {
+		CaptainCommand currentCmd = getCurrentCaptainCommend();
 		
 		GameEvent e = null;
-		if(currentCmd.getPredicate().test(newEngineThrust, getFutureMeasurements())) {
-			setMeasurements(getFutureMeasurements());
+		try {
+			if(currentCmd.validate(newValue)) {
+				setMeasurements(getFutureMeasurements());
+				e = currentCmd.successEvent();
+			}
 			
-			e = new GameEvent(EventType.EVENT_GAME_MEASURMENT_PROPERTY_CHANGED, "Engine Thrust is now " + newEngineThrust, new PropertyEvent("EngineThrust", newEngineThrust));
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
 		}
 		
 		return e;

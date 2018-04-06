@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import Lab4.SpaceGame.Client.ClientRemote;
-import Lab4.SpaceGame.Core.CaptainCommend;
+import Lab4.SpaceGame.Core.CaptainCommand;
 import Lab4.SpaceGame.Core.GameSession;
 import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Core.Utils;
@@ -67,7 +67,7 @@ public class GameServer extends UnicastRemoteObject implements ServerRemote {
 	}
 
 	@Override
-	public GameEvent captainSendsCommend(CaptainCommend cmd) throws RemoteException {
+	public GameEvent captainSendsCommend(CaptainCommand cmd) throws RemoteException {
 	
 		GameEvent event = gameSession.captainSendsCommend(cmd);
 		
