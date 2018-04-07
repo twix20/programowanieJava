@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 
 import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.Player;
+import Lab4.SpaceGame.GUI.Beans.PlayerPanelBean;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
 import java.beans.PropertyChangeListener;

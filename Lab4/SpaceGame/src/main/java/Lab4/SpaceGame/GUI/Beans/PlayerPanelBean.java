@@ -1,4 +1,4 @@
-package Lab4.SpaceGame.GUI;
+package Lab4.SpaceGame.GUI.Beans;
 
 import java.awt.Component;
 import java.awt.Container;

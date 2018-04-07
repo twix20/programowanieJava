@@ -1,4 +1,4 @@
-package Lab4.SpaceGame.GUI;
+package Lab4.SpaceGame.GUI.Beans;
 
 import java.beans.BeanDescriptor;
 import java.beans.IntrospectionException;
