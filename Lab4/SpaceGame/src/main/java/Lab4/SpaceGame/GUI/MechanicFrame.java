@@ -45,6 +45,7 @@ public class MechanicFrame extends JFrame {
 		setSize(576, 440);
 		
 		playerPanelBean = new PlayerPanelBean();
+		playerPanelBean.setCheckboxName("Broken");
 		playerPanelBean.addVetoableChangeListener(new VetoableChangeListener() {
 			public void vetoableChange(PropertyChangeEvent e) throws PropertyVetoException {
 				if(e.getPropertyName() == "sliderValue") {
@@ -64,7 +65,6 @@ public class MechanicFrame extends JFrame {
 					try {
 						playerPanelBean.getLook_up().trySetEngineThrust((int)e.getNewValue());
 					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
@@ -73,7 +73,6 @@ public class MechanicFrame extends JFrame {
 					try {
 						playerPanelBean.getLook_up().trySetOilLevel((int)e.getNewValue());
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						//e1.printStackTrace();
 					}
 				}

@@ -9,11 +9,10 @@ import Lab4.SpaceGame.GUI.ClientFrame;
 
 public class ClientApp {
 
-    public static void main( String[] args ) throws MalformedURLException, RemoteException, NotBoundException
-    {
-    	Utils.Env = "ClientApp";
-    	
-    	ClientFrame f = new ClientFrame();
-    	f.setVisible(true);
-    }
+	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException {
+		Utils.Env = "ClientApp";
+
+		ClientFrame f = new ClientFrame();
+		f.setVisible(true);
+	}
 }

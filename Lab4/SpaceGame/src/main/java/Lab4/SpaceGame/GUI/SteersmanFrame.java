@@ -46,7 +46,7 @@ public class SteersmanFrame extends JFrame {
 		playerPanelBean = new PlayerPanelBean();
 		playerPanelBean.setCheckboxName("Lights");
 		playerPanelBean.setCheckboxEnabled(true);
-		playerPanelBean.setSpinerName(" ");
+		playerPanelBean.setSpinerName("Broken");
 		playerPanelBean.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
 				

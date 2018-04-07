@@ -5,12 +5,12 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
 
-public class PlayerPanelBeanInfo extends SimpleBeanInfo {
+public class PlayerPanelBeanBeanInfo extends SimpleBeanInfo {
 	static BeanDescriptor beanDescriptor = null;
 
 	Class<PlayerPanelBean> beanClass;
 
-	public PlayerPanelBeanInfo() {
+	public PlayerPanelBeanBeanInfo() {
 		beanClass = PlayerPanelBean.class;
 	}
 
@@ -26,19 +26,18 @@ public class PlayerPanelBeanInfo extends SimpleBeanInfo {
 		try {
 			PropertyDescriptor sliderPD = new PropertyDescriptor("sliderEnabled", beanClass);
 			PropertyDescriptor sliderNamePD = new PropertyDescriptor("sliderName", beanClass);
-			
+
 			PropertyDescriptor spinerPD = new PropertyDescriptor("spinerEnabled", beanClass);
 			PropertyDescriptor spinerNamePD = new PropertyDescriptor("spinerName", beanClass);
-			
+
 			PropertyDescriptor checkBoxPD = new PropertyDescriptor("spinerEnabled", beanClass);
 			PropertyDescriptor checkBoxNamePD = new PropertyDescriptor("spinerName", beanClass);
 
-			PropertyDescriptor rv[] = { sliderPD, sliderNamePD, spinerPD, spinerNamePD, checkBoxPD, checkBoxNamePD};
+			PropertyDescriptor rv[] = { sliderPD, sliderNamePD, spinerPD, spinerNamePD, checkBoxPD, checkBoxNamePD };
 			return rv;
 		} catch (IntrospectionException e) {
 			throw new Error(e.toString());
 		}
 	}
-	
-	
+
 }
