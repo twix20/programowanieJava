@@ -40,9 +40,11 @@ public class SteersmanFrame extends JFrame {
 	public SteersmanFrame() {
 		setTitle("Steersman Frame");
 		getContentPane().setLayout(null);
-		setBounds(100, 100, 584, 408);
+		setBounds(100, 100, 584, 455);
 		
 		playerPanelBean = new PlayerPanelBean();
+		playerPanelBean.setCheckboxName("Lights");
+		playerPanelBean.setCheckboxEnabled(true);
 		playerPanelBean.setSpinerName(" ");
 		playerPanelBean.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -54,11 +56,21 @@ public class SteersmanFrame extends JFrame {
 						e1.printStackTrace();
 					}
 				}
+				
+				
+				if(e.getPropertyName() == "checkbox") {
+					try {
+						playerPanelBean.getLook_up().trySetLights((boolean)e.getNewValue());
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 		playerPanelBean.setSliderEnabled(true);
 		playerPanelBean.setSliderName("Steer Wheel Angle");
-		playerPanelBean.setBounds(10, 11, 545, 351);
+		playerPanelBean.setBounds(10, 11, 545, 394);
 		getContentPane().add(playerPanelBean);
 	}
 	

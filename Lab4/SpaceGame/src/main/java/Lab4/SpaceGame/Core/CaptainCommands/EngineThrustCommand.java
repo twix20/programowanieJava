@@ -7,11 +7,11 @@ import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.PropertyEvent;
 import Lab4.SpaceGame.Server.GameEvent.EventType;
 
-public class EngineThrustCommend extends CaptainCommand<Integer> {
+public class EngineThrustCommand extends CaptainCommand<Integer> {
 
 	int desiredValue;
 	
-	public EngineThrustCommend(int desiredValue) {
+	public EngineThrustCommand(int desiredValue) {
 		super("Set Engine Thrust to " + desiredValue, Role.Mechanic);
 		// TODO Auto-generated constructor stub
 		

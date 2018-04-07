@@ -125,8 +125,7 @@ public class ClientFrame extends JFrame implements Serializable {
 				}
 
 				// TODO: Generic server response
-				// TODO: PlayerFrame beans
-
+				
 				dispose();
 
 				if(f != null)

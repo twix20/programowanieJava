@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -23,11 +24,13 @@ import javax.swing.table.DefaultTableModel;
 
 import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CaptainCommand;
+import Lab4.SpaceGame.Core.GameSession;
 import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Core.Player.Role;
 import Lab4.SpaceGame.Core.SpaceshipMeasurements;
 import Lab4.SpaceGame.Core.Utils;
-import Lab4.SpaceGame.Core.CaptainCommands.EngineThrustCommend;
+import Lab4.SpaceGame.Core.CaptainCommands.EngineThrustCommand;
+import Lab4.SpaceGame.Core.CaptainCommands.LightsCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.GameEvent.EventType;
@@ -46,6 +49,11 @@ public class CaptainFrame extends JFrame {
 	private JButton btnSetEngineThrust;
 	private JSpinner spinnerEngineThrust;
 	private JSpinner spinnerSteeringWheelAngle;
+	private JButton btnLightsOn;
+	private JButton btnLightsOff;
+	JButton btnSetSteeringWheelAngle;
+	
+	HashSet<Role> playerRoles;
 
 	/**
 	 * Launch the application.
@@ -69,7 +77,7 @@ public class CaptainFrame extends JFrame {
 	public CaptainFrame() {
 		setTitle("Captain Frame");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 531, 463);
+		setBounds(100, 100, 531, 470);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -111,12 +119,11 @@ public class CaptainFrame extends JFrame {
 					updateGui();
 					updateTableSpaceship();
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
-		btnStartGame.setBounds(10, 390, 159, 23);
+		btnStartGame.setBounds(10, 390, 187, 23);
 		contentPane.add(btnStartGame);
 		
 		btnSetEngineThrust = new JButton("Set Engine Thrust");
@@ -126,7 +133,7 @@ public class CaptainFrame extends JFrame {
 				
 				try {
 	
-					CaptainCommand cmd = new EngineThrustCommend(desiredValue);
+					CaptainCommand<Integer> cmd = new EngineThrustCommand(desiredValue);
 					
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {
@@ -142,7 +149,7 @@ public class CaptainFrame extends JFrame {
 		spinnerEngineThrust.setBounds(207, 245, 94, 20);
 		contentPane.add(spinnerEngineThrust);
 		
-		JButton btnSetSteeringWheelAngle = new JButton("Set Steering Wheel Angle");
+		btnSetSteeringWheelAngle = new JButton("Set Steering Wheel Angle");
 		btnSetSteeringWheelAngle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int desiredValue = (Integer)spinnerSteeringWheelAngle.getValue();
@@ -152,7 +159,6 @@ public class CaptainFrame extends JFrame {
 				
 					look_up.captainSendsCommend(cmd);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -164,6 +170,37 @@ public class CaptainFrame extends JFrame {
 		spinnerSteeringWheelAngle.setModel(new SpinnerNumberModel(0, -180, 180, 1));
 		spinnerSteeringWheelAngle.setBounds(207, 276, 94, 20);
 		contentPane.add(spinnerSteeringWheelAngle);
+		
+		btnLightsOn = new JButton("Turn Lights On");
+		btnLightsOn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+				
+					CaptainCommand<Boolean> cmd = new LightsCommand(true);
+				
+					look_up.captainSendsCommend(cmd);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		btnLightsOn.setBounds(10, 311, 187, 23);
+		contentPane.add(btnLightsOn);
+		
+		btnLightsOff = new JButton("Turn Lights Off");
+		btnLightsOff.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					CaptainCommand<Boolean> cmd = new LightsCommand(false);
+				
+					look_up.captainSendsCommend(cmd);
+				} catch (RemoteException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		btnLightsOff.setBounds(10, 311, 187, 23);
+		contentPane.add(btnLightsOff);
 	}
 	
 	public CaptainFrame(ServerRemote look_up, ClientRemote client) throws RemoteException {
@@ -183,15 +220,30 @@ public class CaptainFrame extends JFrame {
 		switch(event.getLogType()){
 			case EVENT_GAME_STARTED:
 				btnStartGame.setVisible(false);
+				
+				playerRoles = (HashSet<Role>)event.getEventData();
+				if(!playerRoles.contains(Role.Mechanic)) {
+					btnSetEngineThrust.setVisible(false);
+					spinnerEngineThrust.setVisible(false);
+				}
+				
+				if(!playerRoles.contains(Role.Steersman)) {
+					btnSetSteeringWheelAngle.setVisible(false);
+					spinnerSteeringWheelAngle.setVisible(false);
+					
+					btnLightsOn.setVisible(false);
+					btnLightsOff.setVisible(false);
+				}
 				break;
 			case EVENT_GAME_ENDED:
 				break;
 				
-			case EVENT_CAPTAIN_SENDS_COMMEND:
+			case EVENT_CAPTAIN_SENDS_COMMAND:
 				break;
 				
 			case EVENT_GAME_MEASURMENT_PROPERTY_CHANGED:
 				try {
+					updateGui();
 					updateTableSpaceship();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -206,11 +258,24 @@ public class CaptainFrame extends JFrame {
 	}
 	
 	private void updateGui() throws RemoteException {
-		int plyersConnected = look_up.getGameSession().getPlayers().keySet().size();
-	
+		GameSession session = look_up.getGameSession();
+		SpaceshipMeasurements measurments = session.getMeasurements();
 
+		int plyersConnected = session.getPlayers().keySet().size();
 		txtPlayersConnected.setText(Integer.toString(plyersConnected));
 		
+		
+		if(measurments != null) {
+			
+			btnLightsOff.setVisible(measurments.isLights());
+			btnLightsOn.setVisible(!measurments.isLights());
+		
+			if(!playerRoles.contains(Role.Steersman)) {
+				btnLightsOff.setVisible(false);
+				btnLightsOn.setVisible(false);
+			}
+		}
+
 		repaint();
 	}
 	
@@ -222,7 +287,7 @@ public class CaptainFrame extends JFrame {
 		Object[][] data = {
 			new String[] {"Engine Thrust", Integer.toString(currentMeasurments.getEngineThrust())},
 			new String[] {"Steering Wheel Angle", Integer.toString(currentMeasurments.getSteeringWheelAngle())},
-				
+			new String[] {"Lights", Boolean.toString(currentMeasurments.isLights())}
 		};
 		DefaultTableModel model = new DefaultTableModel(data, columnNames);
 		

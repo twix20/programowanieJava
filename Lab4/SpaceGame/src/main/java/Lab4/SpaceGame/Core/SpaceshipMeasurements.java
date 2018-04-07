@@ -8,6 +8,7 @@ public class SpaceshipMeasurements implements Serializable {
 	
 	//Steersman
 	private int steeringWheelAngle = 0;
+	private boolean lights = false;
 	
 	public SpaceshipMeasurements() {}
 
@@ -25,5 +26,13 @@ public class SpaceshipMeasurements implements Serializable {
 
 	public void setSteeringWheelAngle(int steeringWheelAngle) {
 		this.steeringWheelAngle = steeringWheelAngle;
+	}
+
+	public boolean isLights() {
+		return lights;
+	}
+
+	public void setLights(boolean lights) {
+		this.lights = lights;
 	}
 }

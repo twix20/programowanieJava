@@ -29,6 +29,9 @@ public class PlayerPanelBeanInfo extends SimpleBeanInfo {
 			
 			PropertyDescriptor spinerPD = new PropertyDescriptor("spinerEnabled", beanClass);
 			PropertyDescriptor spinerNamePD = new PropertyDescriptor("spinerName", beanClass);
+			
+			PropertyDescriptor checkBoxPD = new PropertyDescriptor("spinerEnabled", beanClass);
+			PropertyDescriptor checkBoxNamePD = new PropertyDescriptor("spinerName", beanClass);
 
 			PropertyDescriptor rv[] = { sliderPD, sliderNamePD, spinerPD, spinerNamePD};
 			return rv;

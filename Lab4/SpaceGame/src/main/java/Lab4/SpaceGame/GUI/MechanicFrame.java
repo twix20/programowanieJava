@@ -39,7 +39,7 @@ public class MechanicFrame extends JFrame {
 	public MechanicFrame() {
 		setTitle("Mechanic Frame");
 		getContentPane().setLayout(null);
-		setSize(576, 401);
+		setSize(576, 440);
 		
 		playerPanelBean = new PlayerPanelBean();
 		playerPanelBean.addPropertyChangeListener(new PropertyChangeListener() {
@@ -56,7 +56,7 @@ public class MechanicFrame extends JFrame {
 		});
 		playerPanelBean.setSpinerEnabled(true);
 		playerPanelBean.setSpinerName("Engine Thrust");
-		playerPanelBean.setBounds(10, 11, 541, 339);
+		playerPanelBean.setBounds(10, 11, 541, 379);
 		getContentPane().add(playerPanelBean);
 	}
 	

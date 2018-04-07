@@ -28,6 +28,7 @@ import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CaptainCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
+import javax.swing.JCheckBox;
 
 public class PlayerPanelBean extends JPanel {
 	
@@ -49,15 +50,19 @@ public class PlayerPanelBean extends JPanel {
 	JLabel lblSpinner;
 	JSpinner spinner;
 	
+	String checkboxName;
+	JLabel lblCheckbox;
+	JCheckBox chckbxCheckBox;
 	
 	
 	private int spinnerOldValue;
 	private int steerWheelAngleOldValue;
-	JPanel panelMechanic;
+	JPanel panelTools;
 	
 	//Wlasciwosci proste
 	private boolean isSpinerEnabled;
 	private boolean isSliderEnabled;
+	private boolean isCheckboxEnabled;
 	
 	//Wlasciwosci ograniczone
 	private VetoableChangeSupport vetoes = new VetoableChangeSupport(this); 
@@ -87,21 +92,21 @@ public class PlayerPanelBean extends JPanel {
 	 */
 	public PlayerPanelBean() {
 	
-		setBounds(100, 100, 548, 422);
+		setBounds(100, 100, 548, 405);
 		setLayout(null);
 
-		panelMechanic = new JPanel();
-		panelMechanic.setBounds(10, 249, 524, 161);
-		add(panelMechanic);
-		panelMechanic.setLayout(null);
+		panelTools = new JPanel();
+		panelTools.setBounds(10, 249, 524, 142);
+		add(panelTools);
+		panelTools.setLayout(null);
 
-		JLabel lblTools = new JLabel("Avalible Tools");
+		JLabel lblTools = new JLabel("Available Tools");
 		lblTools.setBounds(0, 0, 104, 14);
-		panelMechanic.add(lblTools);
+		panelTools.add(lblTools);
 		
 		lblSpinner = new JLabel("Spinner label");
 		lblSpinner.setBounds(10, 25, 94, 14);
-		panelMechanic.add(lblSpinner);
+		panelTools.add(lblSpinner);
 		
 		spinner = new JSpinner();
 		spinner.addChangeListener(new ChangeListener() {
@@ -114,21 +119,36 @@ public class PlayerPanelBean extends JPanel {
 		});
 		spinner.setModel(new SpinnerNumberModel(0, 0, 150, 1));
 		spinner.setBounds(20, 50, 207, 20);
-		panelMechanic.add(spinner);
+		panelTools.add(spinner);
 		
 		lblSlider = new JLabel("Slider Label");
 		lblSlider.setBounds(275, 25, 135, 14);
-		panelMechanic.add(lblSlider);
+		panelTools.add(lblSlider);
 		
 		lblSliderValue = new JLabel("0");
 		lblSliderValue.setBounds(465, 25, 46, 14);
-		panelMechanic.add(lblSliderValue);
+		panelTools.add(lblSliderValue);
 		
 		slider = new JSlider();
 		slider.setBounds(264, 50, 247, 26);
-		panelMechanic.add(slider);
+		panelTools.add(slider);
 		slider.setMaximum(180);
 		slider.setMinimum(-180);
+		
+		lblCheckbox = new JLabel("Checkbox");
+		lblCheckbox.setToolTipText("");
+		lblCheckbox.setBounds(10, 81, 81, 14);
+		panelTools.add(lblCheckbox);
+		
+		chckbxCheckBox = new JCheckBox("New check box");
+		chckbxCheckBox.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				
+				changes.firePropertyChange("checkbox", !chckbxCheckBox.isSelected(), chckbxCheckBox.isSelected());
+			}
+		});
+		chckbxCheckBox.setBounds(7, 102, 97, 23);
+		panelTools.add(chckbxCheckBox);
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				int newValue  = slider.getValue();
@@ -183,6 +203,7 @@ public class PlayerPanelBean extends JPanel {
 		
 		setSliderEnabled(false);
 		setSpinerEnabled(false);
+		setCheckboxEnabled(false);
 	}
 	
 	public void appendLogMessage(String msg) {
@@ -225,7 +246,7 @@ public class PlayerPanelBean extends JPanel {
 			case EVENT_GAME_ENDED:
 				appendLogMessage("Game ended");
 				break;
-			case EVENT_CAPTAIN_SENDS_COMMEND:
+			case EVENT_CAPTAIN_SENDS_COMMAND:
 
 				lastCaptainCommend = (CaptainCommand)event.getEventData();
 				appendLogMessage("Captain sends commend: " + lastCaptainCommend.getMessage());
@@ -264,6 +285,17 @@ public class PlayerPanelBean extends JPanel {
 		lblSlider.setEnabled(enabled);
 		lblSliderValue.setEnabled(enabled);
 		slider.setEnabled(enabled);
+	}
+	
+	public boolean isCheckboxEnabled() {
+		return this.isCheckboxEnabled;
+	}
+
+	public void setCheckboxEnabled(boolean isCheckboxEnabled) {
+		this.isCheckboxEnabled = isCheckboxEnabled;
+		
+		lblCheckbox.setEnabled(isCheckboxEnabled);
+		this.chckbxCheckBox.setEnabled(isCheckboxEnabled);
 	}
 	
 	
@@ -341,4 +373,15 @@ public class PlayerPanelBean extends JPanel {
 		this.spinerName = spinerName;
 		this.lblSpinner.setText(spinerName);
 	}
+	public String getCheckboxName() {
+		return checkboxName;
+	}
+
+	public void setCheckboxName(String checkboxName) {
+		this.checkboxName = checkboxName;
+		
+		this.lblCheckbox.setText(checkboxName);
+		this.chckbxCheckBox.setText(checkboxName);
+	}
+
 }

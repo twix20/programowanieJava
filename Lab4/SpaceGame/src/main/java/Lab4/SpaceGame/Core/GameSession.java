@@ -5,9 +5,12 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import Lab4.SpaceGame.Core.Player.Role;
 import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.PropertyEvent;
@@ -41,8 +44,12 @@ public class GameSession implements Serializable {
 		
 		this.status = Status.Running;
 		this.setMeasurements(new SpaceshipMeasurements());
-
-		GameEvent e = new GameEvent(EventType.EVENT_GAME_STARTED, String.format("Game started: players %d", players.values().size()), null);
+		
+		GameEvent e = new GameEvent(
+				EventType.EVENT_GAME_STARTED, 
+				String.format("Game started: players %d", 
+						players.values().size()), 
+				new HashSet<Role>(players.values().stream().map(p -> p.getRole()).collect(Collectors.toList())));
 		serverEvents.add(e);
 		
 		Utils.log(String.format("Game started: players %d", players.values().size()));
@@ -52,7 +59,7 @@ public class GameSession implements Serializable {
 	public GameEvent captainSendsCommend(CaptainCommand cmd) throws RemoteException {
 		setCurrentCaptainCommand(cmd);
 
-		GameEvent e = new GameEvent(EventType.EVENT_CAPTAIN_SENDS_COMMEND, "Captain sends commend: " + cmd.getMessage(), cmd);
+		GameEvent e = new GameEvent(EventType.EVENT_CAPTAIN_SENDS_COMMAND, "Captain sends commend: " + cmd.getMessage(), cmd);
 		serverEvents.add(e);
 		
 		return e;
@@ -82,6 +89,10 @@ public class GameSession implements Serializable {
 
 	public GameEvent trySetEngineThrust(int newEngineThrust) throws RemoteException {
 		return testCurrentCommand(newEngineThrust);
+	}
+	
+	public GameEvent trySetLights(boolean newLigths) {
+		return testCurrentCommand(newLigths);
 	}
 	
 	private GameEvent testCurrentCommand(Object newValue) {
