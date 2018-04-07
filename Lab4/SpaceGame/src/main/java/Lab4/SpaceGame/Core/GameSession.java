@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import Lab4.SpaceGame.Core.Player.Role;
+import Lab4.SpaceGame.Core.CaptainCommands.EngineThrustCommand;
+import Lab4.SpaceGame.Core.CaptainCommands.LightsCommand;
+import Lab4.SpaceGame.Core.CaptainCommands.OilLevelCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.PropertyEvent;
@@ -84,18 +87,22 @@ public class GameSession implements Serializable {
 	}
 	
 	public GameEvent trySetSteeringWheelAngle(int newangle) throws RemoteException {
-		return testCurrentCommand(newangle);
+		return testCurrentCommand(newangle, StearingWheelAngleCommand.class.getSimpleName());
 	}
 
 	public GameEvent trySetEngineThrust(int newEngineThrust) throws RemoteException {
-		return testCurrentCommand(newEngineThrust);
+		return testCurrentCommand(newEngineThrust, EngineThrustCommand.class.getSimpleName());
 	}
 	
 	public GameEvent trySetLights(boolean newLigths) {
-		return testCurrentCommand(newLigths);
+		return testCurrentCommand(newLigths, LightsCommand.class.getSimpleName());
 	}
 	
-	private GameEvent testCurrentCommand(Object newValue) {
+	public GameEvent trySetOilLevel(int newOilLevel) {
+		return testCurrentCommand(newOilLevel, OilLevelCommand.class.getSimpleName());
+	}
+	
+	private GameEvent testCurrentCommand(Object newValue, String commandType) {
 		
 		GameEvent e = null;
 		CaptainCommand currentCmd = getCurrentCaptainCommand();
@@ -103,7 +110,7 @@ public class GameSession implements Serializable {
 			return e;
 		
 		try {
-			if(currentCmd.validate(newValue)) {
+			if(currentCmd.validate(newValue, commandType)) {
 				
 				currentCmd.modifyOnSuccess(getMeasurements());
 				e = currentCmd.successEvent();
@@ -112,7 +119,6 @@ public class GameSession implements Serializable {
 			}
 		}
 		catch(Exception ex) {
-			ex.printStackTrace();
 		}
 		
 		return e;

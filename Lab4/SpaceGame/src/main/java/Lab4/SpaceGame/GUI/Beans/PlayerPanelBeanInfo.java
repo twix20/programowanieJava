@@ -33,7 +33,7 @@ public class PlayerPanelBeanInfo extends SimpleBeanInfo {
 			PropertyDescriptor checkBoxPD = new PropertyDescriptor("spinerEnabled", beanClass);
 			PropertyDescriptor checkBoxNamePD = new PropertyDescriptor("spinerName", beanClass);
 
-			PropertyDescriptor rv[] = { sliderPD, sliderNamePD, spinerPD, spinerNamePD};
+			PropertyDescriptor rv[] = { sliderPD, sliderNamePD, spinerPD, spinerNamePD, checkBoxPD, checkBoxNamePD};
 			return rv;
 		} catch (IntrospectionException e) {
 			throw new Error(e.toString());

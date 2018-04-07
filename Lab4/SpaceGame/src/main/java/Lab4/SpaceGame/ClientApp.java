@@ -16,5 +16,4 @@ public class ClientApp {
     	ClientFrame f = new ClientFrame();
     	f.setVisible(true);
     }
-
 }

@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class SpaceshipMeasurements implements Serializable {
 	//Mechanic
 	private int engineThrust = 10;
+	private int oilLevel = 0;
 	
 	//Steersman
 	private int steeringWheelAngle = 0;
@@ -34,5 +35,13 @@ public class SpaceshipMeasurements implements Serializable {
 
 	public void setLights(boolean lights) {
 		this.lights = lights;
+	}
+
+	public int getOilLevel() {
+		return oilLevel;
+	}
+
+	public void setOilLevel(int oilLevel) {
+		this.oilLevel = oilLevel;
 	}
 }

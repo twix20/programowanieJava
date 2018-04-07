@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import Lab4.SpaceGame.Client.ClientRemote;
+import Lab4.SpaceGame.Core.Utils;
 import Lab4.SpaceGame.GUI.Beans.PlayerPanelBean;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
@@ -48,11 +49,11 @@ public class SteersmanFrame extends JFrame {
 		playerPanelBean.setSpinerName(" ");
 		playerPanelBean.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
-				if(e.getPropertyName() == "slider") {
+				
+				if(e.getPropertyName() == "sliderValue") {
 					try {
 						playerPanelBean.getLook_up().trySetSteeringWheelAngle((int)e.getNewValue());
 					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
@@ -62,7 +63,6 @@ public class SteersmanFrame extends JFrame {
 					try {
 						playerPanelBean.getLook_up().trySetLights((boolean)e.getNewValue());
 					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}

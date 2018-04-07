@@ -12,14 +12,14 @@ public class EngineThrustCommand extends CaptainCommand<Integer> {
 	int desiredValue;
 	
 	public EngineThrustCommand(int desiredValue) {
-		super("Set Engine Thrust to " + desiredValue, Role.Mechanic);
+		super("Set Engine Thrust to " + desiredValue, Role.Mechanic, EngineThrustCommand.class.getSimpleName());
 		// TODO Auto-generated constructor stub
 		
 		this.desiredValue = desiredValue;
 	}
 
 	@Override
-	public boolean validate(Integer newValue) {
+	public boolean validateValue(Integer newValue) {
 		return this.desiredValue == newValue;
 	}
 

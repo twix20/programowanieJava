@@ -92,6 +92,14 @@ public class GameServer extends UnicastRemoteObject implements ServerRemote {
 		return event;
 	}
 	
+	@Override
+	public GameEvent trySetOilLevel(int newValue) throws RemoteException {
+		GameEvent event = gameSession.trySetOilLevel(newValue);
+		
+		publish(event);
+		return event;
+	}
+	
 	public void publish(GameEvent event) {
 		connectedClients.stream().forEach(c -> {
 			try {
@@ -101,5 +109,6 @@ public class GameServer extends UnicastRemoteObject implements ServerRemote {
 			}
 		});
 	}
+
 
 }

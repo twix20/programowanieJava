@@ -56,7 +56,7 @@ public class PlayerPanelBean extends JPanel {
 	
 	
 	private int spinnerOldValue;
-	private int steerWheelAngleOldValue;
+	private int sliderOldValue;
 	JPanel panelTools;
 	
 	//Wlasciwosci proste
@@ -65,7 +65,7 @@ public class PlayerPanelBean extends JPanel {
 	private boolean isCheckboxEnabled;
 	
 	//Wlasciwosci ograniczone
-	private VetoableChangeSupport vetoes = new VetoableChangeSupport(this); 
+	private VetoableChangeSupport vetoes = new VetoableChangeSupport(this);
 	
 	//Wlasciwosci zlozone
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
@@ -152,13 +152,19 @@ public class PlayerPanelBean extends JPanel {
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				int newValue  = slider.getValue();
-				lblSliderValue.setText(Integer.toString(newValue));
 				
-				changes.firePropertyChange("slider", steerWheelAngleOldValue, newValue);
-				steerWheelAngleOldValue = newValue;
+				try {
+					setSliderValue(newValue);
+					
+					lblSliderValue.setText(Integer.toString(newValue));
+					changes.firePropertyChange("slider", sliderOldValue, newValue);
+					sliderOldValue = newValue;
+				} catch (PropertyVetoException e) {
+					slider.setValue(sliderOldValue);
+				}
 			}
 		});
-		steerWheelAngleOldValue = slider.getValue();
+		sliderOldValue = slider.getValue();
 
 		JPanel panelPlayer = new JPanel();
 		panelPlayer.setBounds(10, 11, 524, 227);
@@ -324,12 +330,13 @@ public class PlayerPanelBean extends JPanel {
 
 	public void setSliderValue(int sliderValue) throws PropertyVetoException {
 		
-		Float oldSliderValue = new Float (this.sliderValue);
-		 vetoes.fireVetoableChange ( "sliderValue", oldSliderValue, new Float (oldSliderValue));
+		 vetoes.fireVetoableChange ( "sliderValue", sliderOldValue, sliderValue);
 
 		 this.sliderValue = sliderValue;
 		 
-		 changes.firePropertyChange ( "sliderValue", oldSliderValue, new Float (oldSliderValue)); 
+		 changes.firePropertyChange ( "sliderValue", sliderOldValue, sliderValue); 
+		 
+		 sliderOldValue = sliderValue;
 	}
 	
 	

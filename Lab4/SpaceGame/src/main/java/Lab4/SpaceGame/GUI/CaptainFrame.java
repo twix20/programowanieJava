@@ -31,6 +31,7 @@ import Lab4.SpaceGame.Core.SpaceshipMeasurements;
 import Lab4.SpaceGame.Core.Utils;
 import Lab4.SpaceGame.Core.CaptainCommands.EngineThrustCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.LightsCommand;
+import Lab4.SpaceGame.Core.CaptainCommands.OilLevelCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.GameEvent.EventType;
@@ -51,7 +52,10 @@ public class CaptainFrame extends JFrame {
 	private JSpinner spinnerSteeringWheelAngle;
 	private JButton btnLightsOn;
 	private JButton btnLightsOff;
-	JButton btnSetSteeringWheelAngle;
+	private JButton btnSetSteeringWheelAngle;
+	
+	private JButton btnSetOilLevel;
+	private JSpinner spinnerOilLevel;
 	
 	HashSet<Role> playerRoles;
 
@@ -163,12 +167,12 @@ public class CaptainFrame extends JFrame {
 				}
 			}
 		});
-		btnSetSteeringWheelAngle.setBounds(10, 278, 187, 23);
+		btnSetSteeringWheelAngle.setBounds(10, 311, 187, 23);
 		contentPane.add(btnSetSteeringWheelAngle);
 		
 		spinnerSteeringWheelAngle = new JSpinner();
 		spinnerSteeringWheelAngle.setModel(new SpinnerNumberModel(0, -180, 180, 1));
-		spinnerSteeringWheelAngle.setBounds(207, 276, 94, 20);
+		spinnerSteeringWheelAngle.setBounds(207, 312, 94, 20);
 		contentPane.add(spinnerSteeringWheelAngle);
 		
 		btnLightsOn = new JButton("Turn Lights On");
@@ -184,7 +188,7 @@ public class CaptainFrame extends JFrame {
 				}
 			}
 		});
-		btnLightsOn.setBounds(10, 311, 187, 23);
+		btnLightsOn.setBounds(10, 345, 187, 23);
 		contentPane.add(btnLightsOn);
 		
 		btnLightsOff = new JButton("Turn Lights Off");
@@ -199,8 +203,29 @@ public class CaptainFrame extends JFrame {
 				}
 			}
 		});
-		btnLightsOff.setBounds(10, 311, 187, 23);
+		btnLightsOff.setBounds(10, 345, 187, 23);
 		contentPane.add(btnLightsOff);
+		
+		btnSetOilLevel = new JButton("Set Oil Level");
+		btnSetOilLevel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int desiredValue = (Integer)spinnerOilLevel.getValue();
+				try {
+					CaptainCommand<Integer> cmd = new OilLevelCommand(desiredValue);
+				
+					look_up.captainSendsCommend(cmd);
+				} catch (RemoteException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+		btnSetOilLevel.setBounds(10, 278, 187, 23);
+		contentPane.add(btnSetOilLevel);
+		
+		spinnerOilLevel = new JSpinner();
+		spinnerOilLevel.setModel(new SpinnerNumberModel(0, 0, 50, 1));
+		spinnerOilLevel.setBounds(207, 276, 94, 20);
+		contentPane.add(spinnerOilLevel);
 	}
 	
 	public CaptainFrame(ServerRemote look_up, ClientRemote client) throws RemoteException {
@@ -225,6 +250,9 @@ public class CaptainFrame extends JFrame {
 				if(!playerRoles.contains(Role.Mechanic)) {
 					btnSetEngineThrust.setVisible(false);
 					spinnerEngineThrust.setVisible(false);
+					
+					btnSetOilLevel.setVisible(false);
+					spinnerOilLevel.setVisible(false);
 				}
 				
 				if(!playerRoles.contains(Role.Steersman)) {
@@ -286,6 +314,7 @@ public class CaptainFrame extends JFrame {
 		String[] columnNames = {"Measurment Name", "Value"};
 		Object[][] data = {
 			new String[] {"Engine Thrust", Integer.toString(currentMeasurments.getEngineThrust())},
+			new String[] {"Oil Level", Integer.toString(currentMeasurments.getOilLevel())},
 			new String[] {"Steering Wheel Angle", Integer.toString(currentMeasurments.getSteeringWheelAngle())},
 			new String[] {"Lights", Boolean.toString(currentMeasurments.isLights())}
 		};

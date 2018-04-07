@@ -22,7 +22,7 @@ public interface ServerRemote extends Remote {
 	
 	public GameEvent trySetSteeringWheelAngle(int newangle) throws RemoteException;
 	public GameEvent trySetEngineThrust(int newEngineThrust) throws RemoteException;
-
 	public GameEvent trySetLights(boolean newValue) throws RemoteException;
+	public GameEvent trySetOilLevel(int newValue) throws RemoteException;
 
 }

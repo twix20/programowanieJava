@@ -12,13 +12,13 @@ public class LightsCommand extends CaptainCommand<Boolean> {
 	boolean desiredValue;
 	
 	public LightsCommand(boolean desiredValue) {
-		super("Set Ligths to " + desiredValue, Role.Steersman);
+		super("Set Ligths to " + desiredValue, Role.Steersman, LightsCommand.class.getSimpleName());
 
 		this.desiredValue = desiredValue;
 	}
 
 	@Override
-	public boolean validate(Boolean newValue) {
+	public boolean validateValue(Boolean newValue) {
 		return desiredValue == newValue;
 	}
 
