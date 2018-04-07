@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import Lab4.SpaceGame.Client.ClientRemote;
+import Lab4.SpaceGame.Core.CanHandleGameEvent;
 import Lab4.SpaceGame.Core.Utils;
 import Lab4.SpaceGame.GUI.Beans.PlayerPanelBean;
 import Lab4.SpaceGame.Server.GameEvent;
@@ -15,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.beans.PropertyChangeEvent;
 
-public class SteersmanFrame extends JFrame {
+public class SteersmanFrame extends JFrame implements CanHandleGameEvent{
 
 	private PlayerPanelBean playerPanelBean;
 

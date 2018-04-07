@@ -3,11 +3,8 @@ package Lab4.SpaceGame.GUI;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashSet;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,13 +16,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.SliderUI;
 import javax.swing.table.DefaultTableModel;
 
 import Lab4.SpaceGame.Client.ClientRemote;
+import Lab4.SpaceGame.Core.CanHandleGameEvent;
 import Lab4.SpaceGame.Core.CaptainCommand;
 import Lab4.SpaceGame.Core.GameSession;
-import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Core.Player.Role;
 import Lab4.SpaceGame.Core.SpaceshipMeasurements;
 import Lab4.SpaceGame.Core.Utils;
@@ -34,10 +30,9 @@ import Lab4.SpaceGame.Core.CaptainCommands.LightsCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.OilLevelCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
-import Lab4.SpaceGame.Server.GameEvent.EventType;
 import Lab4.SpaceGame.Server.ServerRemote;
 
-public class CaptainFrame extends JFrame {
+public class CaptainFrame extends JFrame implements CanHandleGameEvent {
 
 	ServerRemote look_up;
 	ClientRemote client;

@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 
 import Lab4.SpaceGame.Client.Client;
 import Lab4.SpaceGame.Client.ClientRemote;
+import Lab4.SpaceGame.Core.CanHandleGameEvent;
 import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Core.Player.Role;
 import Lab4.SpaceGame.Core.Utils;
@@ -30,7 +31,7 @@ import Lab4.SpaceGame.Server.ServerRemote;
 public class ClientFrame extends JFrame implements Serializable {
 
 	private ServerRemote look_up;
-	
+
 	private JPanel contentPane;
 	private JTextField txtPlayerName;
 	private JComboBox<Role> cbRole;
@@ -87,49 +88,39 @@ public class ClientFrame extends JFrame implements Serializable {
 
 				Player p = new Player(name, playerRole);
 				Client client = null;
+				CanHandleGameEvent f = null;
 				try {
 					client = new Client(p);
-				} catch (RemoteException e2) {
-					e2.printStackTrace();
-				}
-
-				JFrame f = null;
-				try {
+					
 					switch (p.getRole()) {
 					case Captain:
-
 						f = new CaptainFrame(look_up, client);
-						client.setFrame((CaptainFrame) f);
 						break;
 					case Mechanic:
 						f = new MechanicFrame(look_up, client);
-						client.setFrame((MechanicFrame) f);
 						break;
 					case Steersman:
 						f = new SteersmanFrame(look_up, client);
-						client.setFrame((SteersmanFrame) f);
+						break;
 					}
-				} catch (RemoteException e1) {
-					e1.printStackTrace();
-				}
 
-				try {
+					client.setEventHandler(f);
+
 					GameEvent r = look_up.joinGame(client, p);
-					
+
 					if (r == null) {
 						Utils.displayError("Cant join game righ now");
 						return;
 					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
+					// TODO: Generic server response
+
+					dispose();
+
+					if (f != null)
+						((JFrame) f).setVisible(true);
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
 				}
-
-				// TODO: Generic server response
-				
-				dispose();
-
-				if(f != null)
-					f.setVisible(true);
 
 			}
 		});
@@ -141,7 +132,7 @@ public class ClientFrame extends JFrame implements Serializable {
 		contentPane.add(lblRole);
 
 		cbRole = new JComboBox<>();
-		cbRole.setModel(new DefaultComboBoxModel(Role.values()));
+		cbRole.setModel(new DefaultComboBoxModel<Role>(Role.values()));
 		cbRole.setBounds(195, 31, 109, 20);
 		contentPane.add(cbRole);
 	}

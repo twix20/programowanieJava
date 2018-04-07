@@ -1,22 +1,21 @@
 package Lab4.SpaceGame.GUI;
 
 import java.awt.EventQueue;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import java.rmi.RemoteException;
 
 import javax.swing.JFrame;
 
 import Lab4.SpaceGame.Client.ClientRemote;
-import Lab4.SpaceGame.Core.Player;
-import Lab4.SpaceGame.Core.Utils;
+import Lab4.SpaceGame.Core.CanHandleGameEvent;
 import Lab4.SpaceGame.GUI.Beans.PlayerPanelBean;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import java.beans.PropertyChangeEvent;
-import java.beans.VetoableChangeListener;
 
-public class MechanicFrame extends JFrame {
+public class MechanicFrame extends JFrame implements CanHandleGameEvent {
 	
 	PlayerPanelBean playerPanelBean;
 
