@@ -61,12 +61,13 @@ public class GameSession implements Serializable {
 	
 	public GameEvent joinGame(Player newPlayer) throws RemoteException {
 		
-		if((newPlayer.isCaptain() && isCaptainInSquad()) || players.containsKey(newPlayer.getName())) {
-			Utils.log(String.format("Player %s cant be Captain cuz there is a catain in the team already or name is not unique", newPlayer.getName()));
+		String playerKey = newPlayer.getId();
+		if((newPlayer.isCaptain() && isCaptainInSquad()) || players.containsKey(playerKey)) {
+			Utils.log(String.format("Player %s cant be Captain cuz there is a catain in the team already", playerKey));
 			return null;
 		}
 		
-		players.put(newPlayer.getName(), newPlayer);
+		players.put(playerKey, newPlayer);
 		
 		GameEvent e = new GameEvent(EventType.EVENT_NEW_PLAYER_JOINED, "New player joined: " + newPlayer.getName(), newPlayer);
 		serverEvents.add(e);
