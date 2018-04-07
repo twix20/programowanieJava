@@ -1,6 +1,6 @@
 
 Screenshots
-![Alt text](/screenshots/1.png?raw=true "Screen 1")
+![Screen 1](screenshots/1.png?raw=true "Screen 1")
 
 
 
