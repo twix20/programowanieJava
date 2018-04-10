@@ -1,5 +1,6 @@
 package Lab5.GenClassificator.GUI;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -14,10 +15,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.bind.JAXBException;
 
 import Lab5.GenClassificator.Data.Database;
 import Lab5.GenClassificator.Data.SqliteDbContext;
 import Lab5.GenClassificator.Entities.Examined;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainFrame extends JFrame {
 
@@ -66,7 +71,7 @@ public class MainFrame extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(border);
-		panel.setBounds(10, 11, 505, 234);
+		panel.setBounds(10, 11, 505, 274);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -77,6 +82,20 @@ public class MainFrame extends JFrame {
 		tableExamined = new JTable();
 		tableExamined.setModel(new ExaminedTableModel(new ArrayList<Examined>()));
 		scrollPane.setViewportView(tableExamined);
+		
+		JButton btnNewButton = new JButton("Save To XML");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					db.dumpExaminedToXML("test.xml");
+				} catch (FileNotFoundException | JAXBException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		btnNewButton.setBounds(296, 234, 199, 23);
+		panel.add(btnNewButton);
 		
 		updateExaminedTable();
 	}
@@ -131,7 +150,6 @@ class ExaminedTableModel extends DefaultTableModel {
            }
            return null;
    }
-
 
 	public void setData(List<Examined> data) {
 		this.data = data;
