@@ -15,20 +15,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-
+import Lab5.GenClassificator.Data.Database;
 import Lab5.GenClassificator.Data.SqliteDbContext;
 import Lab5.GenClassificator.Entities.Examined;
 
 public class MainFrame extends JFrame {
 
-	private final String DB_NAME = "test.db";
+	private final String DB_PATH = "test.db";
 	
 	private JPanel contentPane;
 	private JTable tableExamined;
 	
-	private SqliteDbContext dbContext;
+	private Database db;
 
 	/**
 	 * Launch the application.
@@ -53,7 +51,7 @@ public class MainFrame extends JFrame {
 	 * @throws IOException 
 	 */
 	public MainFrame() throws IOException, SQLException, URISyntaxException {
-		dbContext = new SqliteDbContext(DB_NAME);
+		db = new Database(new SqliteDbContext(DB_PATH));
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 541, 393);
@@ -85,17 +83,11 @@ public class MainFrame extends JFrame {
 	
 	private void updateExaminedTable() throws SQLException, IOException {
 
-		List<Examined> allExamined = getDbContext().examinedDAO.queryForAll();
-		
+		List<Examined> allExamined = db.getAllExamined();
 		
 		ExaminedTableModel m = ((ExaminedTableModel)tableExamined.getModel());
 		m.setData(allExamined);
 		m.fireTableDataChanged();
-
-	}
-
-	public SqliteDbContext getDbContext() {
-		return dbContext;
 	}
 }
 

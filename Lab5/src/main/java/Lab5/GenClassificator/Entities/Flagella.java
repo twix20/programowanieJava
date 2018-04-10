@@ -1,18 +1,9 @@
 package Lab5.GenClassificator.Entities;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
-@DatabaseTable(tableName = "FLAGELLA")
 public class Flagella {
 	
-	@DatabaseField(columnName = "ALPHA", canBeNull = false)
 	private int alpha;
-	
-	@DatabaseField(columnName = "BETA", canBeNull = false)
 	private int beta;
-	
-	@DatabaseField(columnName = "NUMBER", canBeNull = false)
 	private int number;
 	
 	public int getAlpha() {

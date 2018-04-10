@@ -1,18 +1,9 @@
 package Lab5.GenClassificator.Entities;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
-@DatabaseTable(tableName = "TOUGHNESS")
 public class Toughness {
 	
-	@DatabaseField(columnName = "BETA", canBeNull = false)
 	private int beta;
-	
-	@DatabaseField(columnName = "GAMMA", canBeNull = false)
 	private int gamma;
-	
-	@DatabaseField(columnName = "RANK", canBeNull = false)
 	private char rank;
 	
 	public int getBeta() {
