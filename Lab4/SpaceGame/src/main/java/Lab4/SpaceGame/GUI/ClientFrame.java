@@ -19,7 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import Lab4.SpaceGame.Client.Client;
-import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CanHandleGameEvent;
 import Lab4.SpaceGame.Core.Player;
 import Lab4.SpaceGame.Core.Player.Role;

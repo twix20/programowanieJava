@@ -1,8 +1,6 @@
 package Lab4.SpaceGame.Core;
 
 import java.io.Serializable;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import Lab4.SpaceGame.Core.Player.Role;
 import Lab4.SpaceGame.Server.GameEvent;

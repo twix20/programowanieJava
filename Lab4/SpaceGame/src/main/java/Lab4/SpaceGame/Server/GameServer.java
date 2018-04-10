@@ -4,14 +4,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CaptainCommand;
 import Lab4.SpaceGame.Core.GameSession;
 import Lab4.SpaceGame.Core.Player;
-import Lab4.SpaceGame.Core.Utils;
-import Lab4.SpaceGame.Server.GameEvent.EventType;
 
 public class GameServer extends UnicastRemoteObject implements ServerRemote {
 	public static final String SERVER_LOOKUP = "//localhost/MyServer";

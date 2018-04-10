@@ -2,7 +2,6 @@ package Lab4.SpaceGame.Core;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +15,6 @@ import Lab4.SpaceGame.Core.CaptainCommands.LightsCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.OilLevelCommand;
 import Lab4.SpaceGame.Core.CaptainCommands.StearingWheelAngleCommand;
 import Lab4.SpaceGame.Server.GameEvent;
-import Lab4.SpaceGame.Server.PropertyEvent;
 import Lab4.SpaceGame.Server.GameEvent.EventType;
 
 public class GameSession implements Serializable {

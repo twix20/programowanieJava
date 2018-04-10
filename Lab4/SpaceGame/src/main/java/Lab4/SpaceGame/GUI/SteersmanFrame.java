@@ -1,20 +1,17 @@
 package Lab4.SpaceGame.GUI;
 
-import java.awt.*;
+import java.awt.EventQueue;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JFrame;
 
 import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CanHandleGameEvent;
-import Lab4.SpaceGame.Core.Utils;
 import Lab4.SpaceGame.GUI.Beans.PlayerPanelBean;
 import Lab4.SpaceGame.Server.GameEvent;
 import Lab4.SpaceGame.Server.ServerRemote;
-
-import java.beans.PropertyChangeListener;
-import java.rmi.RemoteException;
-import java.beans.PropertyChangeEvent;
 
 public class SteersmanFrame extends JFrame implements CanHandleGameEvent{
 

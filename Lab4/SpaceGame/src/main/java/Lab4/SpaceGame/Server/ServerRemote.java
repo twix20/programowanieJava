@@ -2,7 +2,6 @@ package Lab4.SpaceGame.Server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import Lab4.SpaceGame.Client.ClientRemote;
 import Lab4.SpaceGame.Core.CaptainCommand;

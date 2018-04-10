@@ -216,12 +216,6 @@ public class PlayerPanelBean extends JPanel {
 		this.txtAreaLog.append(msg + '\n');
 	}
 
-	private void entirePanelEnabled(JPanel p, boolean enabled) {
-		for (Component component : getComponents(p)) {
-			component.setEnabled(enabled);
-		}
-	}
-
 	private Component[] getComponents(Component container) {
 		ArrayList<Component> list = null;
 
