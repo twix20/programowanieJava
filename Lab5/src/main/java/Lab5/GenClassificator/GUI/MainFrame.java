@@ -15,6 +15,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+
 import Lab5.GenClassificator.Data.SqliteDbContext;
 import Lab5.GenClassificator.Entities.Examined;
 
@@ -23,7 +26,7 @@ public class MainFrame extends JFrame {
 	private final String DB_NAME = "test.db";
 	
 	private JPanel contentPane;
-	private JTable table;
+	private JTable tableExamined;
 	
 	private SqliteDbContext dbContext;
 
@@ -73,9 +76,22 @@ public class MainFrame extends JFrame {
 		scrollPane.setBounds(10, 21, 485, 202);
 		panel.add(scrollPane);
 		
-		table = new JTable();
-		table.setModel(new ExaminedTableModel(new ArrayList<Examined>()));
-		scrollPane.setViewportView(table);
+		tableExamined = new JTable();
+		tableExamined.setModel(new ExaminedTableModel(new ArrayList<Examined>()));
+		scrollPane.setViewportView(tableExamined);
+		
+		updateExaminedTable();
+	}
+	
+	private void updateExaminedTable() throws SQLException, IOException {
+
+		List<Examined> allExamined = getDbContext().examinedDAO.queryForAll();
+		
+		
+		ExaminedTableModel m = ((ExaminedTableModel)tableExamined.getModel());
+		m.setData(allExamined);
+		m.fireTableDataChanged();
+
 	}
 
 	public SqliteDbContext getDbContext() {
@@ -124,9 +140,6 @@ class ExaminedTableModel extends DefaultTableModel {
            return null;
    }
 
-	public List<Examined> getData() {
-		return data;
-	}
 
 	public void setData(List<Examined> data) {
 		this.data = data;
