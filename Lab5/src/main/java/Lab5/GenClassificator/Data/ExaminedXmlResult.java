@@ -6,11 +6,10 @@ import javax.xml.bind.annotation.*;
 import Lab5.GenClassificator.Entities.Examined;;
 
 
-@XmlRootElement
+@XmlRootElement(name="allExamined")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExaminedXmlResult {
 	
-	@XmlElementWrapper(name="allExamined")
 	@XmlElement(name="examined")
 	private List<Examined> allExamined;
 	
