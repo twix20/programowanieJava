@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,18 +22,29 @@ import javax.xml.bind.JAXBException;
 import Lab5.GenClassificator.Data.Database;
 import Lab5.GenClassificator.Data.SqliteDbContext;
 import Lab5.GenClassificator.Entities.Examined;
+import Lab5.GenClassificator.Entities.Genotype;
+import Lab5.KNearestNeighbours.NearestNeighbour;
+
 import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextArea;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import java.awt.Color;
 
 public class MainFrame extends JFrame {
 
 	private final String DB_PATH = "test.db";
-	
+
 	private JPanel contentPane;
 	private JTable tableExamined;
-	
+
 	private Database db;
+	private NearestNeighbour nnAlgorithm;
 
 	/**
 	 * Launch the application.
@@ -51,41 +64,46 @@ public class MainFrame extends JFrame {
 
 	/**
 	 * Create the frame.
-	 * @throws URISyntaxException 
-	 * @throws SQLException 
-	 * @throws IOException 
+	 * 
+	 * @throws URISyntaxException
+	 * @throws SQLException
+	 * @throws IOException
 	 */
 	public MainFrame() throws IOException, SQLException, URISyntaxException {
 		db = new Database(new SqliteDbContext(DB_PATH));
-		
+		nnAlgorithm = new NearestNeighbour(db.getAllFlagellas(), db.getAllToughnesses());
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 541, 393);
+		setBounds(100, 100, 488, 335);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		TitledBorder border = new TitledBorder("Examined");
-	    border.setTitleJustification(TitledBorder.LEFT);
-	    border.setTitlePosition(TitledBorder.TOP);
-		
+		border.setTitleJustification(TitledBorder.LEFT);
+		border.setTitlePosition(TitledBorder.TOP);
+
 		JPanel panel = new JPanel();
 		panel.setBorder(border);
-		panel.setBounds(10, 11, 505, 274);
+		panel.setBounds(10, 11, 242, 274);
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 21, 485, 202);
+		scrollPane.setBounds(10, 21, 222, 208);
 		panel.add(scrollPane);
-		
+
 		tableExamined = new JTable();
 		tableExamined.setModel(new ExaminedTableModel(new ArrayList<Examined>()));
 		scrollPane.setViewportView(tableExamined);
-		
+
 		JButton btnNewButton = new JButton("Save To XML");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+
+				String c = nnAlgorithm.classifyGenotype(new Genotype("123456"));
+
 				try {
 					db.dumpExaminedToXML("test.xml");
 				} catch (FileNotFoundException | JAXBException | SQLException e) {
@@ -94,17 +112,66 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
-		btnNewButton.setBounds(296, 234, 199, 23);
+		btnNewButton.setBounds(10, 240, 215, 23);
 		panel.add(btnNewButton);
-		
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "1-NN Algorithm",
+				TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBounds(262, 11, 199, 274);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(10, 50, 179, 179);
+		panel_1.add(scrollPane_1);
+
+		JTextArea textAreaToClassify = new JTextArea();
+		scrollPane_1.setViewportView(textAreaToClassify);
+
+		JLabel lblGenotypesToClassify = new JLabel("Genotypes to classify");
+		lblGenotypesToClassify.setBounds(10, 25, 171, 14);
+		panel_1.add(lblGenotypesToClassify);
+
+		JButton btnClassify = new JButton("Classify");
+		btnClassify.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				List<Genotype> genotypes = new ArrayList<>();
+				try {
+					genotypes = Arrays.stream(textAreaToClassify.getText().split("\\n"))
+							
+												.map(line -> new Genotype(line))
+												.collect(Collectors.toList());
+				} 
+				catch (IllegalArgumentException e) {
+					JOptionPane.showMessageDialog(panel, "One of the genotypes is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				textAreaToClassify.setText("");
+				
+				List<Examined> classified = genotypes.stream().map(g -> new Examined(g.getGenotype(), nnAlgorithm.classifyGenotype(g))).collect(Collectors.toList());
+				try {
+					db.addOrUpdateExamined(classified);
+					
+					updateExaminedTable();
+				} catch (SQLException | IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		btnClassify.setBounds(10, 240, 179, 23);
+		panel_1.add(btnClassify);
+
 		updateExaminedTable();
 	}
-	
+
 	private void updateExaminedTable() throws SQLException, IOException {
 
 		List<Examined> allExamined = db.getAllExamined();
-		
-		ExaminedTableModel m = ((ExaminedTableModel)tableExamined.getModel());
+
+		ExaminedTableModel m = ((ExaminedTableModel) tableExamined.getModel());
 		m.setData(allExamined);
 		m.fireTableDataChanged();
 	}
@@ -114,42 +181,42 @@ class ExaminedTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = 6555171111055993181L;
 
 	private String[] columnNames = { "Genotype", "Class" };
-	
+
 	private List<Examined> data;
-	
+
 	public ExaminedTableModel(List<Examined> data) {
 		this.setData(data);
 	}
-	
+
 	@Override
-    public String getColumnName(int columnIndex){
-         return columnNames[columnIndex];
-    }
+	public String getColumnName(int columnIndex) {
+		return columnNames[columnIndex];
+	}
 
-    @Override     
-    public int getRowCount() {
-    	if(data == null)
-    		return 0;
-    	
-        return data.size();
-    }
+	@Override
+	public int getRowCount() {
+		if (data == null)
+			return 0;
 
-    @Override        
-    public int getColumnCount() {
-        return columnNames.length; 
-    }
-    
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-    	Examined e = data.get(rowIndex);
-        switch (columnIndex) {
-            case 0: 
-                return e.getGenotype();
-            case 1:
-                return e.getClazz();
-           }
-           return null;
-   }
+		return data.size();
+	}
+
+	@Override
+	public int getColumnCount() {
+		return columnNames.length;
+	}
+
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		Examined e = data.get(rowIndex);
+		switch (columnIndex) {
+		case 0:
+			return e.getGenotype();
+		case 1:
+			return e.getClazz();
+		}
+		return null;
+	}
 
 	public void setData(List<Examined> data) {
 		this.data = data;

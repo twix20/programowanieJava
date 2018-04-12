@@ -5,8 +5,14 @@ import javax.xml.bind.annotation.XmlElement;
 public class Examined {
 	
 	private String genotype;
-	
 	private String clazz;
+	
+	public Examined() { }
+
+	public Examined(String genotype, String clazz) {
+		this.genotype = genotype;
+		this.clazz = clazz;
+	}
 	
 	public String getGenotype() {
 		return genotype;

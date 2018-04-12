@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,6 +20,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import Lab5.GenClassificator.Entities.Examined;
+import Lab5.GenClassificator.Entities.Flagella;
+import Lab5.GenClassificator.Entities.Toughness;
 
 public class Database {
 
@@ -42,6 +45,7 @@ public class Database {
 
 			while (rs.next()) {
 				Examined entity = new Examined();
+				
 				entity.setClazz(rs.getString("CLASS"));
 				entity.setGenotype(rs.getString("GENOTYPE"));
 
@@ -51,6 +55,76 @@ public class Database {
 
 		return result;
 	}
+	
+	public List<Flagella> getAllFlagellas() throws SQLException{
+		List<Flagella> result = new ArrayList<>();
+
+		context.runInTransaction(conn -> {
+			String sql = "SELECT * FROM `FLAGELLA`";
+
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+				Flagella entity = new Flagella();
+				
+				entity.setAlpha(rs.getInt("ALPHA"));
+				entity.setBeta(rs.getInt("BETA"));
+				entity.setNumber(rs.getInt("NUMBER"));
+
+				result.add(entity);
+			}
+		});
+
+		return result;
+	}
+	
+	public List<Toughness> getAllToughnesses() throws SQLException{
+		List<Toughness> result = new ArrayList<>();
+
+		context.runInTransaction(conn -> {
+			String sql = "SELECT * FROM `TOUGHNESS`";
+
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+				Toughness entity = new Toughness();
+				
+				entity.setBeta(rs.getInt("BETA"));
+				entity.setGamma(rs.getInt("GAMMA"));
+				entity.setRank(rs.getString("RANK").charAt(0));
+
+				result.add(entity);
+			}
+		});
+
+		return result;
+	}
+	
+	public void addOrUpdateExamined(List<Examined> examined) throws SQLException {
+		
+		String deleteSql = "DELETE FROM `EXAMINED` WHERE GENOTYPE = (?)";
+		String insertSql = "INSERT INTO `EXAMINED` VALUES (?, ?)";
+		
+		context.runInTransaction(conn -> {
+			PreparedStatement dpstm = conn.prepareStatement(deleteSql);
+			PreparedStatement ipstm = conn.prepareStatement(insertSql);
+			
+			for(Examined e : examined) {
+				dpstm.setString(1, e.getGenotype());
+				dpstm.addBatch();
+				
+				ipstm.setString(1, e.getGenotype());
+				ipstm.setString(2, e.getClazz());
+				ipstm.addBatch();
+			}
+			
+			dpstm.executeBatch();
+			ipstm.executeBatch();
+		});
+	}
+	
 	
 	public void dumpExaminedToXML(String path) throws JAXBException, SQLException, FileNotFoundException {
 		JAXBContext jc = JAXBContext.newInstance(ExaminedXmlResult.class);

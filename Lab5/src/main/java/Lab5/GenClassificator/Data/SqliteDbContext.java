@@ -51,6 +51,7 @@ public class SqliteDbContext {
 			c.accept(connection);
 			
 			connection.commit(); //transaction block end
+			connection.setAutoCommit(true);
 		}
 		catch(SQLException ex) {
 			connection.rollback();
