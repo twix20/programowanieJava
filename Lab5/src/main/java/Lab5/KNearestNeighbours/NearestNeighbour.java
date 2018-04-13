@@ -1,6 +1,7 @@
 package Lab5.KNearestNeighbours;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -51,21 +52,25 @@ public class NearestNeighbour {
 		return r.getData().getRank();
 	}
 
-	private <T, TR extends Integer> DistanceResult<T> euclideanDistanceResult(TR p, TR q, List<T> flagellas,
+	private <T, TR extends Integer> DistanceResult<T> euclideanDistanceResult(TR p, TR q, List<T> dataSet,
 			Function<T, TR> getP, Function<T, TR> getQ) {
 
 		List<DistanceResult<T>> results = new ArrayList<>();
-		for (T f : flagellas) {
+		for (T f : dataSet) {
 
 			double dist = Math.sqrt(Math.pow(getP.apply(f) - p, 2) + Math.pow(getQ.apply(f) - q, 2));
 			results.add(new DistanceResult<T>(f, dist));
 		}
-
-		results.sort((r1, r2) -> {
-			return r1.getDistance() > r2.getDistance() ? 1 : -1;
-		});
-
-		return results.get(0);
+		
+		//1-NN
+		DistanceResult<T> min = results.stream().min(Comparator.comparingDouble(r -> r.getDistance())).get();
+		return min;
+		
+		//k-NN
+		//results.sort((r1, r2) -> {
+		//	return r1.getDistance() > r2.getDistance() ? 1 : -1;
+		//});
+		//return results.get(0);
 	}
 
 }
@@ -78,10 +83,6 @@ class DistanceResult<T> {
 	public DistanceResult(T data, double distance) {
 		this.data = data;
 		this.distance = distance;
-	}
-
-	public boolean compareTo(DistanceResult o) {
-		return distance > o.distance;
 	}
 
 	public T getData() {

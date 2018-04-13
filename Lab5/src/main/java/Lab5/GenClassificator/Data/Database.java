@@ -135,10 +135,10 @@ public class Database {
 		
         Marshaller marshaller = jc.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(result, System.out);
         
-        //OutputStream os = new FileOutputStream(path);
-        //marshaller.marshal(result, os);
+        OutputStream os = new FileOutputStream(path);
+        marshaller.marshal(result, os);
+        //marshaller.marshal(result, System.out);
 	}
 
 	private void ensureDatabaseExist() throws IOException, SQLException, URISyntaxException {

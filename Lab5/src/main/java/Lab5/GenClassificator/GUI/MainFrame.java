@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import java.awt.Color;
+import javax.swing.JTextField;
 
 public class MainFrame extends JFrame {
 
@@ -45,6 +46,7 @@ public class MainFrame extends JFrame {
 
 	private Database db;
 	private NearestNeighbour nnAlgorithm;
+	private JTextField txtDbName;
 
 	/**
 	 * Launch the application.
@@ -70,11 +72,8 @@ public class MainFrame extends JFrame {
 	 * @throws IOException
 	 */
 	public MainFrame() throws IOException, SQLException, URISyntaxException {
-		db = new Database(new SqliteDbContext(DB_PATH));
-		nnAlgorithm = new NearestNeighbour(db.getAllFlagellas(), db.getAllToughnesses());
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 488, 335);
+		setBounds(100, 100, 488, 367);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -101,9 +100,8 @@ public class MainFrame extends JFrame {
 		JButton btnNewButton = new JButton("Save To XML");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
-				String c = nnAlgorithm.classifyGenotype(new Genotype("123456"));
-
+				if(db == null) return;
+				
 				try {
 					db.dumpExaminedToXML("test.xml");
 				} catch (FileNotFoundException | JAXBException | SQLException e) {
@@ -136,6 +134,8 @@ public class MainFrame extends JFrame {
 		JButton btnClassify = new JButton("Classify");
 		btnClassify.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(db == null) return;
+				
 				List<Genotype> genotypes = new ArrayList<>();
 				try {
 					genotypes = Arrays.stream(textAreaToClassify.getText().split("\\n"))
@@ -163,8 +163,28 @@ public class MainFrame extends JFrame {
 		});
 		btnClassify.setBounds(10, 240, 179, 23);
 		panel_1.add(btnClassify);
-
-		updateExaminedTable();
+		
+		txtDbName = new JTextField();
+		txtDbName.setText("test.db");
+		txtDbName.setBounds(20, 297, 117, 20);
+		contentPane.add(txtDbName);
+		txtDbName.setColumns(10);
+		
+		JButton btnConnectToDb = new JButton("Connect to Database");
+		btnConnectToDb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					db = new Database(new SqliteDbContext(DB_PATH));
+					nnAlgorithm = new NearestNeighbour(db.getAllFlagellas(), db.getAllToughnesses());
+					
+					updateExaminedTable();
+				} catch (IOException | SQLException | URISyntaxException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		btnConnectToDb.setBounds(147, 296, 159, 23);
+		contentPane.add(btnConnectToDb);
 	}
 
 	private void updateExaminedTable() throws SQLException, IOException {
