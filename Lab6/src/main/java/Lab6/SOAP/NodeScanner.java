@@ -2,6 +2,7 @@ package Lab6.SOAP;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import javax.xml.namespace.QName;
@@ -18,11 +19,8 @@ public class NodeScanner {
 		_maxPort = maxPort;
 	}
 
-	public NodeServiceWs findNextNodeService(String remoteFormat, int startPort) throws UnknownHostException {
+	public NodeServiceWs findNextNodeService(String remoteFormat, int startPort) {
 
-		startPort += 1;
-		// TODO FIX
-		NodeServiceWs r = null;
 		for (int portOffset = 0; portOffset < (_maxPort - _minPort); portOffset++) {
 			int port = _minPort + ((startPort + portOffset) % ((_maxPort - _minPort))) % _maxPort;
 			try {
@@ -30,13 +28,11 @@ public class NodeScanner {
 				
 				Socket s = new Socket();
 				s.connect(new InetSocketAddress(new URL(url).getHost(), port), 10);
-				
 				s.close();
 
-
 				Service service = Service.create(new URL(url + "?wsdl"), new QName("http://superbiz.org/wsdl", "NodeService"));
-				r = service.getPort(NodeServiceWs.class);
-				break;
+				NodeServiceWs r = service.getPort(NodeServiceWs.class);
+				return r;
 
 			} catch (WebServiceException | IOException ex) {
 				// ex.printStackTrace();
@@ -44,12 +40,41 @@ public class NodeScanner {
 			}
 		}
 
-		return r;
+		return null;
+	}
+	
+	public List<NodeServiceWs> findAllNodeServices(String remoteFormat){
+		List<NodeServiceWs> allNodes = new ArrayList<>();
+		
+		for (int port = _minPort; port < _maxPort; port++) {
+			try {
+				
+				String url = String.format(remoteFormat, port);
+				
+				Socket s = new Socket();
+				s.connect(new InetSocketAddress(new URL(url).getHost(), port), 10);
+				
+				s.close();
+				
+				Service service = Service.create(new URL(url + "?wsdl"), new QName("http://superbiz.org/wsdl", "NodeService"));
+				NodeServiceWs r = service.getPort(NodeServiceWs.class);
+				allNodes.add(r);
+
+				/*
+				String url = String.format(remoteFormat, port);
+				 * 
+				 * Service calculatorService = Service.create( new URL(url+"?wsdl"), new
+				 * QName("http://superbiz.org/wsdl", "NodeService"));
+				 */
+
+			} catch (WebServiceException | IOException ex) {
+			}
+		}
+		
+		return allNodes;
 	}
 
 	public Integer findNextFreePort(String host) {
-
-	
 		
 		for (int port = _minPort; port < _maxPort; port++) {
 			try {

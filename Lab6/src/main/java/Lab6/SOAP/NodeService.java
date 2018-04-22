@@ -21,8 +21,8 @@ public class NodeService implements NodeServiceWs {
 	private int port;
 	private NodeGUI nodeGui;
 
-	public NodeService(NodeGUI nodeGui, String url, int port) {
-		this.url = url;
+	public NodeService(NodeGUI nodeGui, String urlFormat, int port) {
+		this.url = String.format(urlFormat, port);
 		this.port = port;
 		this.nodeGui = nodeGui;
 	}

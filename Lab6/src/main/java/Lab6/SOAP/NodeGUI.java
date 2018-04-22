@@ -1,26 +1,25 @@
 package Lab6.SOAP;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.xml.ws.Endpoint;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.awt.event.ActionEvent;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.xml.ws.Endpoint;
 
 public class NodeGUI extends JFrame {
 	
-	static final String LAYER_URL = "http://localhost:%d/imqSOAPexamples/SOAPEchoServlet";
+	static final String LAYER_URL = "http://localhost:%d/SOAPRing";
 
 	private JPanel contentPane;
 	private JTextField txtEndpointUrl;
@@ -53,7 +52,7 @@ public class NodeGUI extends JFrame {
 	 */
 	public NodeGUI() throws MalformedURLException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 607, 387);
+		setBounds(100, 100, 607, 421);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -97,21 +96,39 @@ public class NodeGUI extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String msg = txtMsg.getText().trim();
 				
-				try {
-					NodeServiceWs running = scanner.findNextNodeService(LAYER_URL, nodeService.getPort());
-					
-					AddLogMsg("Sending to " + running.getUrl() + " Message " + msg);
+				NodeServiceWs running = scanner.findNextNodeService(LAYER_URL, nodeService.getPort() + 1);
+				
+				AddLogMsg("Sending to " + running.getUrl() + " Message " + msg);
 
-					running.handleMessage(msg);
-				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    	
+				running.handleMessage(msg);
 			}
 		});
 		btnSendToNextNode.setBounds(309, 316, 260, 23);
 		contentPane.add(btnSendToNextNode);
+		
+		JButton btnSendToAllNodes = new JButton("Send To All Nodes");
+		btnSendToAllNodes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String msg = txtMsg.getText().trim();
+				
+				List<NodeServiceWs> allRunning = scanner.findAllNodeServices(LAYER_URL);
+				
+				//Remove self
+				allRunning.removeIf(n -> n.getUrl().equals(nodeService.getUrl()));
+				
+				for(NodeServiceWs n : allRunning)
+				{
+					
+					AddLogMsg("Sending to " + n.getUrl() + " Message " + msg);
+
+					n.handleMessage(msg);
+				}
+				
+			}
+		});
+		btnSendToAllNodes.setBounds(309, 348, 260, 23);
+		contentPane.add(btnSendToAllNodes);
 		
 		init();
 	}
