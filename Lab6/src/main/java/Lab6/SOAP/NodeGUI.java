@@ -140,7 +140,7 @@ public class NodeGUI extends JFrame {
 	}
 	
 	private void init() throws MalformedURLException {
-		scanner = new NodeScanner(100, 105);
+		scanner = new NodeScanner(3100, 3105);
 		
 		URL u = new URL(String.format(LAYER_URL_FORMAT, 80));
 		
