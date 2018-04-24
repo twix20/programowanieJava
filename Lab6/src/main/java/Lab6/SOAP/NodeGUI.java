@@ -3,23 +3,20 @@ package Lab6.SOAP;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.xml.messaging.URLEndpoint;
+import javax.xml.soap.*;
 import javax.xml.ws.Endpoint;
 
 public class NodeGUI extends JFrame {
 	
-	static final String LAYER_URL = "http://localhost:%d/SOAPRing";
+	static final String LAYER_URL_FORMAT = "http://localhost:%d/SOAPRing";
 
 	private JPanel contentPane;
 	private JTextField txtEndpointUrl;
@@ -96,11 +93,20 @@ public class NodeGUI extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String msg = txtMsg.getText().trim();
 				
-				NodeServiceWs running = scanner.findNextNodeService(LAYER_URL, nodeService.getPort() + 1);
-				
-				AddLogMsg("Sending to " + running.getUrl() + " Message " + msg);
+				NodeServiceWs running = scanner.findNextNodeService(LAYER_URL_FORMAT, nodeService.getPort() + 1);
+				//AddLogMsg("Sending to " + running.getUrl() + " Message " + msg)
+				//running.handleMessage(msg);
 
-				running.handleMessage(msg);
+				try {
+					SOAPMessage soapMsg = createSoapMessage(running.getUrl(), msg);
+					callEndpoint(running.getUrl(), soapMsg);
+					
+				} catch (SOAPException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
 			}
 		});
 		btnSendToNextNode.setBounds(309, 316, 260, 23);
@@ -112,7 +118,7 @@ public class NodeGUI extends JFrame {
 				
 				String msg = txtMsg.getText().trim();
 				
-				List<NodeServiceWs> allRunning = scanner.findAllNodeServices(LAYER_URL);
+				List<NodeServiceWs> allRunning = scanner.findAllNodeServices(LAYER_URL_FORMAT);
 				
 				//Remove self
 				allRunning.removeIf(n -> n.getUrl().equals(nodeService.getUrl()));
@@ -136,12 +142,12 @@ public class NodeGUI extends JFrame {
 	private void init() throws MalformedURLException {
 		scanner = new NodeScanner(100, 105);
 		
-		URL u = new URL(String.format(LAYER_URL, 80));
+		URL u = new URL(String.format(LAYER_URL_FORMAT, 80));
 		
 
 		int freePort = scanner.findNextFreePort(u.getHost());
 		
-		nodeService = new NodeService(this, String.format(LAYER_URL, freePort), freePort);
+		nodeService = new NodeService(this, String.format(LAYER_URL_FORMAT, freePort), freePort);
 		Endpoint.publish(nodeService.getUrl(), nodeService);
 		
 		this.txtEndpointUrl.setText(nodeService.getUrl());
@@ -152,5 +158,61 @@ public class NodeGUI extends JFrame {
 	
 	public void AddLogMsg(String msg) {
 		this.txtAreaLog.append(msg + '\n');
+	}
+	
+	private SOAPMessage createSoapMessage(String targetUrl, String msg) throws SOAPException, IOException {
+		
+        String myNamespace = "myNamespace";
+        String myNamespaceURI = "http://superbiz.org/wsdl";
+		
+		 //Construct a default SOAP message factory.
+        MessageFactory mf = MessageFactory.newInstance();
+
+         //Create a SOAP message object.
+        SOAPMessage soapMessage = mf.createMessage();
+
+         //Get SOAP part.
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        
+         //Get SOAP envelope.
+        SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
+        soapEnvelope.addNamespaceDeclaration(myNamespace, myNamespaceURI);
+        
+        // Get SOAP header.
+        SOAPHeader header = soapEnvelope.getHeader();
+        
+        SOAPElement headerTargetElement = header.addChildElement("TargetUrl", myNamespace, myNamespaceURI);
+        SOAPElement soapHeaderElem1 = headerTargetElement.addChildElement("Url");
+        soapHeaderElem1.addTextNode(targetUrl);
+
+        // Get SOAP body.
+        SOAPBody soapBody = soapEnvelope.getBody();
+
+        SOAPElement element = soapBody.addChildElement("handleMessage", myNamespace, myNamespaceURI);
+        SOAPElement soapBodyElem1 = element.addChildElement("msg");
+        soapBodyElem1.addTextNode(msg);
+
+        soapMessage.saveChanges();
+       
+        return soapMessage;
+	}
+	
+	private SOAPMessage callEndpoint(String targetUrl, SOAPMessage soapMessage) throws SOAPException, IOException {
+        SOAPConnectionFactory connectionFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection soapConnection = connectionFactory.createConnection();
+
+        URLEndpoint endpoint = new URLEndpoint (targetUrl);
+        
+        System.out.println("Sending SOAP message");
+        soapMessage.writeTo(System.out);
+        
+        SOAPMessage resp = soapConnection.call(soapMessage, endpoint);
+ 
+        System.out.println("\nSOAP message response");
+        resp.writeTo(System.out);
+
+        soapConnection.close();
+        
+        return resp;
 	}
 }

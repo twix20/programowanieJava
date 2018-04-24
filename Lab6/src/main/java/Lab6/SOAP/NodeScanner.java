@@ -3,7 +3,6 @@ package Lab6.SOAP;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
-import java.util.stream.IntStream;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
