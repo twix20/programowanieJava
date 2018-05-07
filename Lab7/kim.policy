@@ -1,0 +1,17 @@
+keystore "kim.keystore";
+
+grant {
+  permission java.util.PropertyPermission "user.dir", "read";
+  permission java.security.AllPermission;
+
+  permission Lab7 "*", signedBy "chris";
+};
+
+
+grant {
+  permission java.util.PropertyPermission "user.dir", "read";
+  permission java.security.AllPermission;
+
+  permission Lab7 "*", signedBy "chris";
+};
+
