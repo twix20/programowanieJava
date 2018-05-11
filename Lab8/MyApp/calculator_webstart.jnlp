@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" href="calculator_webstart.jnlp">
+    <information>
+        <title>JavaWS Simple Calculator</title>
+        <vendor>Calculator</vendor>
+    </information>
+    <resources>
+        <!-- Application Resources -->
+        <j2se version="1.7+" href="http://java.sun.com/products/autodl/j2se" />
+        <jar href="Calculator.jar" main="true" />
+    </resources>
+    <application-desc name="JavaWS Simple Calculator" main-class="Lab8.CalculatorJNLP.App"></application-desc>
+    <update check="background" />
+
+    <security>
+        <all-permissions/>
+    </security> 
+</jnlp>
