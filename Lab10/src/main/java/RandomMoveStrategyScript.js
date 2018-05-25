@@ -1,7 +1,6 @@
-function randomMoveStrategy(board) {
+function randomMoveStrategy(currentPlayer, board) {
 	
 	var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
-
 
 	var boardSize = board.getSize();
 	

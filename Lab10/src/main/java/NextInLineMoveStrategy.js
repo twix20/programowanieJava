@@ -1,4 +1,4 @@
-function nextInLineMoveStrategy(board) {
+function nextInLineMoveStrategy(currentPlayer, board) {
 	
 	var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
 
@@ -6,8 +6,8 @@ function nextInLineMoveStrategy(board) {
 	for(var i = 0; i < boardSize; i++){
 		for(var j = 0; j < boardSize; j++){
 
-			var x = j;
-			var y = i;
+			var x = i;
+			var y = j;
 
 			var isTaken = board.isFieldTaken(x, y);
 			if(!isTaken)

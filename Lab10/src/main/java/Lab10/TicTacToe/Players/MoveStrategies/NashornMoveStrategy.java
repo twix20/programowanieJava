@@ -8,6 +8,7 @@ import javax.script.ScriptException;
 
 import Lab10.TicTacToe.Core.Board;
 import Lab10.TicTacToe.Core.BoardPosition;
+import Lab10.TicTacToe.Core.Player;
 import Lab10.TicTacToe.Nashorn.NashornHelper;
 import Lab10.TicTacToe.Players.MoveStrategy;
 
@@ -21,12 +22,12 @@ public abstract class NashornMoveStrategy implements MoveStrategy{
 	}
 
 	@Override
-	public BoardPosition getNextBoardPositionToMark(Board board) {
+	public BoardPosition getNextBoardPositionToMark(Player currentPlayer, Board board) {
 		try {
 						
 			NashornHelper.engine.eval(new FileReader(scriptPath));
 			Invocable invocable = (Invocable)NashornHelper.engine;
-			BoardPosition result = (BoardPosition)invocable.invokeFunction(funcName, board);
+			BoardPosition result = (BoardPosition)invocable.invokeFunction(funcName, currentPlayer, board);
 			
 			return result;
 		} catch (NoSuchMethodException | ScriptException | FileNotFoundException e) {

@@ -1,6 +1,6 @@
 package Lab10.TicTacToe;
 
-import Lab10.TicTacToe.GUI.MainFrame;
+import Lab10.TicTacToe.GUI.MenuFrame;
 
 /**
  * Hello world!
@@ -13,6 +13,6 @@ public class App
 	 */
 	public static void main(String[] args)
 	{
-		MainFrame.main(args);
+		MenuFrame.main(args);
 	}
 }
