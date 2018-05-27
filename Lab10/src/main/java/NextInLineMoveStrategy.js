@@ -1,4 +1,4 @@
-function nextInLineMoveStrategy(currentPlayer, board) {
+function nextInLineMoveStrategy(currentPlayer, enemyPlayer, board) {
 	
 	var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
 

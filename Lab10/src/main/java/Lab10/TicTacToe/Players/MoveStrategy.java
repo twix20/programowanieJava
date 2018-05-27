@@ -6,7 +6,7 @@ import Lab10.TicTacToe.Core.Player;
 
 public interface MoveStrategy {
 	
-	public BoardPosition getNextBoardPositionToMark(Player currentPlayer, Board board);
+	public BoardPosition getNextBoardPositionToMark(Player currentPlayer, Player enemyPlayer, Board board);
 	
 	public String getName();
 

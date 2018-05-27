@@ -24,6 +24,7 @@ public class MenuFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JSpinner spinnerBoardSize;
+	private JSpinner spinnerToWinInARow;
 
 	/**
 	 * Launch the application.
@@ -82,16 +83,26 @@ public class MenuFrame extends JFrame {
 		contentPane.add(lblBoardSize);
 		
 		spinnerBoardSize = new JSpinner();
-		spinnerBoardSize.setModel(new SpinnerNumberModel(5, 5, 25, 1));
-		spinnerBoardSize.setBounds(80, 124, 29, 20);
+		spinnerBoardSize.setModel(new SpinnerNumberModel(3, 3, 25, 1));
+		spinnerBoardSize.setBounds(114, 124, 29, 20);
 		contentPane.add(spinnerBoardSize);
+		
+		JLabel lblToWinIn = new JLabel("To win in a row");
+		lblToWinIn.setBounds(10, 87, 99, 14);
+		contentPane.add(lblToWinIn);
+		
+		spinnerToWinInARow = new JSpinner();
+		spinnerToWinInARow.setModel(new SpinnerNumberModel(3, 3, 5, 1));
+		spinnerToWinInARow.setBounds(114, 84, 29, 20);
+		contentPane.add(spinnerToWinInARow);
 	}
 	
 	private void StartGameFrame(Player... players) {
 		
 		int boardSize = (int)spinnerBoardSize.getValue();
+		int toWinInARow = (int)spinnerToWinInARow.getValue();
 		
-		GameFrame gameFrame = new GameFrame(boardSize, players);
+		GameFrame gameFrame = new GameFrame(boardSize, toWinInARow, players);
 		gameFrame.frmTicTacToe.pack();
 		gameFrame.frmTicTacToe.setVisible(true);
 		

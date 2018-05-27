@@ -4,6 +4,7 @@ import Lab10.TicTacToe.Core.Board;
 import Lab10.TicTacToe.Core.BoardPosition;
 import Lab10.TicTacToe.Core.Player;
 import Lab10.TicTacToe.Core.TicTacToeValue;
+import Lab10.TicTacToe.Players.MoveStrategies.MinMaxMoveStrategy;
 import Lab10.TicTacToe.Players.MoveStrategies.RandomMoveStrategy;
 
 public class AiPlayer extends Player {
@@ -13,7 +14,8 @@ public class AiPlayer extends Player {
 	public AiPlayer(String name, TicTacToeValue value) {
 		super(name, value);
 		
-		setMoveStrategy(new RandomMoveStrategy());
+		//setMoveStrategy(new RandomMoveStrategy());
+		setMoveStrategy(new MinMaxMoveStrategy());
 	}
 	
 	public void setMoveStrategy(MoveStrategy strategy) {
@@ -25,7 +27,7 @@ public class AiPlayer extends Player {
 	}
 
 
-	public BoardPosition getNextBoardPositionToMark(Board board) {
-		return strategy.getNextBoardPositionToMark(this, board);
+	public BoardPosition getNextBoardPositionToMark(Player enemyPlayer, Board board) {
+		return strategy.getNextBoardPositionToMark(this, enemyPlayer, board);
 	}
 }

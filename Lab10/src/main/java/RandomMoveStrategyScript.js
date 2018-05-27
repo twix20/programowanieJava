@@ -1,4 +1,4 @@
-function randomMoveStrategy(currentPlayer, board) {
+function randomMoveStrategy(currentPlayer, enemyPlayer, board) {
 	
 	var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
 

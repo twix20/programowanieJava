@@ -1,4 +1,4 @@
-function findTicTacToeValueMarkNextFieldStrategy(currentPlayer, board) {
+function findTicTacToeValueMarkNextFieldStrategy(currentPlayer, enemyPlayer, board) {
 
 	var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
 

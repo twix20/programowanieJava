@@ -10,6 +10,7 @@ import Lab10.TicTacToe.Core.GameSession;
 import Lab10.TicTacToe.Core.Player;
 import Lab10.TicTacToe.Players.AiPlayer;
 import Lab10.TicTacToe.Players.MoveStrategies.FindTicTacToeValueMarkNextFieldStrategy;
+import Lab10.TicTacToe.Players.MoveStrategies.MinMaxMoveStrategy;
 import Lab10.TicTacToe.Players.MoveStrategies.NextInLineMoveStrategy;
 import Lab10.TicTacToe.Players.MoveStrategies.RandomMoveStrategy;
 import Lab10.TicTacToe.Utils.Utils;
@@ -84,7 +85,7 @@ public class GameStatePanel extends JPanel {
 		JButton btnMedium = new JButton("Medium");
 		btnMedium.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				game.changeAiStrategies(new FindTicTacToeValueMarkNextFieldStrategy());
+				game.changeAiStrategies(new RandomMoveStrategy());
 			}
 		});
 		btnMedium.setBounds(10, 199, 161, 23);
@@ -93,7 +94,7 @@ public class GameStatePanel extends JPanel {
 		JButton btnHard = new JButton("Hard");
 		btnHard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				game.changeAiStrategies(new RandomMoveStrategy());
+				game.changeAiStrategies(new MinMaxMoveStrategy());
 			}
 		});
 		btnHard.setBounds(10, 233, 161, 23);

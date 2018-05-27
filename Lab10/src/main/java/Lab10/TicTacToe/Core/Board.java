@@ -7,13 +7,15 @@ import Lab10.TicTacToe.Utils.Utils;
 
 public class Board {
 	
-	public static final int SAME_TIC_TAC_TOE_VALUE_WINNER_LENGTH = 5;
+	public int SAME_TIC_TAC_TOE_VALUE_WINNER_LENGTH;
 	
 	private int size;
 	private BoardPosition[][] positions;
 	
-	public Board(int size) {
+	public Board(int size, int toWinInARow) {
 		this.size = size;
+		this.SAME_TIC_TAC_TOE_VALUE_WINNER_LENGTH = toWinInARow;
+		
 		positions = new BoardPosition[this.size][this.size];
 		
 		restartBoard();

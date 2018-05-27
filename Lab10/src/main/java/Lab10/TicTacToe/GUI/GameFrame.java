@@ -41,7 +41,7 @@ public class GameFrame {
 					Player player1 = new HumanPlayer("A", TicTacToeValue.X);
 					AiPlayer player2 = new AiPlayer("B", TicTacToeValue.O);
 					
-					GameFrame window = new GameFrame(5, player1, player2);
+					GameFrame window = new GameFrame(5, 5, player1, player2);
 					window.frmTicTacToe.setSize(1200, 500);
 					window.frmTicTacToe.setVisible(true);
 				} catch (Exception e) {
@@ -54,8 +54,8 @@ public class GameFrame {
 	/**
 	 * Create the application.
 	 */
-	public GameFrame(int boardSize, Player... players) {
-		game = new GameSession(boardSize);
+	public GameFrame(int boardSize, int toWinInARow, Player... players) {
+		game = new GameSession(boardSize, toWinInARow);
 		
 		initialize(players);
 	}

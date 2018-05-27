@@ -22,12 +22,12 @@ public abstract class NashornMoveStrategy implements MoveStrategy{
 	}
 
 	@Override
-	public BoardPosition getNextBoardPositionToMark(Player currentPlayer, Board board) {
+	public BoardPosition getNextBoardPositionToMark(Player currentPlayer, Player enemyPlayer, Board board) {
 		try {
 						
 			NashornHelper.engine.eval(new FileReader(scriptPath));
 			Invocable invocable = (Invocable)NashornHelper.engine;
-			BoardPosition result = (BoardPosition)invocable.invokeFunction(funcName, currentPlayer, board);
+			BoardPosition result = (BoardPosition)invocable.invokeFunction(funcName, currentPlayer, enemyPlayer, board);
 			
 			return result;
 		} catch (NoSuchMethodException | ScriptException | FileNotFoundException e) {

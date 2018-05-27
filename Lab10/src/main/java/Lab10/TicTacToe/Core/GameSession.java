@@ -19,9 +19,9 @@ public class GameSession {
 	
 	private int currentPlayerIndex;
 	
-	public GameSession(int boardSize)
+	public GameSession(int boardSize, int toWinInARow)
 	{
-		this.board = new Board(boardSize);
+		this.board = new Board(boardSize, toWinInARow);
 		gameEventListenerList = new EventListenerList();
 	}
 	
@@ -36,6 +36,7 @@ public class GameSession {
 		
 		fireGameEvent(new GameEvent(GameEventType.GameStarted, this.players));
 		
+		currentPlayerIndex = 1;
 		changeTurn();
 	}
 	
@@ -78,6 +79,8 @@ public class GameSession {
 	
 	private void softGameRestart() {
 		board.restartBoard();
+		changeTurn();
+		
 		fireGameEvent(new GameEvent(GameEventType.GameStarted, this.players));
 	}
 	
@@ -88,7 +91,7 @@ public class GameSession {
 		//If AI player next, mark field
 		if(getCurrentPlayer().getClass() == AiPlayer.class) {
 			AiPlayer aiPlayer = (AiPlayer)getCurrentPlayer();
-			BoardPosition nextMove = aiPlayer.getNextBoardPositionToMark(board);
+			BoardPosition nextMove = aiPlayer.getNextBoardPositionToMark(getEnemyPlayer(), board);
 			
 			selectField(nextMove.getX(), nextMove.getY());
 		}
