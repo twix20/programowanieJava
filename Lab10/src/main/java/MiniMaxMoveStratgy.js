@@ -1,81 +1,46 @@
-var board = new Array();
-var BOARD_SIZE_SQRT;
-var BOARD_SIZE;
-var UNOCCUPIED;
-var HUMAN_PLAYER;
-var COMPUTER_PLAYER;
-var active_turn;
+
+var choice;
+var boardSize;
 var aiPlayer;
 var humanPlayer;
-var choice;
+var active_turn;
 
-var BoardType = Java.type('Lab10.TicTacToe.Core.Board');
-var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
-var intType = Java.type("int");
 
-var toWinInARow;
-
-function minimaxMoveStrategy(currentPlayer, enemyPlayer, boardJava) {
-    BOARD_SIZE_SQRT = boardJava.getSize();
-	BOARD_SIZE = BOARD_SIZE_SQRT * BOARD_SIZE_SQRT;
-	aiPlayer = currentPlayer;
-	humanPlayer = enemyPlayer;
-
-    toWinInARow = boardJava.SAME_TIC_TAC_TOE_VALUE_WINNER_LENGTH;
-
-    HUMAN_PLAYER = humanPlayer.getValue();
-    COMPUTER_PLAYER = aiPlayer.getValue();
-    UNOCCUPIED = null;
-
-    //prepare
-    for (var i = 0; i < BOARD_SIZE; i++)
-    {
-        var x = i % BOARD_SIZE_SQRT;
-        var y = Math.floor(i / BOARD_SIZE_SQRT);
-
-        var pos = boardJava.getPos(x, y);
-        board[i] = pos.getValue();
-    }
-
-    active_turn = "COMPUTER";
+function minimaxMoveStrategy(currentPlayer, enemyPlayer, board) {
+    boardSize = board.getSize();
+    aiPlayer = currentPlayer;
+    humanPlayer = enemyPlayer;
+    active_turn = "AI";
     choice = null;
 
-	minimax(board, 0);
+    var BoardPosition = Java.type('Lab10.TicTacToe.Core.BoardPosition');
 
-    print(choice);
+    minimax(board, 0);
 
-	return intToBoardPosition(choice);
+    return choice;
 }
 
-function score(game, depth) {
-    var score = CheckForWinner(game);
-    if (score === 1)
-        return 0;
-    else if (score === 2)
-        return depth-(BOARD_SIZE + 1);
-    else if (score === 3)
-        return (BOARD_SIZE + 1)-depth;
-}
+
 
 function minimax(tempBoardGame, depth) {
     if (CheckForWinner(tempBoardGame) !== 0)
         return score(tempBoardGame, depth);
-    
+
     depth += 1;
     var scores = new Array();
     var moves = new Array();
     var availableMoves = GetAvailableMoves(tempBoardGame);
     var move, possible_game;
-    for(var i=0; i < availableMoves.length; i++) {
+    for(var i = 0; i < availableMoves.length; i++) {
         move = availableMoves[i];
         possible_game = GetNewState(move, tempBoardGame);
         scores.push(minimax(possible_game, depth));
         moves.push(move);
         tempBoardGame = UndoMove(tempBoardGame, move);
     }
-
+    
     var max_score, max_score_index, min_score, min_score_index;
-    if (active_turn === "COMPUTER") {
+    if (active_turn === "AI") {
         max_score = Math.max.apply(Math, scores);
         max_score_index = scores.indexOf(max_score);
         choice = moves[max_score_index];
@@ -89,57 +54,73 @@ function minimax(tempBoardGame, depth) {
     }
 }
 
-function UndoMove(game, move) {
-    game[move] = UNOCCUPIED;
-    ChangeTurn();
-    return game;
+function GetAvailableMoves(board) {
+    var possibleMoves = new Array();
+
+    for (var i = 0; i < boardSize; i++){
+        for(var j = 0; j < boardSize; j++){
+            var pos = board.getPos(j, i);
+
+            if(pos.getValue() == null) {
+                possibleMoves.push(pos);
+            }
+        }
+    }
+    
+    return possibleMoves;
 }
 
-function GetNewState(move, game) {
+function GetNewState(pos, board) {
     var piece = ChangeTurn();
-    game[move] = piece;
-    return game;
+
+    board.tryMarkField(pos.getX(), pos.getY(), piece);
+
+    return board;
 }
 
 function ChangeTurn() {
     var piece;
-    if (active_turn === "COMPUTER") {
+    if (active_turn === "AI") {
         piece = aiPlayer.getValue();
         active_turn = "HUMAN";
     } else {
         piece = humanPlayer.getValue();
-        active_turn = "COMPUTER";
+        active_turn = "AI";
     }
+
     return piece;
 }
 
-function GetAvailableMoves(game) {
-    var possibleMoves = new Array();
-    for (var i = 0; i < BOARD_SIZE; i++)
-        if (game[i] === UNOCCUPIED)
-            possibleMoves.push(i);
-    return possibleMoves;
+function UndoMove(board, pos) {
+
+    board.resetMarkField(pos.getX(), pos.getY());
+    ChangeTurn();
+    return board;
 }
+
+function score(board, depth) {
+    var score = CheckForWinner(board);
+
+    var maxScore = boardSize * boardSize + 1;
+
+    if (score === 1)
+        return 0;
+    else if (score === 2)
+        return depth - maxScore;
+    else if (score === 3)
+        return maxScore - depth;
+}
+
 
 // Check for a winner.  Return
 //   0 if no winner or tie yet
 //   1 if it's a tie
 //   2 if HUMAN_PLAYER won
 //   3 if COMPUTER_PLAYER won
-function CheckForWinner(game) {
-    var b = new BoardType(BOARD_SIZE_SQRT, toWinInARow);
-    for (var i = 0; i < game.length; i++)
-    {
-        var x = i % BOARD_SIZE_SQRT;
-        var y = Math.floor(i / BOARD_SIZE_SQRT);
-
-        b.tryMarkField(x, y, game[i]);
-    }
-
-
-    var isAiPlayerWinner = b.isPlayerWinner(aiPlayer);
-    var isHumanPlayerWinner = b.isPlayerWinner(humanPlayer);
-    var areAllMarked = b.areAllFieldsMarked();
+function CheckForWinner(board) {
+    var isAiPlayerWinner = board.isPlayerWinner(aiPlayer);
+    var isHumanPlayerWinner = board.isPlayerWinner(humanPlayer);
+    var areAllMarked = board.areAllFieldsMarked();
 
     if(!isAiPlayerWinner && !isHumanPlayerWinner && !areAllMarked)
         return 0;
@@ -149,17 +130,4 @@ function CheckForWinner(game) {
         return 2;
     else if(isAiPlayerWinner)
         return 3;
-}
-
-
-function sleep(){
-    for(var j = 0; j < 10000 * 10000; j++){}
-}
-
-
-function intToBoardPosition(i){
-    var x = i % BOARD_SIZE_SQRT;
-    var y = Math.floor(i / BOARD_SIZE_SQRT);
-
-    return new BoardPosition(x, y);
 }

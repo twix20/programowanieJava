@@ -45,6 +45,11 @@ public class Board {
 		}
 	}
 	
+	public void resetMarkField(int x, int y) {
+		BoardPosition pos = getPos(x, y);
+		pos.setValue(null);		
+	}
+	
 	public boolean isFieldTaken(int x, int y) {
 		return getPos(x, y).getValue() != null;
 	}
