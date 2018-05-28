@@ -5,6 +5,8 @@ var aiPlayer;
 var humanPlayer;
 var active_turn;
 
+var intelligence = 3;
+
 
 function minimaxMoveStrategy(currentPlayer, enemyPlayer, board) {
     boardSize = board.getSize();
@@ -23,6 +25,12 @@ function minimaxMoveStrategy(currentPlayer, enemyPlayer, board) {
 
 
 function minimax(tempBoardGame, depth) {
+
+    if(depth > intelligence){
+        //print('depth > intelligence ' + depth);
+        return 0;
+    }
+
     if (CheckForWinner(tempBoardGame) !== 0)
         return score(tempBoardGame, depth);
 
@@ -66,7 +74,7 @@ function GetAvailableMoves(board) {
             }
         }
     }
-    
+
     return possibleMoves;
 }
 
