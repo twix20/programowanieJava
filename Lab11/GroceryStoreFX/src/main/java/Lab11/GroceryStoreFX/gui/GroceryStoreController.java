@@ -1,5 +1,7 @@
 package Lab11.GroceryStoreFX.gui;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
@@ -7,13 +9,18 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.imageio.ImageIO;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import Lab11.GroceryStoreFX.resources.Resources.SupportedLocale;
-import Lab11.GroceryStoreFX.models.Item;
 import Lab11.GroceryStoreFX.repositories.ItemRepository;
 import Lab11.GroceryStoreFX.resources.Resources;
 
@@ -35,6 +42,9 @@ public class GroceryStoreController implements Initializable {
 	private Menu menuLanguage;
 	
 	@FXML
+	private ImageView ivImage;
+	
+	@FXML
 	private TableView<GroceriesItem> tableGroceries;
 	
 	
@@ -47,19 +57,41 @@ public class GroceryStoreController implements Initializable {
 	public void miPolishClick() {
 		Resources.get().changeLocale(SupportedLocale.Polish);
 	}
-
 	
+	@FXML
+	public void onTableGroceriesClick(MouseEvent event) {
+		if(event.getButton() == MouseButton.PRIMARY) {
+			int itemId = tableGroceries.getSelectionModel().getSelectedItem().getCol_0();
+			
+			updateItemPreviewPanel(itemId);
+		}
+	}
+
+	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		System.out.println("GroceryStoreController initialized");
 		
 		Resources r = Resources.get();
-		
 		r.register(menuLanguage, "Language", Resources.GUI_BUNDLE);
 		r.register(miEnglish, "Language_English", Resources.GUI_BUNDLE);
 		r.register(miPolish, "Language_Polish", Resources.GUI_BUNDLE);
-		
 		r.register(e -> updateTableItems());
 		
+	}
+	
+	private void updateItemPreviewPanel(int itemId) {
+
+		int width = 150;
+		int height = 150;
+		
+		ivImage.setFitHeight(height);
+		ivImage.setFitWidth(width);
+		ivImage.setPreserveRatio(true);
+		
+		File imgFile = itemRepository.getImageFile(itemId);
+		
+		Image image = new Image(imgFile.toURI().toString(), width, height, false, false);
+		
+		ivImage.setImage(image);
 	}
 	
 	private void updateTableItems() {
