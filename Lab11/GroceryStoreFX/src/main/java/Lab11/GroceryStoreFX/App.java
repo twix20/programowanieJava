@@ -1,14 +1,12 @@
 package Lab11.GroceryStoreFX;
 
-import java.io.IOException;
-import java.net.URL;
-
 import Lab11.GroceryStoreFX.gui.GroceryStoreController;
+import Lab11.GroceryStoreFX.resources.Resources;
+import Lab11.GroceryStoreFX.resources.Resources.SupportedLocale;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -30,11 +28,11 @@ public class App extends Application
         loader.setLocation(GroceryStoreController.class.getResource("GroceryStoreController.fxml"));
         
         Parent root = (Parent) loader.load();
-      	
     	groceryStoreController = loader.getController();
-    	System.out.println(groceryStoreController == null);
     	
-      				
+    	
+    	Resources.get().changeLocale(SupportedLocale.English);
+    	
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.show();

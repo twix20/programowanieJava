@@ -10,12 +10,12 @@ public class ItemRepository extends JsonRepository<Item> {
 	public final String imageFolder = ItemRepository.class.getResource("").getPath(); //"src/lab2/grocerystore/gui/images/";
 	
 	public ItemRepository() {
-		super("src/itemDatabase.json", Item.class);
+		super(ItemRepository.class.getResource("itemDatabase.json").getPath(), Item.class);
 
 	}
 	
 	public File getImageFile(int itemId) {
-		return new File(imageFolder + itemId + ".png");
+		return new File(imageFolder + "/" + itemId + ".png");
 	}
 	
 	public void update(int itemId, int newQuantity) {

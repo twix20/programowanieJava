@@ -33,6 +33,9 @@ public class JavaFxLocaleChangedListener implements LocaleChangedListener {
     		else if(c instanceof MenuItem) {
     			((MenuItem)c).setText(newComponentText);
     		}
+    		else if(c instanceof TableColumn) {
+    			((TableColumn)c).setText(newComponentText);
+    		}
     		else {
     			throw new UnsupportedOperationException(c.getClass().getName());
     		}

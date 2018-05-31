@@ -9,8 +9,8 @@ import com.github.peholmst.i18n4vaadin.*;
 import javafx.scene.control.Control;
 
 public class Resources {
-	public final static String GUI_BUNDLE = "gui";
-	public final static String GROCERY_ITEMS_BUNDLE = "groceryItems";
+	public final static String GUI_BUNDLE = "Lab11.GroceryStoreFX.resources.gui";
+	public final static String GROCERY_ITEMS_BUNDLE = "Lab11.GroceryStoreFX.resources.groceryItems";
 	
 	private static Resources instance = null;
     public static Resources get() {

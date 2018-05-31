@@ -1,5 +1,6 @@
 package Lab11.GroceryStoreFX.repositories;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -14,14 +15,13 @@ import com.google.gson.GsonBuilder;
 
 public abstract class JsonRepository<T> {
 	protected Path filePath;
-	protected String fileName;
 	protected Class<T> type;
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	public JsonRepository(String fileName, Class<T> type) {
-		this.fileName = fileName;
+	public JsonRepository(String dbFilePath, Class<T> type) {
+		
 		this.type = type;
-		this.filePath = Paths.get(fileName);
+		this.filePath = new File(dbFilePath).toPath();
 	}
 
 	public List<T> getAll() {
