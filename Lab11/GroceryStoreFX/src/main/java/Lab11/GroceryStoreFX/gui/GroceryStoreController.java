@@ -14,12 +14,14 @@ import javax.imageio.ImageIO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.*;
+import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import Lab11.GroceryStoreFX.resources.Resources.SupportedLocale;
 import Lab11.GroceryStoreFX.repositories.ItemRepository;
 import Lab11.GroceryStoreFX.resources.Resources;
@@ -28,6 +30,8 @@ public class GroceryStoreController implements Initializable {
 	
 	private final String ItemsTablePrefix = "ItemsTable_";
 	private ItemRepository itemRepository = new ItemRepository();
+	
+	public Stage stage;
 	
 	@FXML
 	private Label lblGroceriesTable;
@@ -75,6 +79,11 @@ public class GroceryStoreController implements Initializable {
 		r.register(miEnglish, "Language_English", Resources.GUI_BUNDLE);
 		r.register(miPolish, "Language_Polish", Resources.GUI_BUNDLE);
 		r.register(e -> updateTableItems());
+		
+		r.register(e -> {
+			String newTitle = Resources.get().getBundle(Resources.GUI_BUNDLE).getString("Frame_Title_groceryStore");
+			stage.setTitle(newTitle);
+		});
 		
 	}
 	

@@ -15,8 +15,6 @@ import javafx.stage.Stage;
  */
 public class App extends Application
 {
-    GroceryStoreController groceryStoreController;
-	
     public static void main( String[] args )
     {
     	launch(args);
@@ -28,8 +26,9 @@ public class App extends Application
         loader.setLocation(GroceryStoreController.class.getResource("GroceryStoreController.fxml"));
         
         Parent root = (Parent) loader.load();
-    	groceryStoreController = loader.getController();
     	
+        GroceryStoreController controller = loader.getController();
+        controller.stage = primaryStage;
     	
     	Resources.get().changeLocale(SupportedLocale.English);
     	
