@@ -1,0 +1,50 @@
+package Lab11.GroceryStoreFX;
+
+import java.io.IOException;
+import java.net.URL;
+
+import Lab11.GroceryStoreFX.gui.GroceryStoreController;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+/**
+ * Hello world!
+ *
+ */
+public class App extends Application
+{
+    public static void main( String[] args )
+    {
+    	
+    	System.out.println("started");
+    	launch(args);
+    	
+    }
+    
+    GroceryStoreController groceryStoreController;
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(GroceryStoreController.class.getResource("GroceryStoreController.fxml"));
+        
+        Parent root = (Parent) loader.load();
+      	
+    	groceryStoreController = loader.getController();
+    	System.out.println(groceryStoreController == null);
+    	
+    	
+    	groceryStoreController.setPrimaryStage(primaryStage);
+    				
+		Scene scene = new Scene(root);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+
+
+		
+	}
+}
