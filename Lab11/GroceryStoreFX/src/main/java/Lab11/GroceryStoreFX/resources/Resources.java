@@ -1,15 +1,16 @@
 package Lab11.GroceryStoreFX.resources;
 
-import java.awt.Component;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.function.Consumer;
 
 import com.github.peholmst.i18n4vaadin.*;
 
+import javafx.scene.control.Control;
+
 public class Resources {
-	public final static String GUI_BUNDLE = "lab2/grocerystore/resources/gui";
-	public final static String GROCERY_ITEMS_BUNDLE = "lab2/grocerystore/resources/groceryItems";
+	public final static String GUI_BUNDLE = "gui";
+	public final static String GROCERY_ITEMS_BUNDLE = "groceryItems";
 	
 	private static Resources instance = null;
     public static Resources get() {
@@ -21,7 +22,7 @@ public class Resources {
 	
 	private List<Locale> supportedLocales = new ArrayList<>(Arrays.asList(new Locale("en", "US"), new Locale("pl", "PL")));
 	private SupportedLocale currentLocale = SupportedLocale.English;
-    private SwingLocaleChangedListener listener = new SwingLocaleChangedListener();
+    private JavaFxLocaleChangedListener listener = new JavaFxLocaleChangedListener();
 
 	public void changeLocale(SupportedLocale locale) {
 		this.currentLocale = locale;
@@ -33,8 +34,8 @@ public class Resources {
 
 	}
 	
-    public void register(Component c, String bundleName) {
-        listener.add(c, bundleName);
+    public void register(Object c, String key, String bundleName) {
+        listener.add(c, key, bundleName);
     }
     
     public void register(Consumer<LocaleChangedEvent> toRun) {

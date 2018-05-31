@@ -17,16 +17,13 @@ import javafx.stage.Stage;
  */
 public class App extends Application
 {
+    GroceryStoreController groceryStoreController;
+	
     public static void main( String[] args )
     {
-    	
-    	System.out.println("started");
     	launch(args);
-    	
     }
     
-    GroceryStoreController groceryStoreController;
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		FXMLLoader loader = new FXMLLoader();
@@ -37,14 +34,9 @@ public class App extends Application
     	groceryStoreController = loader.getController();
     	System.out.println(groceryStoreController == null);
     	
-    	
-    	groceryStoreController.setPrimaryStage(primaryStage);
-    				
+      				
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
-
-		
 	}
 }
