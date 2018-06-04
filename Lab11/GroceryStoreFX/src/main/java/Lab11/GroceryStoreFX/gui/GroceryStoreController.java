@@ -65,8 +65,11 @@ public class GroceryStoreController implements Initializable {
 	@FXML
 	public void onTableGroceriesClick(MouseEvent event) {
 		if(event.getButton() == MouseButton.PRIMARY) {
-			int itemId = tableGroceries.getSelectionModel().getSelectedItem().getCol_0();
 			
+			GroceriesItem selectedItem = tableGroceries.getSelectionModel().getSelectedItem();
+			if(selectedItem == null) return;
+			
+			int itemId = selectedItem.getCol_0();
 			updateItemPreviewPanel(itemId);
 		}
 	}
